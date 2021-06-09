@@ -10,6 +10,9 @@ class Home extends React.Component{
 
     componentDidMount = () => {
         document.title = "Home - MangaDex";
+        // https://api.mangadex.org/list/8018a70b-1492-4f91-a584-7451d7787f7a "Featured"
+        // https://api.mangadex.org/manga?limit=20&order[createdAt]=desc newest
+        // https://api.mangadex.org/chapter?limit=12&order[publishAt]=desc last chapters
     }
 
     render = () => {

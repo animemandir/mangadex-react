@@ -8,6 +8,7 @@ import {
 
 import Home from './pages/Home.js';
 import About from './pages/About.js';
+import Login from './pages/Login.js';
 import Error404 from './pages/Error404.js';
 
 
@@ -17,6 +18,9 @@ export default function App() {
             <Switch>
                 <Route path="/about">
                     <About />
+                </Route>
+                <Route path="/login">
+                    <Login />
                 </Route>
                 <Route path="/" exact={true}>
                     <Home />

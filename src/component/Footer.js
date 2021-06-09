@@ -9,7 +9,7 @@ class Footer extends React.Component{
 
     render = () => {
         return (
-            <footer class="footer relative pt-1 bg-gray-200 text-gray-600 dark:bg-gray-900 dark:text-gray-100">
+            <footer class="footer relative pt-1 bg-gray-150 text-gray-600 dark:bg-gray-900 dark:text-gray-100">
                 <div class="container mx-auto px-3">
                     <div class="mt-4 border-t-2 border-gray-800 dark:border-gray-100 flex flex-col items-center">
                         <div class="sm:w-2/3 text-center py-6">
