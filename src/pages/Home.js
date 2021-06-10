@@ -129,12 +129,6 @@ class Home extends React.Component{
     renderHomeUpdates = () => {
         var comp = [];
         for(let a = 0; a < this.state.lastChapters.length-1; a++){
-            // comp.push(
-            // <div className="inline-flex">
-            //     <HomeUpdates data={this.state.lastChaptersData[this.state.lastChapters[a]]}/>
-            //     <HomeUpdates data={this.state.lastChaptersData[this.state.lastChapters[a+1]]}/>
-            // </div>);
-            // a++;
             comp.push(<HomeUpdates data={this.state.lastChaptersData[this.state.lastChapters[a]]}/>);
         }
 
@@ -148,7 +142,7 @@ class Home extends React.Component{
                 <Header />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
-                        <div className="box-border w-full md:w-3/5 py-4 mt-6 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">
+                        <div className="box-border w-full md:w-3/5 py-2 mt-6 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-center border-b-2 pb-1 border-gray-200 dark:border-gray-900">
                                 Last Updates
                             </div>
@@ -165,7 +159,7 @@ class Home extends React.Component{
                             </div>
                             
                         </div>
-                        <div className="box-border w-full md:w-2/6 py-4 mt-6 border-2 border-gray-200 dark:border-gray-900">
+                        <div className="box-border w-full md:w-2/6 py-2 mt-6 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-center border-b-2 pb-1 border-gray-200 dark:border-gray-900">
                                 Top Chapters
                             </div>
@@ -181,7 +175,7 @@ class Home extends React.Component{
                                 </button>
                             </div>
                             <div className="h-auto">
-                                <p>Coming when api supports it</p>
+                                {/* <p>Coming when api supports it</p> */}
                             </div>
                         </div>
                     </div>

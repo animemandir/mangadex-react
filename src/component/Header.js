@@ -49,7 +49,7 @@ class Header extends React.Component{
                         <div className="lg:flex flex-grow items-center" id="example-navbar-warning">
                             <ul className="flex flex-col lg:flex-row list-none mr-auto">
                                 <li className="nav-item">
-                                    <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug  hover:opacity-75" to="/manga">
+                                    <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug  hover:opacity-75" to="/search">
                                         Manga
                                     </Link>
                                 </li>
@@ -59,8 +59,13 @@ class Header extends React.Component{
                                     </Link>
                                 </li>
                                 <li className="nav-item">
+                                    <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/settings">
+                                        Settings
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/login">
-                                        Profile/Login
+                                        Login
                                     </Link>
                                 </li>
                                 <li className="nav-item">

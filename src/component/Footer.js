@@ -17,7 +17,7 @@ class Footer extends React.Component{
                                 © 2021 
                                 <a className="text-blue-500" href="https://mangadex.org/" target="_blank"> MangaDex (Official)</a> |
                                 <Link className="text-blue-500" to="/about"> About</Link> |
-                                <a className="text-blue-500" href="https://github.com/Saymon600" target="_blank"> GitHub</a>
+                                <a className="text-blue-500" href="https://github.com/Saymon600/mangadex-react" target="_blank"> GitHub</a>
                             </p>
                         </div>
                     </div>
