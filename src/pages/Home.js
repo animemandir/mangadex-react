@@ -25,7 +25,7 @@ class Home extends React.Component{
 
     getLastChapters = () => {
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?limit=50&order[publishAt]=desc')
+        axios.get('https://api.mangadex.org/chapter?limit=100&order[publishAt]=desc')
         .then(function(response){
             let chapters = [];
             let chaptersOrder = [];
@@ -162,7 +162,7 @@ class Home extends React.Component{
                             </div>
                             
                         </div>
-                        <div className="box-border w-full md:w-2/6 py-2 mt-6 border-2 border-gray-200 dark:border-gray-900">
+                        <div className="box-border w-full md:w-2/6 py-2 mt-6 mb-6 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-center border-b-2 pb-1 border-gray-200 dark:border-gray-900">
                                 Top Chapters
                             </div>
@@ -177,7 +177,7 @@ class Home extends React.Component{
                                     7d
                                 </button>
                             </div>
-                            <div className="h-auto">
+                            <div className="h-auto p-4">
                                 {/* <p>Coming when api supports it</p> */}
                             </div>
                         </div>
