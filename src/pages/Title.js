@@ -48,6 +48,7 @@ class Title extends React.Component{
         document.title = "Manga - Mangadex";
         const id = this.props.match.params.id;
         this.setState({id:id});
+        
         this.getMangaInfo(id);
         this.getChapterList(id,0);
         this.getCoverList(id);

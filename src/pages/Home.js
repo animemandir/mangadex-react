@@ -12,10 +12,6 @@ class Home extends React.Component{
             lastChaptersData: [],
             updatesComponent: null
         };
-
-        this.getLastChapters = this.getLastChapters.bind(this);
-        this.getLCMangaInfo = this.getLCMangaInfo.bind(this);
-        this.getLCCovers = this.getLCCovers.bind(this);
     }
 
     componentDidMount = () => {
@@ -25,23 +21,47 @@ class Home extends React.Component{
 
     getLastChapters = () => {
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?limit=100&order[publishAt]=desc')
+        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+            params: {
+                translatedLanguage: ['en'],
+                includes: ["scanlation_group","manga"],
+                limit: 100,
+            }
+        })
         .then(function(response){
+            console.log(response)
+
             let chapters = [];
-            let chaptersOrder = [];
             let mangaIds = [];
             response.data.results.map((chapter,i) => {
                 let mangaId = "";
+                let mangaName = "";
+                let groupId = "";
+                let groupName = ""
                 chapter.relationships.map((relation) => {
                     if(relation.type == "manga"){
                         mangaId = relation.id;
+
+                        Object.keys(relation.attributes.title).map(function(key){
+                            if(key == "en" || mangaName == ""){
+                                mangaName = relation.attributes.title[key];
+                            }
+                        });
+                    }
+
+                    if(relation.type == "scanlation_group"){
+                        groupId = relation.id;
+                        groupName = relation.attributes.name;
                     }
                 });
                 let temp = {
                     chapterId: chapter.data.id,
                     publishAt: chapter.data.attributes.publishAt,
                     chapter: chapter.data.attributes.chapter,
-                    mangaId: mangaId
+                    mangaId: mangaId,
+                    mangaName: mangaName,
+                    groupId: groupId,
+                    groupName: groupName
                 };
                 mangaIds.push(mangaId);
                 chapters[mangaId] = temp;
@@ -49,58 +69,19 @@ class Home extends React.Component{
 
             var mangaIdsUnique = [...new Set(mangaIds)]
             $this.setState({lastChapters:mangaIdsUnique});
-            $this.getLCMangaInfo(chapters,mangaIdsUnique);
+            $this.getLCCovers(chapters,mangaIdsUnique);
         })
         .catch(function(error){
             console.log(error);
         });
     }
 
-    getLCMangaInfo = (chapters,mangaIds) => {
-        var $this = this;
-        axios.get('https://api.mangadex.org/manga',{
-            params: {
-                ids: mangaIds,
-                limit: 50
-            }
-        })
-        .then(function(response){
-            let coverIds = [];
-            response.data.results.map((manga,i) => {
-                let cover = "";
-                let title = "";
-                
-                manga.relationships.map((relation) => {
-                    if(relation.type == "cover_art"){
-                        cover = relation.id;
-                    }
-                })
-
-                Object.keys(manga.data.attributes.title).map(function(key,index){
-                    if(key == "en" || title == ""){
-                        title = manga.data.attributes.title[key];
-                    }
-                });
-                if(chapters[manga.data.id]){
-                    chapters[manga.data.id].mangaName = title;
-                    chapters[manga.data.id].coverId = cover;
-                    coverIds.push(cover);
-                }
-            });
-
-            $this.getLCCovers(chapters,coverIds);
-        })
-        .catch(function(error){
-            console.log(error);
-        });
-    }
-
-    getLCCovers = (chapters,coverIds) => {
+    getLCCovers = (chapters,mangaIds) => {
         var $this = this;
         axios.get('https://api.mangadex.org/cover',{
             params: {
-                ids: coverIds,
-                limit: 50
+                manga: mangaIds,
+                limit: 100
             }
         })
         .then(function(response){
@@ -157,7 +138,7 @@ class Home extends React.Component{
                                     Follows
                                 </button>
                             </div>
-                            <div className="flex flex-wrap">
+                            <div className="flex flex-wrap p-1">
                                 {this.state.updatesComponent}
                             </div>
                             
