@@ -10,7 +10,7 @@ class HomeUpdates extends React.Component{
 
     render = () => {
         return (
-            <div className="content flex w-1/2 my-2 border-b border-gray-200 dark:border-gray-900">
+            <div className="content flex w-1/2 mt-2 border-b border-gray-200 dark:border-gray-900">
                <img 
                     className="w-1/5 pl-1 pb-1"
                     alt={this.props.data.mangaName}

@@ -61,7 +61,7 @@ class Home extends React.Component{
         axios.get('https://api.mangadex.org/manga',{
             params: {
                 ids: mangaIds,
-                limit: 40
+                limit: 50
             }
         })
         .then(function(response){
@@ -100,7 +100,7 @@ class Home extends React.Component{
         axios.get('https://api.mangadex.org/cover',{
             params: {
                 ids: coverIds,
-                limit: 40
+                limit: 50
             }
         })
         .then(function(response){
@@ -128,7 +128,7 @@ class Home extends React.Component{
 
     renderHomeUpdates = () => {
         var comp = [];
-        for(let a = 0; a < this.state.lastChapters.length-1; a++){
+        for(let a = 0; a < this.state.lastChapters.length; a++){
             comp.push(<HomeUpdates data={this.state.lastChaptersData[this.state.lastChapters[a]]}/>);
         }
 
@@ -136,7 +136,10 @@ class Home extends React.Component{
     }
 
     render = () => {
-        
+        var comp = [];
+        for(let a = 0; a < this.state.lastChapters.length; a++){
+            comp.push(<HomeUpdates data={this.state.lastChaptersData[this.state.lastChapters[a]]}/>);
+        }
         return (
             <div class="flex flex-col justify-between">
                 <Header />

@@ -76,11 +76,11 @@ class Header extends React.Component{
                             </ul>
                             <div class="relative flex w-full sm:w-7/12 md:w-5/12 px-4 flex-wrap items-stretch lg:ml-auto">
                                 <div class="flex">
-                                    <span class="font-normal leading-snug flex text-center white-space-no-wrap border border-solid items-center rounded-r-none pl-2 py-1 rounded-full text-sm border-r-0 border-gray-600 dark:border-gray-1000 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-800 dark:placeholder-gray-100">
+                                    <span class="font-normal leading-snug flex text-center white-space-no-wrap border border-solid items-center rounded-r-none pl-2 py-1 rounded text-sm border-r-0 border-gray-600 dark:border-gray-1000 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500">
                                         <i class="fas fa-search"></i>
                                     </span>
                                 </div>
-                                <input type="text" class="px-2 py-1 h-8 border border-solid rounded-full text-sm leading-snug shadow-none outline-none focus:outline-none w-full font-normal rounded-l-none flex-1 border-l-0 border-gray-600 dark:border-gray-1000 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-800 dark:placeholder-gray-100" placeholder="Search"/>
+                                <input type="text" class="px-2 py-1 h-8 border border-solid rounded text-sm leading-snug shadow-none outline-none focus:outline-none w-full font-normal rounded-l-none flex-1 border-l-0 border-gray-600 dark:border-gray-1000 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500" placeholder="Search"/>
                             </div>
                         </div>
                     </div>
