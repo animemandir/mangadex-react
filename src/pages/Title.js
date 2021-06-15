@@ -151,6 +151,9 @@ class Title extends React.Component{
             }
 
             $this.setState({chapterList: list});
+            if(response.data.total >= (offset+100)){
+                $this.getChapterList(id,offset+100);
+            }
         })
         .catch(function(error){
             console.log(error);
@@ -166,8 +169,6 @@ class Title extends React.Component{
             }
         })
         .then(function(response){
-            console.log(response);
-
             let list = $this.state.coverList;
             for(let i = 0; i < response.data.results.length; i++){
                 let fileFull = "https://uploads.mangadex.org/covers/" +  id + "/" + response.data.results[i].data.attributes.fileName;

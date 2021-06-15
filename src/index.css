@@ -4,13 +4,29 @@
 
 @layer utilities {
     @variants responsive {
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
 
-    .no-scrollbar {
-        -ms-overflow-style: none; 
-        scrollbar-width: none;  
+        .no-scrollbar {
+            -ms-overflow-style: none; 
+            scrollbar-width: none;  
+        }
+
+        .scrollbar-blue::-webkit-scrollbar-track{
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: rgba(191, 219, 254, var(--tw-bg-opacity));
+        }
+        
+        .scrollbar-blue::-webkit-scrollbar{
+            width: 0.5rem;
+            background-color: rgba(191, 219, 254, var(--tw-bg-opacity));
+        }
+        
+        .scrollbar-blue::-webkit-scrollbar-thumb{
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: rgba(37, 99, 235, var(--tw-bg-opacity));
+        }
     }
-  }
 }
+
