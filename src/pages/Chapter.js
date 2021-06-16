@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 import axios from 'axios';
+import ChapterImage from '../component/ChapterImage.js';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 
@@ -22,6 +23,11 @@ class Chapter extends React.Component{
             baseUrl: "",
             chapterList: [],
 
+            progress: 0,
+            progressBar: null,
+            imageLoad: [],
+
+
             classMenuA: "w-3/12 flex flex-wrap",
             classMenuB: "hidden",
             classImg: "object-contain",
@@ -38,19 +44,27 @@ class Chapter extends React.Component{
                 left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-            }
+            },
+            nextPrevController: {
+                leftClass: "mx-2 hover:opacity-75 dark:text-gray-100",
+                rightClass: "mx-2 hover:opacity-75 dark:text-gray-100",
+                leftTitle: "Previous",
+                rightTitle: "Next",
+                prevId: "",
+                nextId: ""
+            },
+            imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
+            progressBarClass: "w-2 flex flex-col",
         };
-
-        this.changeImageFit = this.changeImageFit.bind(this);
     }
 
+    // Initialization
     componentDidMount = () => {
         const id = this.props.match.params.id;
         this.setState({id:id});
 
         this.initReader();
         this.getChapter(id);
-        this.getBaseUrl(id);
     }
 
     getChapter = (id) => {
@@ -61,7 +75,6 @@ class Chapter extends React.Component{
             }
         })
         .then(function(response){
-            console.log(response);
             let mangaId = "";
             let manga = "";
             let groupId = "";
@@ -110,6 +123,7 @@ class Chapter extends React.Component{
             });
 
             $this.getChapterList(mangaId,0);
+            $this.getBaseUrl(id);
         })
         .catch(function(error){
             console.log(error);
@@ -120,14 +134,14 @@ class Chapter extends React.Component{
         var $this = this;
         axios.get('https://api.mangadex.org/at-home/server/' + id)
         .then(function(response){
-            console.log(response);
-
             let baseUrl = "";
             baseUrl = response.data.baseUrl;
 
             $this.setState({
                 baseUrl: baseUrl
             });
+
+            $this.updateReader("next");
         })
         .catch(function(error){
             console.log(error);
@@ -167,9 +181,27 @@ class Chapter extends React.Component{
             $this.setState({chapterList: list});
             if(response.data.total >= (offset+100)){
                 $this.getChapterList(id,offset+100);
-            }
+            }else{
+                for(let a = 0; a < list.length; a++){
+                    if(list[a].id == $this.state.id){
+                        let prev = "";
+                        let next = "";
+                        if(a < (list.length-1) && a > 0){
+                            next = list[a-1].id;
+                        }
 
-            console.log(response);
+                        if(a <= (list.length-2)){
+                            prev = list[a+1].id;
+                        }
+
+                        let nextPrevController = $this.state.nextPrevController;
+                        nextPrevController.prevId = prev;
+                        nextPrevController.nextId = next;
+
+                        $this.setState({nextPrevController:nextPrevController});
+                    }
+                }
+            }
         })
         .catch(function(error){
             console.log(error);
@@ -183,6 +215,7 @@ class Chapter extends React.Component{
         this.setLayout();
     }
 
+    // Reader Settings 
     setMode = () => {
         if(localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
@@ -308,6 +341,37 @@ class Chapter extends React.Component{
     }
 
 
+    // Reader Actions 
+    changeChapter = (e) => {
+        window.location = '/chapter/' + e.target.value;
+    }
+
+    leftChapter = () => {
+        switch(localStorage.readerlayout){
+            case "left":
+                window.location = '/chapter/' + this.state.nextPrevController.nextId;
+            break;
+            case "single":
+            case "right":
+            default:
+                window.location = '/chapter/' + this.state.nextPrevController.prevId;
+            break;
+        }
+    }
+
+    rightChapter = () => {
+        switch(localStorage.readerlayout){
+            case "left":
+                window.location = '/chapter/' + this.state.nextPrevController.prevId;
+            break;
+            case "single":
+            case "right":
+            default:
+                window.location = '/chapter/' + this.state.nextPrevController.nextId;
+            break;
+        }
+    }
+
     clickListener = (e) => {
         let readerwidth = document.getElementById('mainReader').clientWidth;
         if(e.clientX <= (readerwidth/2)){
@@ -319,11 +383,104 @@ class Chapter extends React.Component{
     }
     
     leftSide = () => {
-        console.log("left");
+        switch(localStorage.readerlayout){
+            case "left":
+                this.updateReader("next");
+            break;
+            case "right":
+                this.updateReader("prev");
+            break;
+        }
     }
 
     rightSide = () => {
-        console.log("right");
+        switch(localStorage.readerlayout){
+            case "left":
+                this.updateReader("prev");
+            break;
+            case "right":
+                this.updateReader("next");
+            break;
+        }
+    }
+
+    updateReader = (action) => {
+        var progress = this.state.progress;
+        let imageLoad = [];
+        let progressBar = [];
+        switch(action){
+            case "next":
+                progress = progress + 1;
+                for(let a = 0; a < this.state.data.length; a++){
+                    let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
+                    if((a+1) < progress){
+                        progressBar.push(<div className="flex-grow bg-blue-300 border-b-2 border-gray-900"></div>);
+                        imageLoad.push(
+                            <div className="flex flex-row justify-center items-center">
+                                <img 
+                                    alt={"Page " + progress}
+                                    className={this.state.classImg + " hidden"}
+                                    src={image} />
+                            </div>
+                        );
+                    }
+                    if((a+1) == progress){
+                        progressBar.push(<div className="flex-grow bg-blue-600 border-b-2 border-gray-900"></div>);
+                        imageLoad.push(
+                            <div className="flex flex-row justify-center items-center">
+                                <img 
+                                    alt={"Page " + progress}
+                                    className={this.state.classImg}
+                                    src={image} />
+                            </div>
+                        );
+                    }
+                    if((a+1) > progress){
+                        progressBar.push(<div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>);
+                        if((progress + 5) >= (a+1)){
+                            imageLoad.push(
+                                <div className="flex flex-row justify-center items-center">
+                                    <img 
+                                        alt={"Page " + progress}
+                                        className={this.state.classImg + " hidden"}
+                                        src={image} />
+                                </div>
+                            );
+                        }
+                    }
+                }
+            break;
+            case "prev":
+                progress = progress - 1;
+                for(let a = 0; a < this.state.data.length; a++){
+                    let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
+                    if((a+1) < progress){
+                        progressBar.push(<div className="flex-grow bg-blue-300 border-b-2 border-gray-900"></div>);
+                        imageLoad.push(<ChapterImage page={"Page " + progress} classImg={this.state.classImg + " hidden"} src={image} />);
+                    }
+                    if((a+1) == progress){
+                        progressBar.push(<div className="flex-grow bg-blue-600 border-b-2 border-gray-900"></div>);
+                        imageLoad.push(<ChapterImage page={"Page " + progress} classImg={this.state.classImg} src={image} />);
+                    }
+                    if((a+1) > progress){
+                        progressBar.push(<div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>);
+                        if((progress + 5) >= (a+1)){
+                            imageLoad.push(<ChapterImage page={"Page " + progress} classImg={this.state.classImg + " hidden"} src={image} />);
+                        }
+                    }
+                }
+            break;
+            case "update":
+            break;
+            case "single":
+            break;
+        }
+
+        this.setState({
+            progress: progress,
+            progressBar: progressBar,
+            imageLoad: imageLoad,
+        });
     }
 
     render = () => {
@@ -333,50 +490,15 @@ class Chapter extends React.Component{
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="flex h-screen">
                         <div className="flex-1 flex overflow-hidden" id="mainReader" onClick={this.clickListener}>
-                            <div className="flex-1 overflow-y-auto scrollbar-blue">
-                                <div className="flex flex-row justify-center items-center">
-                                    <img 
-                                        alt="page"
-                                        className={this.state.classImg}
-                                        src="https://guya.moe/media/manga/Original-Hinatazaka/chapters/0001_x5w805dw/9/04.png?v4" />
-                                </div>
-                                <div className="flex flex-row justify-center items-center">
-                                    <img 
-                                        alt="page"
-                                        className={this.state.classImg}
-                                        src="https://guya.moe/media/manga/Original-Hinatazaka/chapters/0001_x5w805dw/9/04.png?v4" />
-                                </div>
-                                <div className="flex flex-row justify-center items-center">
-                                    <img 
-                                        alt="page"
-                                        className={this.state.classImg}
-                                        src="https://guya.moe/media/manga/Original-Hinatazaka/chapters/0001_x5w805dw/9/04.png?v4" />
-                                </div>
+                            <div className={this.state.imgContainerClass}>
+                                {this.state.imageLoad}
                             </div>   
                         </div>
                         
 
-                        {/* <div className="w-2 flex flex-col">
-                            <div className="flex-grow bg-blue-600 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                            <div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>
-                        </div> */}
+                        <div className={this.state.progressBarClass}>
+                            {this.state.progressBar}
+                        </div>
                         
                         <div className={this.state.classMenuA}>
                             <div onClick={this.toggleMenu} title="Hide Menu" className="w-12 hover:opacity-75 cursor-pointer h-screen flex justify-center items-center border-l-4 border-r-4 border-gray-200 dark:border-gray-900 dark:text-gray-900">
@@ -392,19 +514,19 @@ class Chapter extends React.Component{
                                 </div>
                                 <div className="flex flex-wrap border-b-2 pb-1 border-gray-200 dark:border-gray-900">
                                     <div className="w-1/6 cursor-pointer justify-center items-center flex">
-                                        <div className="mx-2 hover:opacity-75 dark:text-gray-100">
+                                        <div className={this.state.nextPrevController.leftClass} title={this.state.nextPrevController.leftTitle} onClick={this.leftChapter}>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
                                             </svg>
                                         </div>
                                     </div>
                                     <div className="w-4/6 content-center">
-                                        <select className="w-full p-1 m-2 focus:outline-none dark:bg-gray-700 scrollbar-blue" value={this.state.id}>
+                                        <select className="w-full p-1 m-2 focus:outline-none dark:bg-gray-700 scrollbar-blue" value={this.state.id} onChange={this.changeChapter}>
                                             {chapterList}
                                         </select>
                                     </div>
                                     <div className="w-1/6 cursor-pointer justify-center items-center flex">
-                                        <div className="mx-2 hover:opacity-75 dark:text-gray-100">
+                                        <div className={this.state.nextPrevController.rightClass} title={this.state.nextPrevController.rightTitle} onClick={this.rightChapter}>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
                                             </svg>
@@ -468,7 +590,7 @@ class Chapter extends React.Component{
                                 </div>
                                 <footer class="footer relative pt-2">
                                     <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
-                                        <span>Page 1/20</span> 
+                                        <span>Page {this.state.progress}/{this.state.data.length}</span> 
                                     </div>
                                     <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
                                         <Link className="text-blue-600 hover:opacity-75" to={"/"}>Home</Link>

@@ -23,7 +23,6 @@ class About extends React.Component{
                     Search
                     Follows 
                     Login
-                    Title page load all chapter
                     Title page clean if it doesn't have any info
                     Title page chapter/cover tab bug
                     Title page author/artist links
