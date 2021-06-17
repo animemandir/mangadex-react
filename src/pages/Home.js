@@ -3,14 +3,14 @@ import axios from 'axios';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import HomeUpdates from '../component/HomeUpdates.js';
-
+import Loading from '../component/Loading.js';
 class Home extends React.Component{
     constructor(props){
         super(props);
         this.state = {
             lastChapters: [],
             lastChaptersData: [],
-            updatesComponent: null
+            updatesComponent: <Loading />
         };
     }
 
@@ -160,6 +160,7 @@ class Home extends React.Component{
                             </div>
                             <div className="h-auto p-4">
                                 {/* <p>Coming when api supports it</p> */}
+                                <Loading />
                             </div>
                         </div>
                     </div>

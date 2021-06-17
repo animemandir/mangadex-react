@@ -21,7 +21,7 @@ export default function App() {
     return (
         <Router>
             <Switch>
-                <Route path="/chapter/:id">
+                <Route path="/chapter/:id/:page">
                     <Chapter />
                 </Route>
                 <Route path="/title/:id">

@@ -9,6 +9,8 @@ import LanguageFlag  from '../component/LanguageFlag.js';
 import TitleTableRow from '../component/TitleTableRow.js';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
+import Loading from '../component/Loading.js';
+
 class Title extends React.Component{
     constructor(props){
         super(props);
@@ -40,8 +42,6 @@ class Title extends React.Component{
                 contentCover: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
             }
         };
-
-        this.changeTabs = this.changeTabs.bind(this);
     }
 
     componentDidMount = () => {
@@ -192,24 +192,25 @@ class Title extends React.Component{
         });
     }
 
-    changeTabs = () => {
-        switch(this.state.tabControl.active){
+    changeTabs = (tab) => {
+        switch(tab){
             case "chapter":
-                this.setState({tabControl: {
-                    active: "cover",
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    btnCover: "text-center px-3 py-1 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
-                    contentCover: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
-                }});
-            break;
-            case "cover":
                 this.setState({tabControl: {
                     active: "chapter",
                     btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                     btnCover: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                     contentCover: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
+                }});
+                
+            break;
+            case "cover":
+                this.setState({tabControl: {
+                    active: "cover",
+                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnCover: "text-center px-3 py-1 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentCover: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
                 }});
             break;
         }
@@ -223,6 +224,7 @@ class Title extends React.Component{
         var official = this.state.official.map((o) => <Tags name={o.name} url={o.url}/>);
         var retail = this.state.retail.map((r) => <Tags name={r.name}  url={r.url}/>);
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
+        var loading = (!this.state.title) ? <Loading /> : "";
 
         return (
             <div class="flex flex-col justify-between">
@@ -314,10 +316,10 @@ class Title extends React.Component{
                             </div>
                         </div>
                         <div className="box-border w-full py-2 mb-6 mr-1 border-gray-200 dark:border-gray-900">
-                            <button onClick={this.changeTabs} className={this.state.tabControl.btnChapter} >
+                            <button onClick={() => this.changeTabs("chapter")} className={this.state.tabControl.btnChapter} >
                                 Chapters
                             </button>
-                            <button onClick={this.changeTabs} className={this.state.tabControl.btnCover}>
+                            <button onClick={() => this.changeTabs("cover")} className={this.state.tabControl.btnCover}>
                                 Covers
                             </button>
 

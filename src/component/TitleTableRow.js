@@ -61,7 +61,7 @@ class TitleTableRow extends React.Component{
                     </svg>
                 </td>
                 <td>
-                    <Link className="text-blue-500" to={"/chapter/" + this.props.data.data.id} title={this.state.chapterLabel}>
+                    <Link className="text-blue-500" to={"/chapter/" + this.props.data.data.id + "/1"} title={this.state.chapterLabel}>
                         {this.state.chapterLabel}
                     </Link>
                 </td>

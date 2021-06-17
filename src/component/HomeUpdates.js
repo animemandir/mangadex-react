@@ -20,7 +20,7 @@ class HomeUpdates extends React.Component{
                         <Link to={"/title/" + this.props.data.mangaId}>{this.props.data.mangaName}</Link>
                     </p>
                     <p className="text-left mt-1 text-blue-500">
-                        <Link className="flex" to={"/chapter/" + this.props.data.chapterId}>
+                        <Link className="flex" to={"/chapter/" + this.props.data.chapterId + "/1"}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>

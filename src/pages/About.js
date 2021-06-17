@@ -24,7 +24,6 @@ class About extends React.Component{
                     Follows 
                     Login
                     Title page clean if it doesn't have any info
-                    Title page chapter/cover tab bug
                     Title page author/artist links
                     Loading/loader
                     Catch Error UI message zzzzzzzzzzzzzzz

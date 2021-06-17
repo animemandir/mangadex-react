@@ -2,13 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 import axios from 'axios';
-import ChapterImage from '../component/ChapterImage.js';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
+import { data } from "autoprefixer";
 
 class Chapter extends React.Component{
     constructor(props){
         super(props);
+        this.scrollTop = React.createRef();
         this.state = {
             id: "",
             mangaId: "",
@@ -23,7 +24,7 @@ class Chapter extends React.Component{
             baseUrl: "",
             chapterList: [],
 
-            progress: 0,
+            progress: 1,
             progressBar: null,
             imageLoad: [],
 
@@ -39,6 +40,7 @@ class Chapter extends React.Component{
                 original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
             },
             btnLayout: {
                 left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
@@ -61,7 +63,11 @@ class Chapter extends React.Component{
     // Initialization
     componentDidMount = () => {
         const id = this.props.match.params.id;
-        this.setState({id:id});
+        const page = parseInt(this.props.match.params.page);
+        this.setState({
+            id:id,
+            progress: page
+        });
 
         this.initReader();
         this.getChapter(id);
@@ -141,7 +147,7 @@ class Chapter extends React.Component{
                 baseUrl: baseUrl
             });
 
-            $this.updateReader("next");
+            $this.updateReader("update");
         })
         .catch(function(error){
             console.log(error);
@@ -186,6 +192,8 @@ class Chapter extends React.Component{
                     if(list[a].id == $this.state.id){
                         let prev = "";
                         let next = "";
+
+                        document.title = list[a].label + " - " + $this.state.manga + " - MangaDex";
                         if(a < (list.length-1) && a > 0){
                             next = list[a-1].id;
                         }
@@ -274,9 +282,10 @@ class Chapter extends React.Component{
                         original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                         width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     },
                     classImg: "object-none"
-                });
+                },() => this.updateReader("update"));
             break;
             case "height":
                 this.setState({
@@ -284,9 +293,21 @@ class Chapter extends React.Component{
                         original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     },
                     classImg: "h-screen"
-                });
+                },() => this.updateReader("update"));
+            break;
+            case "container":
+                this.setState({
+                    btnFit: {
+                        original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    },
+                    classImg: "object-contain w-3/5"
+                },() => this.updateReader("update"));
             break;
             case "width":
             default:
@@ -295,11 +316,12 @@ class Chapter extends React.Component{
                         original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                         height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     },
                     classImg: "object-contain"
-                });            
+                },() => this.updateReader("update"));      
             break;
-        }
+        }        
     }
 
     changeReaderLayout = (layout) => {
@@ -308,34 +330,52 @@ class Chapter extends React.Component{
     }
 
     setLayout = () => {
+        let nextPrevController = this.state.nextPrevController
+        // imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
+        //     progressBarClass: "w-2 flex flex-col",
         switch(localStorage.readerlayout){
             case "right":
+                nextPrevController.leftTitle = "Previous";
+                nextPrevController.rightTitle = "Next";
                 this.setState({
                     btnLayout: {
                         left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    }
-                });
+                    },
+                    nextPrevController: nextPrevController,
+                    imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
+                    progressBarClass: "w-2 flex flex-col",
+                },() => this.updateReader("update"));
             break;
             case "single":
+                nextPrevController.leftTitle = "Previous";
+                nextPrevController.rightTitle = "Next";
                 this.setState({
                     btnLayout: {
                         left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                         right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    }
-                });            
+                    },
+                    nextPrevController: nextPrevController,
+                    imgContainerClass: "flex-1 overflow-y-auto scrollbar-blue",
+                    progressBarClass: "hidden",
+                },() => this.updateReader("single"));            
             break;
             case "left":
             default:
+                nextPrevController.leftTitle = "Next";
+                nextPrevController.rightTitle = "Previous";
                 this.setState({
                     btnLayout: {
                         left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                         single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    }
-                });
+                    },
+                    nextPrevController: nextPrevController,
+                    imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
+                    progressBarClass: "w-2 flex flex-col",
+                },() => this.updateReader("update"));
             break;
         }
     }
@@ -343,18 +383,26 @@ class Chapter extends React.Component{
 
     // Reader Actions 
     changeChapter = (e) => {
-        window.location = '/chapter/' + e.target.value;
+        window.location = '/chapter/' + e.target.value + "/1";
     }
 
     leftChapter = () => {
         switch(localStorage.readerlayout){
             case "left":
-                window.location = '/chapter/' + this.state.nextPrevController.nextId;
+                if(this.state.nextPrevController.nextId.length > 0){
+                    window.location = '/chapter/' + this.state.nextPrevController.nextId + "/1";
+                }else{
+                    window.location = '/title/' + this.state.mangaId;
+                }                
             break;
             case "single":
             case "right":
             default:
-                window.location = '/chapter/' + this.state.nextPrevController.prevId;
+                if(this.state.nextPrevController.prevId.length > 0){
+                    window.location = '/chapter/' + this.state.nextPrevController.prevId + "/1";
+                }else{
+                    window.location = '/title/' + this.state.mangaId;
+                }                
             break;
         }
     }
@@ -362,12 +410,20 @@ class Chapter extends React.Component{
     rightChapter = () => {
         switch(localStorage.readerlayout){
             case "left":
-                window.location = '/chapter/' + this.state.nextPrevController.prevId;
+                if(this.state.nextPrevController.prevId.length > 0){
+                    window.location = '/chapter/' + this.state.nextPrevController.prevId + "/1";
+                }else{
+                    window.location = '/title/' + this.state.mangaId;
+                }
             break;
             case "single":
             case "right":
             default:
-                window.location = '/chapter/' + this.state.nextPrevController.nextId;
+                if(this.state.nextPrevController.nextId.length > 0){
+                    window.location = '/chapter/' + this.state.nextPrevController.nextId + "/1";
+                }else{
+                    window.location = '/title/' + this.state.mangaId;
+                }
             break;
         }
     }
@@ -404,6 +460,12 @@ class Chapter extends React.Component{
         }
     }
 
+    goToPage = (page) => {
+        this.setState({
+            progress: page
+        },() => this.updateReader("update"));
+    }
+
     updateReader = (action) => {
         var progress = this.state.progress;
         let imageLoad = [];
@@ -411,10 +473,80 @@ class Chapter extends React.Component{
         switch(action){
             case "next":
                 progress = progress + 1;
-                for(let a = 0; a < this.state.data.length; a++){
-                    let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
-                    if((a+1) < progress){
-                        progressBar.push(<div className="flex-grow bg-blue-300 border-b-2 border-gray-900"></div>);
+            break;
+            case "prev":
+                progress = progress - 1;
+            break;
+            case "update":
+            break;
+            case "single":
+                progress = 1;
+            break;
+        }
+
+        if(progress <= 0){
+            if(this.state.nextPrevController.prevId.length > 0){
+                window.location = '/chapter/' + this.state.nextPrevController.prevId + "/1";
+            }else{
+                window.location = '/title/' + this.state.mangaId;
+            }
+        }
+
+        if(progress > this.state.data.length && this.state.data.length > 0){
+            if(this.state.nextPrevController.nextId.length > 0){
+                window.location = '/chapter/' + this.state.nextPrevController.nextId  + "/1";
+            }else{
+                window.location = '/title/' + this.state.mangaId;
+            }
+        }
+
+        let path = "/chapter/" + this.state.id + "/" + progress;
+        window.history.pushState({path: path}, '', path);
+        imageLoad.push(<div className="invisible" ref={this.scrollTop}></div>);
+
+        if(localStorage.readerlayout != "single"){
+            for(let a = 0; a < this.state.data.length; a++){
+                let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
+                if((a+1) < progress){
+                    progressBar.push(
+                        <div 
+                            className="flex-grow cursor-pointer bg-blue-300 border-b-2 border-gray-300 dark:border-gray-900" 
+                            title={a+1} 
+                            onClick={() => this.goToPage(a+1)}></div>
+                    );
+                    imageLoad.push(
+                        <div className="flex flex-row justify-center items-center">
+                            <img 
+                                alt={"Page " + progress}
+                                className={this.state.classImg + " hidden"}
+                                src={image} />
+                        </div>
+                    );
+                }
+                if((a+1) == progress){
+                    progressBar.push(
+                        <div 
+                            className="flex-grow cursor-pointer bg-blue-600 border-b-2 border-gray-300 dark:border-gray-900" 
+                            title={a+1} 
+                            onClick={() => this.goToPage(a+1)}></div>
+                    );
+                    imageLoad.push(
+                        <div className="flex flex-row justify-center items-center">
+                            <img 
+                                alt={"Page " + progress}
+                                className={this.state.classImg}
+                                src={image} />
+                        </div>
+                    );
+                }
+                if((a+1) > progress){
+                    progressBar.push(
+                        <div 
+                            className="flex-grow cursor-pointer bg-blue-200 border-b-2 border-gray-300 dark:border-gray-900" 
+                            title={a+1} 
+                            onClick={() => this.goToPage(a+1)}></div>
+                    );
+                    if((progress + 5) >= (a+1)){
                         imageLoad.push(
                             <div className="flex flex-row justify-center items-center">
                                 <img 
@@ -424,63 +556,28 @@ class Chapter extends React.Component{
                             </div>
                         );
                     }
-                    if((a+1) == progress){
-                        progressBar.push(<div className="flex-grow bg-blue-600 border-b-2 border-gray-900"></div>);
-                        imageLoad.push(
-                            <div className="flex flex-row justify-center items-center">
-                                <img 
-                                    alt={"Page " + progress}
-                                    className={this.state.classImg}
-                                    src={image} />
-                            </div>
-                        );
-                    }
-                    if((a+1) > progress){
-                        progressBar.push(<div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>);
-                        if((progress + 5) >= (a+1)){
-                            imageLoad.push(
-                                <div className="flex flex-row justify-center items-center">
-                                    <img 
-                                        alt={"Page " + progress}
-                                        className={this.state.classImg + " hidden"}
-                                        src={image} />
-                                </div>
-                            );
-                        }
-                    }
                 }
-            break;
-            case "prev":
-                progress = progress - 1;
-                for(let a = 0; a < this.state.data.length; a++){
-                    let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
-                    if((a+1) < progress){
-                        progressBar.push(<div className="flex-grow bg-blue-300 border-b-2 border-gray-900"></div>);
-                        imageLoad.push(<ChapterImage page={"Page " + progress} classImg={this.state.classImg + " hidden"} src={image} />);
-                    }
-                    if((a+1) == progress){
-                        progressBar.push(<div className="flex-grow bg-blue-600 border-b-2 border-gray-900"></div>);
-                        imageLoad.push(<ChapterImage page={"Page " + progress} classImg={this.state.classImg} src={image} />);
-                    }
-                    if((a+1) > progress){
-                        progressBar.push(<div className="flex-grow bg-blue-200 border-b-2 border-gray-900"></div>);
-                        if((progress + 5) >= (a+1)){
-                            imageLoad.push(<ChapterImage page={"Page " + progress} classImg={this.state.classImg + " hidden"} src={image} />);
-                        }
-                    }
-                }
-            break;
-            case "update":
-            break;
-            case "single":
-            break;
+            }
+        }else{
+            for(let a = 0; a < this.state.data.length; a++){
+                let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
+                imageLoad.push(
+                    <div className="flex flex-row justify-center items-center">
+                        <img 
+                            alt={"Page " + progress}
+                            className={this.state.classImg + " mt-1"}
+                            src={image} />
+                    </div>
+                );
+            }
         }
+         
 
         this.setState({
             progress: progress,
             progressBar: progressBar,
             imageLoad: imageLoad,
-        });
+        },() => this.scrollTop.current.scrollIntoView());
     }
 
     render = () => {
@@ -489,7 +586,7 @@ class Chapter extends React.Component{
             <div class="flex flex-col justify-between">
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="flex h-screen">
-                        <div className="flex-1 flex overflow-hidden" id="mainReader" onClick={this.clickListener}>
+                        <div className="flex-1 flex overflow-hidden" id="mainReader" onClick={this.clickListener} >
                             <div className={this.state.imgContainerClass}>
                                 {this.state.imageLoad}
                             </div>   
@@ -544,7 +641,7 @@ class Chapter extends React.Component{
                                     <Link className="hover:opacity-75 text-blue-500" to={"/user/" + this.state.userId}>{this.state.user}</Link>
                                 </div>             
                                 <div className="flex-grow mt-4">
-                                    <div className="flex flex-row pl-3 py-2 border-b- border-gray-200 dark:border-gray-900">
+                                    <div className="flex flex-row pl-3 py-2">
                                         <span className="pt-3 mr-4">Theme:</span>
                                         <button onClick={this.lightDarkMode} className={this.state.btnTheme.light} title="Light Mode">
                                             Light
@@ -553,35 +650,36 @@ class Chapter extends React.Component{
                                             Dark
                                         </button>
                                     </div>
-                                    <div className="flex flex-row pl-3 py-2 border-b- border-gray-200 dark:border-gray-900">
+                                    <div className="flex flex-row pl-3 py-2">
                                         <span className="pt-3 mr-3">Image Fit:</span>
+                                        <button onClick={() => this.changeImageFit("width")} className={this.state.btnFit.width}  title="Fit Width">
+                                            Width
+                                        </button>
+                                        <button onClick={() => this.changeImageFit("height")} className={this.state.btnFit.height} title="Fit Height">
+                                            Height
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-row pl-3 py-2">
                                         <button onClick={() => this.changeImageFit("original")} className={this.state.btnFit.original} title="Original size">
                                             1:1
                                         </button>
-                                        <button onClick={() => this.changeImageFit("width")} className={this.state.btnFit.width}  title="Fit Width">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
-                                            </svg>
-                                        </button>
-                                        <button onClick={() => this.changeImageFit("height")} className={this.state.btnFit.height} title="Fit Height">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
-                                            </svg>
+                                        <button onClick={() => this.changeImageFit("container")} className={this.state.btnFit.container} title="Fit Container">
+                                            Container
                                         </button>
                                     </div>
-                                    <div className="flex flex-row pl-3 py-2 border-b- border-gray-200 dark:border-gray-900">
+                                    <div className="flex flex-row pl-3 py-2">
                                         <span className="pt-3 mr-4">Layout:</span>
-                                        <button onClick={() => this.changeReaderLayout("left")} className={this.state.btnLayout.left} >
+                                        <button onClick={() => this.changeReaderLayout("left")} className={this.state.btnLayout.left} title="Right to Left">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clip-rule="evenodd" />
                                             </svg>
                                         </button>
-                                        <button onClick={() => this.changeReaderLayout("right")} className={this.state.btnLayout.right} >
+                                        <button onClick={() => this.changeReaderLayout("right")} className={this.state.btnLayout.right} title="Left to Right">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
                                             </svg>
                                         </button>
-                                        <button onClick={() => this.changeReaderLayout("single")} className={this.state.btnLayout.single} >
+                                        <button onClick={() => this.changeReaderLayout("single")} className={this.state.btnLayout.single} title="Long Strip">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
                                             </svg>

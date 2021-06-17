@@ -74,13 +74,17 @@ class Header extends React.Component{
                                     </a>
                                 </li>
                             </ul>
-                            <div class="relative flex w-full sm:w-7/12 md:w-5/12 px-4 flex-wrap items-stretch lg:ml-auto">
-                                <div class="flex">
-                                    <span class="font-normal leading-snug flex text-center white-space-no-wrap border border-solid items-center rounded-r-none pl-2 py-1 rounded text-sm border-r-0 border-gray-600 dark:border-gray-1000 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500">
-                                        <i class="fas fa-search"></i>
-                                    </span>
+                            <div className="relative flex w-full sm:w-7/12 md:w-5/12 px-4 flex-wrap items-stretch lg:ml-auto">
+                                <div className="relative">
+                                    <input type="text" className="h-8 w-96 pl-4 pr-10 rounded focus:outline-none bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500" placeholder="Search" />
+                                    <div className="absolute top-0 right-0"> 
+                                        <button className="h-8 w-8 text-white rounded focus:outline-none bg-blue-500 hover:bg-blue-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </button> 
+                                    </div>
                                 </div>
-                                <input type="text" class="px-2 py-1 h-8 border border-solid rounded text-sm leading-snug shadow-none outline-none focus:outline-none w-full font-normal rounded-l-none flex-1 border-l-0 border-gray-600 dark:border-gray-1000 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500" placeholder="Search"/>
                             </div>
                         </div>
                     </div>
