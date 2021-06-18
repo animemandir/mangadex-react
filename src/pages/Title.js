@@ -10,6 +10,8 @@ import TitleTableRow from '../component/TitleTableRow.js';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import Loading from '../component/Loading.js';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 class Title extends React.Component{
     constructor(props){
@@ -129,7 +131,10 @@ class Title extends React.Component{
             document.title = title + " - Mangadex";
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving manga data.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
@@ -156,7 +161,10 @@ class Title extends React.Component{
             }
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving chapter list.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
@@ -188,7 +196,10 @@ class Title extends React.Component{
             $this.setState({coverList: list});
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving covers.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
@@ -224,10 +235,10 @@ class Title extends React.Component{
         var official = this.state.official.map((o) => <Tags name={o.name} url={o.url}/>);
         var retail = this.state.retail.map((r) => <Tags name={r.name}  url={r.url}/>);
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
-        var loading = (!this.state.title) ? <Loading /> : "";
 
         return (
             <div class="flex flex-col justify-between">
+                <Toaster />
                 <Header />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">

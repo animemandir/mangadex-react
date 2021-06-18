@@ -4,6 +4,8 @@ import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import HomeUpdates from '../component/HomeUpdates.js';
 import Loading from '../component/Loading.js';
+import toast, { Toaster } from 'react-hot-toast';
+
 class Home extends React.Component{
     constructor(props){
         super(props);
@@ -29,8 +31,6 @@ class Home extends React.Component{
             }
         })
         .then(function(response){
-            console.log(response)
-
             let chapters = [];
             let mangaIds = [];
             response.data.results.map((chapter,i) => {
@@ -72,7 +72,10 @@ class Home extends React.Component{
             $this.getLCCovers(chapters,mangaIdsUnique);
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving Last chapters.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
@@ -103,7 +106,10 @@ class Home extends React.Component{
             $this.renderHomeUpdates();
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving Last chapters\'s covers.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
@@ -123,6 +129,7 @@ class Home extends React.Component{
         }
         return (
             <div class="flex flex-col justify-between">
+                <Toaster />
                 <Header />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">

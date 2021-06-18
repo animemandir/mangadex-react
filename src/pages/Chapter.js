@@ -2,9 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 import axios from 'axios';
-import Header from '../component/Header.js';
-import Footer from '../component/Footer.js';
-import { data } from "autoprefixer";
+import toast, { Toaster } from 'react-hot-toast';
 
 class Chapter extends React.Component{
     constructor(props){
@@ -132,7 +130,10 @@ class Chapter extends React.Component{
             $this.getBaseUrl(id);
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving chapter info.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
@@ -150,7 +151,10 @@ class Chapter extends React.Component{
             $this.updateReader("update");
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving base url.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
@@ -212,11 +216,23 @@ class Chapter extends React.Component{
             }
         })
         .catch(function(error){
-            console.log(error);
+            toast.error('Error retrieving chapter list.',{
+                duration: 4000,
+                position: 'top-right',
+            });
         });
     }
 
     initReader = () => {
+        if(!localStorage.showReaderMenu){
+            localStorage.showReaderMenu = 1;
+        }
+        if(!localStorage.imageFit){
+            localStorage.imageFit = "width";
+        }
+        if(!localStorage.readerlayout){
+            localStorage.readerlayout = "left";
+        }
         this.setMode();
         this.setMenu();
         this.setFit();
@@ -379,7 +395,6 @@ class Chapter extends React.Component{
             break;
         }
     }
-
 
     // Reader Actions 
     changeChapter = (e) => {
@@ -584,6 +599,7 @@ class Chapter extends React.Component{
         var chapterList = this.state.chapterList.map((i) => <option value={i.id}>{i.label}</option>);
         return (
             <div class="flex flex-col justify-between">
+                <Toaster />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="flex h-screen">
                         <div className="flex-1 flex overflow-hidden" id="mainReader" onClick={this.clickListener} >
