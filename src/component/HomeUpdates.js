@@ -1,7 +1,6 @@
 import React from "react";
-import moment from 'moment'
 import { Link } from "react-router-dom";
-
+import { DateTime } from "luxon";
 class HomeUpdates extends React.Component{
     constructor(props){
         super(props);
@@ -35,11 +34,11 @@ class HomeUpdates extends React.Component{
                             {this.props.data.groupName}
                         </Link>
                     </p>
-                    <p className="text-left flex">
+                    <p className="text-left flex" title={this.props.data.publishAt}>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        {moment(this.props.data.publishAt).fromNow()}
+                        {DateTime.fromISO(this.props.data.publishAt).toRelative()}
                     </p>
                 </div>
             </div>

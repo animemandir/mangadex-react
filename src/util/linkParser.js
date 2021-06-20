@@ -4,6 +4,15 @@ export let linkParser = (links) => {
     let official = [];
     let retail = [];
     let information = [];
+
+    if(!links){
+        return {
+            official: official,
+            retail: retail,
+            information: information,
+        }
+    }
+
     Object.keys(links).map(function(key){
         switch(key){
             case "al":
@@ -39,7 +48,7 @@ export let linkParser = (links) => {
             case "kt":
                 information.push({
                     name: mangaLinks[key],
-                    url: "https://kitsu.io/api/edge/manga/" + links[key],
+                    url: "https://kitsu.io/manga/" + links[key],
                 });
             break;
             case "amz":

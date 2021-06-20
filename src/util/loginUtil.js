@@ -5,11 +5,10 @@ export let isLogged = () => {
     let isLogin = false;
     if(localStorage.authExpire){
         let now = DateTime.now();
-        console.log(localStorage.authExpire,now.toFormat("X"));
         if(localStorage.authExpire > now.toFormat("X")){
             isLogin = true;
         }else if(localStorage.refreshExpire > now.toFormat("X")){
-            axios.post('https://api.mangadex.org/auth/refresh',{
+            return axios.post('https://api.mangadex.org/auth/refresh',{
                 token: localStorage.authRefresh,
             })
             .then(function(response){

@@ -19,8 +19,8 @@ class Title extends React.Component{
         this.state = {
             id: '',
             coverFile: '',
-            author: '',
-            artist: '',
+            author: [],
+            artist: [],
             title: '',
             demo: '',
             status: '',
@@ -60,21 +60,25 @@ class Title extends React.Component{
         var $this = this;
         axios.get('https://api.mangadex.org/manga/' + id + '?includes[]=author&includes[]=artist&includes[]=cover_art')
         .then(function(response){
+            let authors = [];
+            let artists = [];
             response.data.relationships.map((relation) => {
                 switch(relation.type){
                     case "artist":
-                        let artist = relation.attributes.name;
-                        $this.setState({artist:artist});
+                        artists.push({id:relation.id,name:relation.attributes.name});
                     break;
                     case "author":
-                        let author = relation.attributes.name;
-                        $this.setState({author:author});
+                        authors.push({id:relation.id,name:relation.attributes.name});
                     break;
                     case "cover_art":
                         let coverFile = "https://uploads.mangadex.org/covers/" +  id + "/" + relation.attributes.fileName + ".512.jpg";
                         $this.setState({coverFile:coverFile});
                     break;
                 } 
+            });
+            $this.setState({
+                artist:artists,
+                author:authors
             });
 
             let title = "";
@@ -113,7 +117,12 @@ class Title extends React.Component{
             let originalLanguage = response.data.data.attributes.originalLanguage;
             let demo = demographic[response.data.data.attributes.publicationDemographic];
             let status = mangaStatus[response.data.data.attributes.status];
-            let description = response.data.data.attributes.description.en;
+            let description = "";
+            Object.keys(response.data.data.attributes.description).map(function(key){
+                if(key == "en" || description == ""){
+                    description = response.data.data.attributes.description[key];
+                }
+            });
 
             $this.setState({
                 title:title,
@@ -182,7 +191,6 @@ class Title extends React.Component{
                 let fileFull = "https://uploads.mangadex.org/covers/" +  id + "/" + response.data.results[i].data.attributes.fileName;
                 let file = "https://uploads.mangadex.org/covers/" +  id + "/" + response.data.results[i].data.attributes.fileName + ".512.jpg";
                 let title = (response.data.results[i].data.attributes.volume) ? "Volume " + response.data.results[i].data.attributes.volume : "Cover"; 
-                console.log(file);
                 list.push(
                     <a href={fileFull} target="_blank"  className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
                         <img 
@@ -236,6 +244,13 @@ class Title extends React.Component{
         var retail = this.state.retail.map((r) => <Tags name={r.name}  url={r.url}/>);
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
 
+        var authors = this.state.author.map((au) => 
+            <Link className="text-blue-500 mr-4" to={"/search?author="+au.id}>{au.name}</Link>
+        );
+        var artists = this.state.artist.map((ar) => 
+            <Link className="text-blue-500 mr-4" to={"/search?artist="+ar.id}>{ar.name}</Link>
+        );
+
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
@@ -249,8 +264,7 @@ class Title extends React.Component{
                             <div className="flex flex-wrap">
                                 <div className="content flex w-full mt-2">
                                     <img 
-                                        className="object-contain w-full sm:w-1/4 p-3"
-                                        style={{height:"fit-content"}}
+                                        className="object-contain title-img-height flex items-start w-full sm:w-1/4 p-3"
                                         alt={this.state.title}
                                         src={this.state.coverFile} />
                                     <div className="item-body w-full sm:w-3/4 p-3">
@@ -262,16 +276,16 @@ class Title extends React.Component{
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Alt name(s):</td>
                                                 <td width="80%">
-                                                    <ul>{altTitles}</ul>
+                                                    <ul className="list-disc">{altTitles}</ul>
                                                 </td>
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Author:</td>
-                                                <td width="80%">{this.state.author}</td>
+                                                <td width="80%">{authors}</td>
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Artist:</td>
-                                                <td width="80%">{this.state.artist}</td>
+                                                <td width="80%">{artists}</td>
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Demographic:</td>

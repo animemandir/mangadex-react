@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
-import moment from 'moment'
+import { DateTime } from "luxon";
 
 class TitleTableRow extends React.Component{
     constructor(props){
@@ -79,8 +79,8 @@ class TitleTableRow extends React.Component{
                     </Link>
                 </td>
                 <td className="hidden">1000</td>
-                <td>
-                    {moment(this.props.data.data.attributes.publishAt).fromNow()}
+                <td title={this.props.data.data.attributes.publishAt}>
+                    {DateTime.fromISO(this.props.data.data.attributes.publishAt).toRelative()}
                 </td>
             </tr>
         );

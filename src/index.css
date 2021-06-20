@@ -4,6 +4,10 @@
 
 @layer utilities {
     @variants responsive {
+        .title-img-height{
+            height: fit-content;
+            height:-moz-max-content;
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }

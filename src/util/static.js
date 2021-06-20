@@ -22,10 +22,10 @@ const mangaReadingStatus = {
 }
 
 const mangaContentRating = {
-    safe: "Safe Content",
-    suggestive: "Suggestive Content",
-    erotica: "Erotica Content",
-    pornographic: "Pornographic Content",
+    safe: "Safe",
+    suggestive: "Suggestive",
+    erotica: "Erotica",
+    pornographic: "Pornographic",
 }
 
 const customListVisibility = {
