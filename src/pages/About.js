@@ -17,20 +17,31 @@ class About extends React.Component{
             <div class="flex flex-col h-screen justify-between">
                 <Header />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
-                    <div className="container relative m-16">
-                        <p>Using this as a todo list/note to self (not a priority list):</p>
+                    <div className="container mx-auto flex flex-wrap justify-between mt-6">
+                        <p className="w-full">Using this as a todo list/note to self (not a priority list):</p>
                         <ul className="list-disc ml-4">
                             <li>Settings Page </li>
-                            <li>Follows </li>
-                            <li>Title page clean if it doesn't have any info</li>
                             <li>Setting hide progress bar</li>
                             <li>Setting switch data/dataSaver</li>
                             <li>Site color setting (default blue)</li>
-                            <li>user page </li>
-                            <li>group page </li>
+                            <li>User page </li>
+                            <li>Group page </li>
                             <li>Heroku deploy </li>
+                            <li>Title page clean if it doesn't have any info</li>
                             <li>Reader next/prev page to next/prev chapter resulting on progress 0 or bigger than page count</li>
-                            <li>do a better layout for reader settings in chapter lmaoo</li>
+                            <li>Do a better layout for reader settings in chapter lmaoo</li>
+                            <li>Adjust border bottom when hiding search form</li>
+                        </ul>
+
+                        <p className="w-full mt-3">Waiting for API full support:</p>
+                        <ul className="list-disc ml-4">
+                            <li>Title: stats and ratings</li>
+                            <li>Title: Edit progress</li>
+                            <li>Search: stats and ratings</li>
+                            <li>Follow/Unfollow manga</li>
+                            <li>Mark/Unmark chapter as read (?)</li>
+                            <li>Home: Top chapters</li>
+                            <li>Home: Top manga</li>
                         </ul>
                     </div>
                 </div>

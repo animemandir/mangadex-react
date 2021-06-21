@@ -190,7 +190,6 @@ class Search extends React.Component{
             searchParams.excludedTags = te;
             searchParams.excludedTagsMode = this.state.tagsExclusionMode.toUpperCase();
         }
-        console.log(searchParams);
       
         var $this = this;
         axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{

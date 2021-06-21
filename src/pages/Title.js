@@ -9,7 +9,6 @@ import LanguageFlag  from '../component/LanguageFlag.js';
 import TitleTableRow from '../component/TitleTableRow.js';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
-import Loading from '../component/Loading.js';
 import toast, { Toaster } from 'react-hot-toast';
 
 
@@ -233,7 +232,6 @@ class Title extends React.Component{
                 }});
             break;
         }
-        
     }
 
     render = () => {
