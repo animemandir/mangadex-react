@@ -147,11 +147,15 @@ class Title extends React.Component{
     }
 
     getChapterList = (id,offset) => {
+        var translatedLanguage = ["en"];
+        if(localStorage.language){
+            translatedLanguage = JSON.parse(localStorage.language);
+        }
         var $this = this;
         axios.get('https://api.mangadex.org/chapter?order[chapter]=desc',{
             params: {
                 manga: id,
-                translatedLanguage: ['en'],
+                translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user"],
                 offset: offset,
                 limit: 100

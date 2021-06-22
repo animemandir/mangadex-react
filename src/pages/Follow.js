@@ -49,11 +49,16 @@ class Follow extends React.Component{
         };
     }
     componentDidMount = () => {
+        document.title = "Follows - MangaDex";
         this.getChapterFeed();
         this.getTitleStatus();
     }
 
     getChapterFeed = () => {
+        var translatedLanguage = ["en"];
+        if(localStorage.language){
+            translatedLanguage = JSON.parse(localStorage.language);
+        }
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
         this.setState({
@@ -64,7 +69,7 @@ class Follow extends React.Component{
         })
         axios.get('https://api.mangadex.org/user/follows/manga/feed?order[publishAt]=desc',{
             params: {
-                translatedLanguage: ['en'],
+                translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user","manga"],
                 offset: this.state.chapterOffset,
                 limit: 100
@@ -90,11 +95,15 @@ class Follow extends React.Component{
     }
 
     getChapterInfo = (list,totalOffset) => {
+        var translatedLanguage = ["en"];
+        if(localStorage.language){
+            translatedLanguage = JSON.parse(localStorage.language);
+        }
         var $this = this;
         axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
             params: {
                 ids: list,
-                translatedLanguage: ['en'],
+                translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user","manga"],
                 limit: 100
             }

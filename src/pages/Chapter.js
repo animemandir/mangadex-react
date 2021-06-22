@@ -159,11 +159,15 @@ class Chapter extends React.Component{
     }
 
     getChapterList = (id,offset) => {
+        var translatedLanguage = ["en"];
+        if(localStorage.language){
+            translatedLanguage = JSON.parse(localStorage.language);
+        }
         var $this = this;
         axios.get('https://api.mangadex.org/chapter?order[chapter]=desc',{
             params: {
                 manga: id,
-                translatedLanguage: ['en'],
+                translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user"],
                 offset: offset,
                 limit: 100
@@ -178,6 +182,9 @@ class Chapter extends React.Component{
                 }
                 if(response.data.results[i].data.attributes.chapter){
                     label += "Chapter " + response.data.results[i].data.attributes.chapter + " ";
+                }
+                if(label === ""){
+                    label += "Oneshot ";
                 }
                 if(response.data.results[i].data.attributes.title){
                     label += "- " + response.data.results[i].data.attributes.title;
@@ -198,7 +205,7 @@ class Chapter extends React.Component{
                         let next = "";
 
                         document.title = list[a].label + " - " + $this.state.manga + " - MangaDex";
-                        if(a < (list.length-1) && a > 0){
+                        if(a < (list.length) && a > 0){
                             next = list[a-1].id;
                         }
 
@@ -209,7 +216,6 @@ class Chapter extends React.Component{
                         let nextPrevController = $this.state.nextPrevController;
                         nextPrevController.prevId = prev;
                         nextPrevController.nextId = next;
-
                         $this.setState({nextPrevController:nextPrevController});
                     }
                 }
@@ -322,7 +328,7 @@ class Chapter extends React.Component{
                         height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                     },
-                    classImg: "object-contain w-3/5"
+                    classImg: "object-contain w-4/6"
                 },() => this.updateReader("update"));
             break;
             case "width":
@@ -334,7 +340,7 @@ class Chapter extends React.Component{
                         height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     },
-                    classImg: "object-contain"
+                    classImg: "object-contain px-8"
                 },() => this.updateReader("update"));      
             break;
         }        

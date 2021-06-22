@@ -22,10 +22,14 @@ class Home extends React.Component{
     }
 
     getLastChapters = () => {
+        var translatedLanguage = ["en"];
+        if(localStorage.language){
+            translatedLanguage = JSON.parse(localStorage.language);
+        }
         var $this = this;
         axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
             params: {
-                translatedLanguage: ['en'],
+                translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","manga"],
                 limit: 100,
             }
@@ -37,10 +41,14 @@ class Home extends React.Component{
                 let mangaId = "";
                 let mangaName = "";
                 let groupId = "";
-                let groupName = ""
+                let groupName = "";
+                let originalLanguage = "";
+                let contentRating = "";
                 chapter.relationships.map((relation) => {
                     if(relation.type == "manga"){
                         mangaId = relation.id;
+                        originalLanguage = relation.attributes.originalLanguage;
+                        contentRating = relation.attributes.contentRating;
 
                         Object.keys(relation.attributes.title).map(function(key){
                             if(key == "en" || mangaName == ""){
@@ -54,6 +62,7 @@ class Home extends React.Component{
                         groupName = relation.attributes.name;
                     }
                 });
+                
                 let temp = {
                     chapterId: chapter.data.id,
                     publishAt: chapter.data.attributes.publishAt,
@@ -61,10 +70,25 @@ class Home extends React.Component{
                     mangaId: mangaId,
                     mangaName: mangaName,
                     groupId: groupId,
-                    groupName: groupName
+                    groupName: groupName,
+                    translatedLanguage: chapter.data.attributes.translatedLanguage,
+                    originalLanguage:originalLanguage
                 };
-                mangaIds.push(mangaId);
-                chapters[mangaId] = temp;
+                if(localStorage.content){
+                    let content = JSON.parse(localStorage.content);
+                    if(content.length > 0){
+                        if(content.indexOf(contentRating) > -1){
+                            mangaIds.push(mangaId);
+                            chapters[mangaId] = temp;
+                        }
+                    }else if(contentRating != "erotica" && contentRating != "pornographic"){
+                        mangaIds.push(mangaId);
+                        chapters[mangaId] = temp;
+                    }
+                }else if(contentRating != "erotica" && contentRating != "pornographic"){
+                    mangaIds.push(mangaId);
+                    chapters[mangaId] = temp;
+                }
             });
 
             var mangaIdsUnique = [...new Set(mangaIds)]
@@ -95,7 +119,7 @@ class Home extends React.Component{
                         mangaId = relation.id;
                     }
 
-                    let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + cover.data.attributes.fileName + ".256.jpg";
+                    let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + cover.data.attributes.fileName + ".512.jpg";
                     if(chapters[mangaId]){
                         chapters[mangaId].cover = coverFile;
                     }
@@ -133,7 +157,7 @@ class Home extends React.Component{
                 <Header />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
-                        <div className="box-border w-full md:w-3/5 py-2 mt-6 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">
+                        <div className="box-border w-full md:flex-1 md:mr-4 py-2 mt-6 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-center border-b-2 pb-1 border-gray-200 dark:border-gray-900">
                                 Last Updates
                             </div>

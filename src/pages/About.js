@@ -20,7 +20,6 @@ class About extends React.Component{
                     <div className="container mx-auto flex flex-wrap justify-between mt-6">
                         <p className="w-full">Using this as a todo list/note to self (not a priority list):</p>
                         <ul className="list-disc ml-4">
-                            <li>Settings Page </li>
                             <li>Setting hide progress bar</li>
                             <li>Setting switch data/dataSaver</li>
                             <li>Site color setting (default blue)</li>

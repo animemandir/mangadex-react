@@ -33,6 +33,7 @@ class Search extends React.Component{
                 {value: 'ja', label: 'Japanese'},
                 {value: 'ko', label: 'Korean'},
                 {value: 'zh', label: 'Chinese'},
+                {value: 'zh-hk', label: 'Chinese (HK)'},
             ],
             optionDemographic: [],
             optionPublication: [],
@@ -71,10 +72,16 @@ class Search extends React.Component{
             });
         });
 
+        var contentRating = [];
+        if(localStorage.content){
+            let content = JSON.parse(localStorage.content);
+            contentRating = content.map(c => {return {value: c,label: mangaContentRating[c]}});
+        }
         this.setState({
             optionDemographic: listDemographic,
             optionPublication: listPublication,
-            optionContentRating: listMangaContentRating
+            optionContentRating: listMangaContentRating,
+            contentRating: contentRating
         });
 
         this.getTags();
@@ -267,6 +274,7 @@ class Search extends React.Component{
 
     changeContentRating = (e) => {
         this.setState({contentRating: e ? e.map(x => x) : []});
+        console.log(this.state.contentRating);
     }
 
     changeTagsInclude = (e) => {
@@ -364,14 +372,14 @@ class Search extends React.Component{
                                             <input type="text" value={this.state.manga}  onChange={this.changeManga} className="w-full px-2 h-8 rounded dark:bg-gray-600 border dark:border-gray-900" /> 
                                         </td>
                                     </tr>
-                                    <tr className="h-12 hidden">
-                                        <td width="20%" className="font-semibold text-right px-4">Author:</td>
+                                    <tr className="h-12">
+                                        <td width="20%" className="font-semibold text-right px-4">Author (UUID only):</td>
                                         <td width="80%">
                                             <input type="text" value={this.state.author}  onChange={this.changeAuthor} className="w-full px-2 h-8 rounded dark:bg-gray-600 border dark:border-gray-900" /> 
                                         </td>
                                     </tr>
-                                    <tr className="h-12 hidden">
-                                        <td width="20%" className="font-semibold text-right px-4">Artist:</td>
+                                    <tr className="h-12">
+                                        <td width="20%" className="font-semibold text-right px-4">Artist (UUID only):</td>
                                         <td width="80%">
                                             <input type="text" value={this.state.artist}  onChange={this.changeArtist} className="w-full px-2 h-8 rounded dark:bg-gray-600 border dark:border-gray-900" /> 
                                         </td>
@@ -457,23 +465,47 @@ class Search extends React.Component{
                                     <tr className="h-12">
                                         <td width="20%" className="font-semibold text-right px-4">Tags inclusion mode:</td>
                                         <td width="80%">
-                                            <div className="inline-flex mr-4 mt-1 cursor-pointer"  onClick={() => this.changeTagIncludeMode("and")}>
-                                                <input type="radio" value="and" className="h-6 mr-2" name="tagsInclusion" checked={this.state.tagsInclusionModeChecked[0]}/> All (AND)
-                                            </div>
-                                            <div className="inline-flex mt-1 cursor-pointer" onClick={() => this.changeTagIncludeMode("or")}>
-                                                <input type="radio" value="or" className="h-6 mr-2" name="tagsInclusion" checked={this.state.tagsInclusionModeChecked[1]}/> Any (OR)
-                                            </div>
+                                            <label className="inline-flex mr-4 mt-1 cursor-pointer"  >
+                                                <input 
+                                                    type="radio" 
+                                                    value="and" 
+                                                    className="h-6 mr-2" 
+                                                    name="tagsInclusion" 
+                                                    onChange={() => this.changeTagIncludeMode("and")}
+                                                    checked={this.state.tagsInclusionModeChecked[0]}/> All (AND)
+                                            </label>
+                                            <label className="inline-flex mt-1 cursor-pointer" >
+                                                <input 
+                                                    type="radio" 
+                                                    value="or" 
+                                                    className="h-6 mr-2" 
+                                                    name="tagsInclusion" 
+                                                    onChange={() => this.changeTagIncludeMode("or")}
+                                                    checked={this.state.tagsInclusionModeChecked[1]}/> Any (OR)
+                                            </label>
                                         </td>
                                     </tr>
                                     <tr className="h-12">
                                         <td width="20%" className="font-semibold text-right px-4">Tags exclusion mode:</td>
                                         <td width="80%">
-                                            <div className="inline-flex mr-4 mt-1 cursor-pointer" onClick={() => this.changeTagExcludeMode("and")}>
-                                                <input type="radio" value="and" className="h-6 mr-2" name="tagsExclusion" checked={this.state.tagsExclusionModeChecked[0]}/> All (AND)
-                                            </div>
-                                            <div className="inline-flex mt-1 cursor-pointer" onClick={() => this.changeTagExcludeMode("or")}>
-                                                <input type="radio" value="or" className="h-6 mr-2" name="tagsExclusion" checked={this.state.tagsExclusionModeChecked[1]}/> Any (OR)
-                                            </div>
+                                            <label className="inline-flex mr-4 mt-1 cursor-pointer" >
+                                                <input 
+                                                    type="radio" 
+                                                    value="and" 
+                                                    className="h-6 mr-2" 
+                                                    name="tagsExclusion" 
+                                                    onChange={() => this.changeTagExcludeMode("and")}
+                                                    checked={this.state.tagsExclusionModeChecked[0]}/> All (AND)
+                                            </label>
+                                            <label className="inline-flex mt-1 cursor-pointer" >
+                                                <input 
+                                                    type="radio" 
+                                                    value="or" 
+                                                    className="h-6 mr-2" 
+                                                    name="tagsExclusion" 
+                                                    onChange={() => this.changeTagExcludeMode("or")}
+                                                    checked={this.state.tagsExclusionModeChecked[1]}/> Any (OR)
+                                            </label>
                                         </td>
                                     </tr>
                                 </table>

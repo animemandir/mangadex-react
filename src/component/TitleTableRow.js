@@ -23,6 +23,9 @@ class TitleTableRow extends React.Component{
         if(this.props.data.data.attributes.chapter){
             label += "Chapter " + this.props.data.data.attributes.chapter + " ";
         }
+        if(label === ""){
+            label += "Oneshot ";
+        }
         if(this.props.data.data.attributes.title){
             label += "- " + this.props.data.data.attributes.title;
         }

@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { DateTime } from "luxon";
+import LanguageFlag  from './LanguageFlag.js';
+
 class HomeUpdates extends React.Component{
     constructor(props){
         super(props);
@@ -15,16 +17,23 @@ class HomeUpdates extends React.Component{
                     alt={this.props.data.mangaName}
                     src={this.props.data.cover} />
                 <div className="item-body w-4/5 pl-2">
-                    <p className="text-left pb-1 border-b dark:border-gray-900 text-blue-600">
-                        <Link to={"/title/" + this.props.data.mangaId}>{this.props.data.mangaName}</Link>
+                    <p className="text-left flex pb-1 border-b dark:border-gray-900 text-blue-600">
+                        <Link className="flex flex-row flex-wrap" to={"/title/" + this.props.data.mangaId}>
+                           <div className="inline mr-2">
+                                {this.props.data.mangaName}  
+                           </div>
+                           <LanguageFlag language={this.props.data.originalLanguage} />
+                        </Link> 
+                        
                     </p>
-                    <p className="text-left mt-1 text-blue-500">
-                        <Link className="flex" to={"/chapter/" + this.props.data.chapterId + "/1"}>
+                    <p className="text-left flex mt-1 text-blue-500">
+                        <Link className="flex mr-1" to={"/chapter/" + this.props.data.chapterId + "/1"}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
-                            Chapter {this.props.data.chapter}
+                            {(this.props.data.chapter) ? "Chapter " + this.props.data.chapter : "Oneshot"}
                         </Link>
+                        <LanguageFlag language={this.props.data.translatedLanguage} />
                     </p>
                     <p className="text-left text-blue-500">
                         <Link className="flex" to={"/group/" + this.props.data.groupId}>
