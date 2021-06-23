@@ -9,6 +9,8 @@
   "dependencies": {
     "@craco/craco": "^6.1.2",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4",
+    "autoprefixer": "^9.8.6",
+    "postcss": "^7.0.35",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@testing-library/jest-dom": "^5.13.0",
     "@testing-library/react": "^11.2.7",
@@ -25,7 +27,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "serve -S build",
     "build": "craco build",
     "test": "craco start",
     "eject": "react-scripts eject"
@@ -49,7 +51,6 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^9.8.6",
-    "postcss": "^7.0.35"
+    
   }
 }
