@@ -152,7 +152,7 @@ class Title extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?order[chapter]=desc',{
+        axios.get('https://malleus.moe/dex-proxy/chapter.php?order[chapter]=desc',{
             params: {
                 manga: id,
                 translatedLanguage: translatedLanguage,

@@ -27,7 +27,7 @@ class Home extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+        axios.get('https://malleus.moe/dex-proxy/chapter.php?order[publishAt]=desc',{
             params: {
                 translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","manga"],
@@ -105,7 +105,7 @@ class Home extends React.Component{
 
     getLCCovers = (chapters,mangaIds) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/cover',{
+        axios.get('https://malleus.moe/dex-proxy/cover.php',{
             params: {
                 manga: mangaIds,
                 limit: 100

@@ -18,6 +18,7 @@ class About extends React.Component{
                 <Header />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto flex flex-wrap justify-between mt-6">
+                        <p className="w-full">Fucking forgot totally about cors now I need a fucking proxy</p>
                         <p className="w-full">Using this as a todo list/note to self (not a priority list):</p>
                         <ul className="list-disc ml-4">
                             <li>Setting hide progress bar</li>
@@ -25,7 +26,6 @@ class About extends React.Component{
                             <li>Site color setting (default blue)</li>
                             <li>User page </li>
                             <li>Group page </li>
-                            <li>Heroku deploy </li>
                             <li>Title page clean if it doesn't have any info</li>
                             <li>Reader next/prev page to next/prev chapter resulting on progress 0 or bigger than page count</li>
                             <li>Do a better layout for reader settings in chapter lmaoo</li>
