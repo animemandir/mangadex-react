@@ -14,7 +14,7 @@ export let isLogged = () => {
             .then(function(response){
                 if(response.data.result == "ok"){
                     localStorage.authToken = response.data.token.session;
-                    let now = DateTime.now().plus({minutes: 5});
+                    let now = DateTime.now().plus({minutes: 15});
                     localStorage.authExpire = now.toSeconds();
                     localStorage.authRefresh = response.data.token.refresh;
                     let nowRef = DateTime.now().plus({days: 30});

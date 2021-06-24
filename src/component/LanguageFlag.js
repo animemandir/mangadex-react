@@ -14,7 +14,7 @@ class LanguageFlag extends React.Component{
                     width="25px" 
                     alt={this.props.language} 
                     title={this.props.language}
-                    src={process.env.PUBLIC_URL + '../language/' + this.props.language + '.svg'} />
+                    src={process.env.PUBLIC_URL + '/language/' + this.props.language + '.svg'} />
             </div>
         );
     }

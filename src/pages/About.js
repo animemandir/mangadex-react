@@ -27,7 +27,6 @@ class About extends React.Component{
                             <li>User page </li>
                             <li>Group page </li>
                             <li>Title page clean if it doesn't have any info</li>
-                            <li>Reader next/prev page to next/prev chapter resulting on progress 0 or bigger than page count</li>
                             <li>Do a better layout for reader settings in chapter lmaoo</li>
                             <li>Adjust border bottom when hiding search form</li>
                         </ul>

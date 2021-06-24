@@ -148,7 +148,8 @@ class Chapter extends React.Component{
                 baseUrl: baseUrl
             });
 
-            $this.updateReader("update");
+            $this.setFit();
+            // $this.updateReader("update");
         })
         .catch(function(error){
             toast.error('Error retrieving base url.',{
@@ -241,7 +242,7 @@ class Chapter extends React.Component{
         }
         this.setMode();
         this.setMenu();
-        this.setFit();
+        // this.setFit();
         this.setLayout();
     }
 
@@ -404,26 +405,31 @@ class Chapter extends React.Component{
 
     // Reader Actions 
     changeChapter = (e) => {
-        window.location = '/chapter/' + e.target.value + "/1";
+        window.location = '#/chapter/' + e.target.value + "/1";
+        window.location.reload();   
     }
 
     leftChapter = () => {
         switch(localStorage.readerlayout){
             case "left":
                 if(this.state.nextPrevController.nextId.length > 0){
-                    window.location = '/chapter/' + this.state.nextPrevController.nextId + "/1";
+                    window.location = '#/chapter/' + this.state.nextPrevController.nextId + "/1";
+                    window.location.reload();
                 }else{
-                    window.location = '/title/' + this.state.mangaId;
-                }                
+                    window.location = '#/title/' + this.state.mangaId;
+                    window.location.reload();
+                }
             break;
             case "single":
             case "right":
             default:
                 if(this.state.nextPrevController.prevId.length > 0){
-                    window.location = '/chapter/' + this.state.nextPrevController.prevId + "/1";
+                    window.location = '#/chapter/' + this.state.nextPrevController.prevId + "/1";
+                    window.location.reload();
                 }else{
-                    window.location = '/title/' + this.state.mangaId;
-                }                
+                    window.location = '#/title/' + this.state.mangaId;
+                    window.location.reload();
+                }                 
             break;
         }
     }
@@ -432,18 +438,22 @@ class Chapter extends React.Component{
         switch(localStorage.readerlayout){
             case "left":
                 if(this.state.nextPrevController.prevId.length > 0){
-                    window.location = '/chapter/' + this.state.nextPrevController.prevId + "/1";
+                    window.location = '#/chapter/' + this.state.nextPrevController.prevId + "/1";
+                    window.location.reload();
                 }else{
-                    window.location = '/title/' + this.state.mangaId;
+                    window.location = '#/title/' + this.state.mangaId;
+                    window.location.reload();
                 }
             break;
             case "single":
             case "right":
             default:
                 if(this.state.nextPrevController.nextId.length > 0){
-                    window.location = '/chapter/' + this.state.nextPrevController.nextId + "/1";
+                    window.location = '#/chapter/' + this.state.nextPrevController.nextId + "/1";
+                    window.location.reload();
                 }else{
-                    window.location = '/title/' + this.state.mangaId;
+                    window.location = '#/title/' + this.state.mangaId;
+                    window.location.reload();
                 }
             break;
         }
@@ -505,23 +515,32 @@ class Chapter extends React.Component{
             break;
         }
 
+        
         if(progress <= 0){
             if(this.state.nextPrevController.prevId.length > 0){
-                window.location = '/chapter/' + this.state.nextPrevController.prevId + "/1";
+                window.location = '#/chapter/' + this.state.nextPrevController.prevId + "/1";
+                window.location.reload();
+                return false;
             }else{
-                window.location = '/title/' + this.state.mangaId;
+                window.location = '#/title/' + this.state.mangaId;
+                window.location.reload();
+                return false;
             }
         }
 
         if(progress > this.state.data.length && this.state.data.length > 0){
             if(this.state.nextPrevController.nextId.length > 0){
-                window.location = '/chapter/' + this.state.nextPrevController.nextId  + "/1";
+                window.location = '#/chapter/' + this.state.nextPrevController.nextId  + "/1";
+                window.location.reload();
+                return false;
             }else{
-                window.location = '/title/' + this.state.mangaId;
+                window.location = '#/title/' + this.state.mangaId;
+                window.location.reload();
+                return false;
             }
         }
 
-        let path = "/chapter/" + this.state.id + "/" + progress;
+        let path = "#/chapter/" + this.state.id + "/" + progress;
         window.history.pushState({path: path}, '', path);
         imageLoad.push(<div className="invisible" ref={this.scrollTop}></div>);
 

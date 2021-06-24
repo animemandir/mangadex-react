@@ -50,14 +50,14 @@ class Login extends React.Component{
             if(response.data.result == "ok"){
                 localStorage.authToken = response.data.token.session;
                 localStorage.authUser = $this.state.user;
-                let now = DateTime.now().plus({minutes: 5});
+                let now = DateTime.now().plus({minutes: 15});
                 localStorage.authExpire = now.toSeconds();
                 if($this.state.remember == 1){
                     localStorage.authRefresh = response.data.token.refresh;
                     let nowRef = DateTime.now().plus({days: 30});
                     localStorage.refreshExpire = nowRef.toSeconds();
                 }
-                window.location = "/";
+                window.location = "#/";
             }else{
                 toast.error('Something went wrong. Please try again',{
                     duration: 4000,
