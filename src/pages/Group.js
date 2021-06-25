@@ -2,7 +2,7 @@ import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 
-class Error404 extends React.Component{
+class Group extends React.Component{
     constructor(props){
         super(props);
         this.state = {};
@@ -28,4 +28,4 @@ class Error404 extends React.Component{
 } 
 
 
-export default Error404;
+export default Group;

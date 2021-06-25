@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import LanguageFlag  from '../component/LanguageFlag.js';
 
 class Chapter extends React.Component{
     constructor(props){
@@ -16,6 +17,7 @@ class Chapter extends React.Component{
             group: "",
             userId: "",
             user: "",
+            translatedLanguage: "",
             hash: "",
             data: [],
             dataSaver: [],
@@ -26,25 +28,14 @@ class Chapter extends React.Component{
             progressBar: null,
             imageLoad: [],
 
-
             classMenuA: "w-3/12 flex flex-wrap",
             classMenuB: "hidden",
             classImg: "object-contain",
-            btnTheme: {
-                light: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                dark: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900"
-            },
-            btnFit: {
-                original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-            },
-            btnLayout: {
-                left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-            },
+            theme: "light",
+            imageFit: "width",
+            layout: "left",
+            showProgress: "show",
+            imageSource: "original",
             nextPrevController: {
                 leftClass: "mx-2 hover:opacity-75 dark:text-gray-100",
                 rightClass: "mx-2 hover:opacity-75 dark:text-gray-100",
@@ -85,6 +76,7 @@ class Chapter extends React.Component{
             let group = "";
             let userId = "";
             let user = "";
+            let translatedLanguage = "";
             let hash = "";
             let data = [];
             let dataSaver = [];
@@ -111,6 +103,7 @@ class Chapter extends React.Component{
             });
 
             hash = response.data.data.attributes.hash;
+            translatedLanguage = response.data.data.attributes.translatedLanguage;
             data = response.data.data.attributes.data;
             dataSaver = response.data.data.attributes.dataSaver;
 
@@ -121,6 +114,7 @@ class Chapter extends React.Component{
                 group: group,
                 userId: userId,
                 user: user,
+                translatedLanguage: translatedLanguage,
                 hash: hash,
                 data: data,
                 dataSaver: dataSaver
@@ -149,7 +143,6 @@ class Chapter extends React.Component{
             });
 
             $this.setFit();
-            // $this.updateReader("update");
         })
         .catch(function(error){
             toast.error('Error retrieving base url.',{
@@ -240,9 +233,15 @@ class Chapter extends React.Component{
         if(!localStorage.readerlayout){
             localStorage.readerlayout = "left";
         }
+        if(!localStorage.showProgressBar){
+            localStorage.showProgressBar = "show";
+        }
+        if(!localStorage.imageSource){
+            localStorage.imageSource = "original";
+        }
+        this.setState({imageSource: localStorage.imageSource});
         this.setMode();
         this.setMenu();
-        // this.setFit();
         this.setLayout();
     }
 
@@ -250,26 +249,15 @@ class Chapter extends React.Component{
     setMode = () => {
         if(localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
-            this.setState({btnTheme: {
-                light: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                dark: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200"
-            }});
+            this.setState({theme: "dark"});
         }else{
             document.documentElement.classList.remove('dark');
-            this.setState({btnTheme: {
-                light: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                dark: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900"
-            }});
+            this.setState({theme: "light"});
         }
     }
 
-    lightDarkMode = () => {
-        if(localStorage.theme === 'dark'){
-            localStorage.theme = 'light';
-        }else{
-            localStorage.theme = 'dark';
-        }
-
+    lightDarkMode = (e) => {
+        localStorage.theme = e.target.value;
         this.setMode();
     }
 
@@ -292,96 +280,66 @@ class Chapter extends React.Component{
         }
     }
 
-    changeImageFit = (fit) => {
-        localStorage.imageFit = fit;
+    changeImageFit = (e) => {
+        localStorage.imageFit = e.target.value;
         this.setFit();
     }
 
     setFit = () => {
+        this.setState({imageFit: localStorage.imageFit});
         switch(localStorage.imageFit){
             case "original":
                 this.setState({
-                    btnFit: {
-                        original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    },
                     classImg: "object-none"
                 },() => this.updateReader("update"));
             break;
             case "height":
                 this.setState({
-                    btnFit: {
-                        original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    },
                     classImg: "h-screen"
                 },() => this.updateReader("update"));
             break;
             case "container":
                 this.setState({
-                    btnFit: {
-                        original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    },
                     classImg: "object-contain w-4/6"
                 },() => this.updateReader("update"));
             break;
             case "width":
             default:
                 this.setState({
-                    btnFit: {
-                        original: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        width: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        height: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        container: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    },
                     classImg: "object-contain px-8"
                 },() => this.updateReader("update"));      
             break;
         }        
     }
 
-    changeReaderLayout = (layout) => {
-        localStorage.readerlayout = layout;
+    changeReaderLayout = (e) => {
+        localStorage.readerlayout = e.target.value;
         this.setLayout();
     }
 
     setLayout = () => {
-        let nextPrevController = this.state.nextPrevController
-        // imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
-        //     progressBarClass: "w-2 flex flex-col",
+        this.setState({
+            layout: localStorage.readerlayout,
+            showProgress: localStorage.showProgressBar,
+        });
+        let nextPrevController = this.state.nextPrevController;
+        let scrollbar = (localStorage.showProgressBar === "show") ? "scrollbar-blue" : "no-scrollbar";
         switch(localStorage.readerlayout){
             case "right":
                 nextPrevController.leftTitle = "Previous";
                 nextPrevController.rightTitle = "Next";
                 this.setState({
-                    btnLayout: {
-                        left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    },
                     nextPrevController: nextPrevController,
                     imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
-                    progressBarClass: "w-2 flex flex-col",
+                    progressBarClass: (localStorage.showProgressBar === "show") ? "w-2 flex flex-col" : "hidden",
                 },() => this.updateReader("update"));
             break;
             case "single":
                 nextPrevController.leftTitle = "Previous";
                 nextPrevController.rightTitle = "Next";
                 this.setState({
-                    btnLayout: {
-                        left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    },
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-auto scrollbar-blue",
+                    imgContainerClass: "flex-1 overflow-y-auto " + scrollbar,
                     progressBarClass: "hidden",
                 },() => this.updateReader("single"));            
             break;
@@ -390,17 +348,24 @@ class Chapter extends React.Component{
                 nextPrevController.leftTitle = "Next";
                 nextPrevController.rightTitle = "Previous";
                 this.setState({
-                    btnLayout: {
-                        left: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        single: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        right: "text-center px-3 py-1 m-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    },
                     nextPrevController: nextPrevController,
                     imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
-                    progressBarClass: "w-2 flex flex-col",
+                    progressBarClass: (localStorage.showProgressBar === "show") ? "w-2 flex flex-col" : "hidden",
                 },() => this.updateReader("update"));
             break;
         }
+    }
+
+    changeProgressBar = (e) => {
+        localStorage.showProgressBar = e.target.value;
+        this.setLayout();
+    }
+
+    changeImageSource = (e) => {
+        localStorage.imageSource = e.target.value;
+        this.setState({
+            imageSource: e.target.value
+        },() => this.updateReader("update"));
     }
 
     // Reader Actions 
@@ -546,7 +511,9 @@ class Chapter extends React.Component{
 
         if(localStorage.readerlayout != "single"){
             for(let a = 0; a < this.state.data.length; a++){
-                let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
+                let imageOriginal = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
+                let imageSaver = this.state.baseUrl + "/" + "data-saver" + "/" + this.state.hash + "/" + this.state.dataSaver[a];
+                let image = (this.state.imageSource === "original") ? imageOriginal : imageSaver; 
                 if((a+1) < progress){
                     progressBar.push(
                         <div 
@@ -679,52 +646,57 @@ class Chapter extends React.Component{
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                     </svg>
-                                    <Link className="hover:opacity-75 text-blue-500" to={"/user/" + this.state.userId}>{this.state.user}</Link>
+                                    <Link className="hover:opacity-75 text-blue-500 mr-3" to={"/user/" + this.state.userId}>{this.state.user}</Link>
+                                    <LanguageFlag language={this.state.translatedLanguage} />
                                 </div>             
                                 <div className="flex-grow mt-4">
-                                    <div className="flex flex-row pl-3 py-2">
-                                        <span className="pt-3 mr-4">Theme:</span>
-                                        <button onClick={this.lightDarkMode} className={this.state.btnTheme.light} title="Light Mode">
-                                            Light
-                                        </button>
-                                        <button onClick={this.lightDarkMode} className={this.state.btnTheme.dark} title="Dark Mode">
-                                            Dark
-                                        </button>
+                                    <div className="flex flex-row px-3">
+                                        <select 
+                                            className="w-full p-1 pl-4 h-12 text-lg focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                                            value={this.state.theme} 
+                                            onChange={this.lightDarkMode} >
+                                            <option value="light">Theme: Light</option>
+                                            <option value="dark">Theme: Dark</option>
+                                        </select>
                                     </div>
-                                    <div className="flex flex-row pl-3 py-2">
-                                        <span className="pt-3 mr-3">Image Fit:</span>
-                                        <button onClick={() => this.changeImageFit("width")} className={this.state.btnFit.width}  title="Fit Width">
-                                            Width
-                                        </button>
-                                        <button onClick={() => this.changeImageFit("height")} className={this.state.btnFit.height} title="Fit Height">
-                                            Height
-                                        </button>
+                                    <div className="flex flex-row px-3 pt-3">
+                                        <select 
+                                            className="w-full p-1 pl-4 h-12 text-lg focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                                            value={this.state.imageFit} 
+                                            onChange={this.changeImageFit} >
+                                            <option value="width">Image Fit: Width</option>
+                                            <option value="height">Image Fit: Height</option>
+                                            <option value="original">Image Fit: Original</option>
+                                            <option value="container">Image Fit: Container (60%)</option>
+                                        </select>
                                     </div>
-                                    <div className="flex flex-row pl-3 py-2">
-                                        <button onClick={() => this.changeImageFit("original")} className={this.state.btnFit.original} title="Original size">
-                                            1:1
-                                        </button>
-                                        <button onClick={() => this.changeImageFit("container")} className={this.state.btnFit.container} title="Fit Container">
-                                            Container
-                                        </button>
+                                    <div className="flex flex-row px-3 pt-3">
+                                        <select 
+                                            className="w-full p-1 pl-4 h-12 text-lg focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                                            value={this.state.layout} 
+                                            onChange={this.changeReaderLayout} >
+                                            <option value="left">Page Layout: Right to Left</option>
+                                            <option value="right">Page Layout: Left to Right</option>
+                                            <option value="single">Page Layout: Long Strip</option>
+                                        </select>
                                     </div>
-                                    <div className="flex flex-row pl-3 py-2">
-                                        <span className="pt-3 mr-4">Layout:</span>
-                                        <button onClick={() => this.changeReaderLayout("left")} className={this.state.btnLayout.left} title="Right to Left">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
-                                        <button onClick={() => this.changeReaderLayout("right")} className={this.state.btnLayout.right} title="Left to Right">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
-                                        <button onClick={() => this.changeReaderLayout("single")} className={this.state.btnLayout.single} title="Long Strip">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
+                                    <div className="flex flex-row px-3 pt-3">
+                                        <select 
+                                            className="w-full p-1 pl-4 h-12 text-lg focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                                            value={this.state.showProgress} 
+                                            onChange={this.changeProgressBar} >
+                                            <option value="show">Progress Bar: Show</option>
+                                            <option value="hide">Progress Bar: Hide</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex flex-row px-3 pt-3">
+                                        <select 
+                                            className="w-full p-1 pl-4 h-12 text-lg focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                                            value={this.state.imageSource} 
+                                            onChange={this.changeImageSource} >
+                                            <option value="original">Image Source: Original</option>
+                                            <option value="saver">Image Source: Data Saver</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <footer class="footer relative pt-2">

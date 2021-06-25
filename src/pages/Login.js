@@ -4,6 +4,7 @@ import Footer from '../component/Footer.js';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { DateTime } from "luxon";
+import { isLogged } from "../util/loginUtil.js";
 class Login extends React.Component{
     constructor(props){
         super(props);
@@ -21,6 +22,10 @@ class Login extends React.Component{
 
     componentDidMount = () => {
         document.title = "Login - MangaDex";
+        let logged = isLogged();
+        if(logged){
+            window.location = "#/";
+        }
     }
 
     handleRemember = (e) => {
@@ -52,11 +57,9 @@ class Login extends React.Component{
                 localStorage.authUser = $this.state.user;
                 let now = DateTime.now().plus({minutes: 15});
                 localStorage.authExpire = now.toSeconds();
-                if($this.state.remember == 1){
-                    localStorage.authRefresh = response.data.token.refresh;
-                    let nowRef = DateTime.now().plus({days: 30});
-                    localStorage.refreshExpire = nowRef.toSeconds();
-                }
+                localStorage.authRefresh = response.data.token.refresh;
+                let nowRef = DateTime.now().plus({days: 30});
+                localStorage.refreshExpire = nowRef.toSeconds();
                 window.location = "#/";
             }else{
                 toast.error('Something went wrong. Please try again',{
@@ -109,7 +112,7 @@ class Login extends React.Component{
                                                     onChange={this.handlePassword}
                                                 />
                                             </div>
-                                            <div>
+                                            <div className="hidden">
                                                 <label className="inline-flex items-center cursor-pointer">
                                                     <input
                                                         id="rememberMe"

@@ -17,7 +17,6 @@ app.on('activate',function(){
     }
 });
 function createWindow(){
-
     mainWindow = new BrowserWindow({
         width: 1600,
         height: 900,
@@ -31,5 +30,9 @@ function createWindow(){
     });
     mainWindow.on('page-title-updated',function(e){
         e.preventDefault();
+    });
+    mainWindow.webContents.on('new-window',function(e,url){
+        e.preventDefault();
+        require('electron').shell.openExternal(url);
     });
 }

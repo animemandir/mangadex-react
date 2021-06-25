@@ -28,6 +28,7 @@ class Title extends React.Component{
             altTitles: [],
             genre: [],
             theme: [],
+            contentRating: '',
             official: [],
             retail: [],
             information: [],
@@ -114,6 +115,7 @@ class Title extends React.Component{
             let parsedLinks = linkParser(response.data.data.attributes.links);
 
             let originalLanguage = response.data.data.attributes.originalLanguage;
+            let contentRating = response.data.data.attributes.contentRating;
             let demo = demographic[response.data.data.attributes.publicationDemographic];
             let status = mangaStatus[response.data.data.attributes.status];
             let description = "";
@@ -132,6 +134,7 @@ class Title extends React.Component{
                 altTitles: altTitles,
                 genre: genre,
                 theme: theme,
+                contentRating: contentRating,
                 official: parsedLinks.official,
                 retail: parsedLinks.retail,
                 information: parsedLinks.information,
@@ -253,6 +256,91 @@ class Title extends React.Component{
             <Link className="text-blue-500 mr-4" to={"/search?artist="+ar.id}>{ar.name}</Link>
         );
 
+
+        var trAltTitles = "";
+        var trAuthor = "";
+        var trArtist = "";
+        var trDemographic = "";
+        var trGenre = "";
+        var trTheme = "";
+        var trContentRating = "";
+        var trOfficial = "";
+        var trRetail = "";
+        var trInformation = "";
+        if(altTitles.length > 0){
+            trAltTitles = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Alt name(s):</td>
+                <td width="80%">
+                    <ul className="list-disc">{altTitles}</ul>
+                </td>
+            </tr>;
+        }
+        if(authors.length > 0){
+            trAuthor = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Author:</td>
+                <td width="80%">{authors}</td>
+            </tr>;
+        }
+        if(artists.length > 0){
+            console.log(this.state.artist);
+            trArtist = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Artist:</td>
+                <td width="80%">{artists}</td>
+            </tr>;
+        }
+        if(this.state.demo){
+            trDemographic = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Demographic:</td>
+                <td width="80%"><Tags name={this.state.demo}/></td>
+            </tr>;
+        }
+        if(genre.length > 0){
+            trGenre = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Genre:</td>
+                <td width="80%">{genre}</td>
+            </tr>;
+        }
+        if(theme.length > 0){
+            trTheme = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Theme:</td>
+                <td width="80%">{theme}</td>
+            </tr>;
+        }
+        if(this.state.contentRating.length > 0){
+            trContentRating = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Content Rating:</td>
+                <td width="80%"><Tags name={this.state.contentRating}/></td>
+            </tr>;
+        }
+        if(official.length > 0){
+            trOfficial = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Official:</td>
+                <td width="80%">{official}</td>
+            </tr>;
+        }
+        if(retail.length > 0){
+            trRetail = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Retail:</td>
+                <td width="80%">{retail}</td>
+            </tr>;
+        }
+        if(information.length > 0){
+            trInformation = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Information:</td>
+                <td width="80%">{information}</td>
+            </tr>;
+        }
+
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
@@ -275,32 +363,13 @@ class Title extends React.Component{
                                                 <td width="20%" className="font-semibold">Title ID:</td>
                                                 <td width="80%">{this.state.id}</td>
                                             </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Alt name(s):</td>
-                                                <td width="80%">
-                                                    <ul className="list-disc">{altTitles}</ul>
-                                                </td>
-                                            </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Author:</td>
-                                                <td width="80%">{authors}</td>
-                                            </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Artist:</td>
-                                                <td width="80%">{artists}</td>
-                                            </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Demographic:</td>
-                                                <td width="80%"><Tags name={this.state.demo}/></td>
-                                            </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Genre:</td>
-                                                <td width="80%">{genre}</td>
-                                            </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Theme:</td>
-                                                <td width="80%">{theme}</td>
-                                            </tr>
+                                            {trAltTitles}
+                                            {trAuthor}
+                                            {trArtist}
+                                            {trDemographic}
+                                            {trGenre}
+                                            {trTheme}
+                                            {trContentRating}
                                             <tr className="text-left hidden border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Rating:</td>
                                                 <td width="80%">Coming soon (?)</td>
@@ -317,18 +386,9 @@ class Title extends React.Component{
                                                 <td width="20%" className="font-semibold">Description:</td>
                                                 <td width="80%" className="text-justify">{this.state.description}</td>
                                             </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Official:</td>
-                                                <td width="80%">{official}</td>
-                                            </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Retail:</td>
-                                                <td width="80%">{retail}</td>
-                                            </tr>
-                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Information:</td>
-                                                <td width="80%">{information}</td>
-                                            </tr>
+                                            {trOfficial}
+                                            {trRetail}
+                                            {trInformation}
                                             <tr className="text-left hidden border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Reading progress:</td>
                                                 <td width="80%">Coming soon (?)</td>

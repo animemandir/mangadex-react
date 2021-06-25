@@ -41,6 +41,10 @@ class Search extends React.Component{
             optionTags: [],
 
             classForm: "flex flex-wrap pt-2 px-4",
+            classTop: {
+                left: "w-11/12 flex border-b-2 pb-1 cursor-pointer border-gray-200 dark:border-gray-900",
+                right: "w-1/12 flex border-b-2 pb-1 pr-3 cursor-pointer border-gray-200 dark:border-gray-900"
+            },
             resultList: []
         };
     }
@@ -149,13 +153,24 @@ class Search extends React.Component{
 
     toggleForm = () => {
         let form = ""
+        let top = {
+            left: "w-11/12 flex border-b-2 pb-1 cursor-pointer border-gray-200 dark:border-gray-900",
+            right: "w-1/12 flex border-b-2 pb-1 pr-3 cursor-pointer border-gray-200 dark:border-gray-900"
+        }
         if(this.state.classForm == "hidden"){
             form = "flex flex-wrap pt-2 px-4";
         }else{
             form = "hidden"
+            top = {
+                left: "w-11/12 flex pb-1 cursor-pointer",
+                right: "w-1/12 flex pb-1 pr-3 cursor-pointer"
+            }
         }
 
-        this.setState({classForm:form});
+        this.setState({
+            classForm:form,
+            classTop: top
+        });
     }
 
     searchManga = (offset) => {
@@ -351,15 +366,15 @@ class Search extends React.Component{
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full pt-2 mt-6 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="flex flex-wrap">
-                                <div className="w-11/12 flex border-b-2 pb-1 border-gray-200 dark:border-gray-900">
+                                <div className={this.state.classTop.left}  onClick={this.toggleForm}>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-3" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M5 8a1 1 0 011-1h1V6a1 1 0 012 0v1h1a1 1 0 110 2H9v1a1 1 0 11-2 0V9H6a1 1 0 01-1-1z" />
                                         <path fill-rule="evenodd" d="M2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8zm6-4a4 4 0 100 8 4 4 0 000-8z" clip-rule="evenodd" />
                                     </svg>
                                     Search
                                 </div>
-                                <div className="w-1/12 flex border-b-2 pb-1 pr-3 border-gray-200 dark:border-gray-900">
-                                   <svg xmlns="http://www.w3.org/2000/svg" onClick={this.toggleForm} className="h-5 w-5 ml-auto cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className={this.state.classTop.right} onClick={this.toggleForm}>
+                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-auto cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                                     </svg>
                                 </div>
