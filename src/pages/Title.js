@@ -1,7 +1,7 @@
 import React from "react";
 import axios from 'axios';
 import { withRouter } from "react-router";
-import { demographic,mangaStatus } from '../util/static.js';
+import { demographic,mangaStatus,mangaContentRating } from '../util/static.js';
 import { linkParser } from '../util/linkParser.js';
 import { Link } from "react-router-dom";
 import Tags from '../component/Tags.js';
@@ -99,7 +99,7 @@ class Title extends React.Component{
             for(let i = 0; i < response.data.data.attributes.tags.length; i++){
                 let tempTag = "";
                 Object.keys(response.data.data.attributes.tags[i].attributes.name).map(function(key){
-                    tempTag = response.data.data.attributes.tags[i].attributes.name[key];
+                    tempTag = {id: response.data.data.attributes.tags[i].id, name: response.data.data.attributes.tags[i].attributes.name[key]};
                 });
                 switch(response.data.data.attributes.tags[i].attributes.group){
                     case "genre":
@@ -115,7 +115,7 @@ class Title extends React.Component{
 
             let originalLanguage = response.data.data.attributes.originalLanguage;
             let contentRating = response.data.data.attributes.contentRating;
-            let demo = demographic[response.data.data.attributes.publicationDemographic];
+            let demo = response.data.data.attributes.publicationDemographic;
             let status = mangaStatus[response.data.data.attributes.status];
             let description = "";
             Object.keys(response.data.data.attributes.description).map(function(key){
@@ -242,8 +242,8 @@ class Title extends React.Component{
 
     render = () => {
         var altTitles = this.state.altTitles.map((alt) => <li>{alt}</li>);
-        var genre = this.state.genre.map((g) => <Tags name={g} />);
-        var theme = this.state.theme.map((t) => <Tags name={t} />);
+        var genre = this.state.genre.map((g) => <Tags name={g.name} url={"/search?tag=" + g.id + "&tagName=" + g.name} />);
+        var theme = this.state.theme.map((t) => <Tags name={t.name} url={"/search?tag=" + t.id + "&tagName=" + t.name}/>);
         var official = this.state.official.map((o) => <Tags name={o.name} url={o.url}/>);
         var retail = this.state.retail.map((r) => <Tags name={r.name}  url={r.url}/>);
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
@@ -293,7 +293,7 @@ class Title extends React.Component{
             trDemographic = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                 <td width="20%" className="font-semibold">Demographic:</td>
-                <td width="80%"><Tags name={this.state.demo}/></td>
+                <td width="80%"><Tags name={demographic[this.state.demo]} url={"/search?demographic=" + this.state.demo}/></td>
             </tr>;
         }
         if(genre.length > 0){
@@ -314,7 +314,7 @@ class Title extends React.Component{
             trContentRating = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                 <td width="20%" className="font-semibold">Content Rating:</td>
-                <td width="80%"><Tags name={this.state.contentRating}/></td>
+                <td width="80%"><Tags name={mangaContentRating[this.state.contentRating]} url={"/search?rating=" + this.state.contentRating}/></td>
             </tr>;
         }
         if(official.length > 0){

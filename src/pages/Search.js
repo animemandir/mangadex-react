@@ -28,7 +28,6 @@ class Search extends React.Component{
             tagsInclusionModeChecked: [true,false],
             tagsExclusionModeChecked: [true,false],
             
-
             optionLanguage: [
                 {value: 'ja', label: 'Japanese'},
                 {value: 'ko', label: 'Korean'},
@@ -55,6 +54,7 @@ class Search extends React.Component{
         var listDemographic = [];
         var listPublication = [];
         var listMangaContentRating = [];
+        var contentRating = [];
         Object.keys(demographic).map(function(key){
             listDemographic.push({
                 value: key,
@@ -76,7 +76,7 @@ class Search extends React.Component{
             });
         });
 
-        var contentRating = [];
+        
         if(localStorage.content){
             let content = JSON.parse(localStorage.content);
             contentRating = content.map(c => {return {value: c,label: mangaContentRating[c]}});
@@ -95,6 +95,8 @@ class Search extends React.Component{
         let manga = "";
         let author = "";
         let artist = "";
+        let demo = [];
+        let tag = [];
         if(query.get("manga")){
             manga = query.get("manga");
             hide = true;
@@ -110,13 +112,31 @@ class Search extends React.Component{
             hide = true;
         }
 
+        if(query.get("demographic")){
+            demo  = [{value: query.get("demographic"),label: demographic[query.get("demographic")]}];
+            hide = true;
+        }
+
+        if(query.get("rating")){
+            contentRating  = [{value: query.get("rating"),label: mangaContentRating[query.get("rating")]}];
+            hide = true;
+        }
+
+        if(query.get("tag")){
+            tag  = [{value: query.get("tag"),label: query.get("tagName")}];
+            hide = true;
+        }
+
         if(hide){
             this.toggleForm();
         }
         this.setState({
             manga:manga,
             author:author,
-            artist:artist
+            artist:artist,
+            demographic: demo,
+            contentRating: contentRating,
+            tagsInclude: tag
         },() => this.searchManga(0));
     }
 
@@ -257,6 +277,57 @@ class Search extends React.Component{
         })
         .catch(function(error){
             toast.error('Error retrieving search data.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    randomManga = () => {
+        this.setState({resultList:[<Loading />]});
+
+        var $this = this;
+        axios.get('https://api.mangadex.org/manga/random?includes[]=cover_art')
+        .then(function(response){
+            var mangaList = [];
+
+            let coverFile = "";
+            response.data.relationships.map((relation) => {
+                switch(relation.type){
+                    case "cover_art":
+                        coverFile = "https://uploads.mangadex.org/covers/" +  response.data.data.id + "/" + relation.attributes.fileName + ".512.jpg";
+                    break;
+                } 
+            });
+
+            let title = "";
+            Object.keys(response.data.data.attributes.title).map(function(key){
+                if(key == "en" || title == ""){
+                    title = response.data.data.attributes.title[key];
+                }
+            });
+
+            let description = "";
+            Object.keys(response.data.data.attributes.description).map(function(key){
+                if(key == "en" || description == ""){
+                    description = response.data.data.attributes.description[key];
+                }
+            });
+
+            mangaList.push({
+                mangaId: response.data.data.id,
+                mangaName: title,
+                cover: coverFile,
+                originalLanguage: response.data.data.attributes.originalLanguage,
+                description: description
+            });
+            
+            let list = mangaList.map((manga) => <MangaBox data={manga} />);
+            $this.setState({resultList:list});
+        })
+        .catch(function(error){
+            console.log(error)
+            toast.error('Error retrieving random data.',{
                 duration: 4000,
                 position: 'top-right',
             });
@@ -524,9 +595,12 @@ class Search extends React.Component{
                                         </td>
                                     </tr>
                                 </table>
-                                <div className="w-full flex justify-center items-center">
-                                    <button onClick={() => this.searchManga(0)} className="border-2 py-2 px-4 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
+                                <div className="w-full">
+                                    <button onClick={() => this.searchManga(0)} className="w-auto float-right mx-2 border-2 py-2 px-4 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
                                         Search
+                                    </button>
+                                    <button onClick={() => this.randomManga()} className="w-auto float-right mx-2 border-2 py-2 px-4 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
+                                        Ignore everything and yolo
                                     </button>
                                 </div>
                             </div>
