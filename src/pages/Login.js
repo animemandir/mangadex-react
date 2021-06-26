@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { DateTime } from "luxon";
 import { isLogged } from "../util/loginUtil.js";
+import { colorTheme } from "../util/colorTheme";
 class Login extends React.Component{
     constructor(props){
         super(props);
@@ -127,7 +128,7 @@ class Login extends React.Component{
                                             </div>
                                             <div className="text-center mt-6">
                                                 <button
-                                                    className="bg-blue-500 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:opacity-80 outline-none focus:outline-none mr-1 mb-1 w-full"
+                                                    className={"text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:opacity-80 outline-none focus:outline-none mr-1 mb-1 w-full " + colorTheme(500).bg}
                                                     type="button"
                                                     onClick={this.authLogin}
                                                     style={{ transition: "all .15s ease" }}>

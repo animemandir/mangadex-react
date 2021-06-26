@@ -5,7 +5,7 @@ import Footer from '../component/Footer.js';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { Link } from "react-router-dom";
-
+import { colorTheme } from "../util/colorTheme";
 class Group extends React.Component{
     constructor(props){
         super(props);
@@ -66,7 +66,7 @@ class Group extends React.Component{
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                 </svg>
-                <Link className="hover:opacity-75 text-blue-500 mr-3" to={"/user/" + l.id}>{l.name}</Link>
+                <Link className={"hover:opacity-75 mr-3 " + colorTheme(500).text} to={"/user/" + l.id}>{l.name}</Link>
             </div>
         );
         var member = this.state.members.map((m) => 
@@ -74,7 +74,7 @@ class Group extends React.Component{
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                 </svg>
-                <Link className="hover:opacity-75 text-blue-500 mr-3" to={"/user/" + m.id}>{m.name}</Link>
+                <Link className={"hover:opacity-75 mr-3 " + colorTheme(500).text} to={"/user/" + m.id}>{m.name}</Link>
             </div>
         );
         return (

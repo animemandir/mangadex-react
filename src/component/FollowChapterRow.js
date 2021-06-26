@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
 import { DateTime } from "luxon";
+import { colorTheme } from "../util/colorTheme";
 
 class FollowChapterRow extends React.Component{
     constructor(props){
@@ -75,12 +76,12 @@ class FollowChapterRow extends React.Component{
                     </svg>
                 </td>
                 <td>
-                    <Link className="text-blue-500" to={"/chapter/" + this.props.data.data.id + "/1"} title={this.state.chapterLabel}>
+                    <Link className={colorTheme(500).text} to={"/chapter/" + this.props.data.data.id + "/1"} title={this.state.chapterLabel}>
                         {this.state.chapterLabel}
                     </Link>
                 </td>
                 <td>
-                    <Link className="text-blue-500" to={"/title/" + this.state.mangaId} title={this.state.mangaName}>
+                    <Link className={colorTheme(500).text} to={"/title/" + this.state.mangaId} title={this.state.mangaName}>
                         {this.state.mangaName}
                     </Link>
                 </td>
@@ -88,12 +89,12 @@ class FollowChapterRow extends React.Component{
                     <LanguageFlag language={this.props.data.data.attributes.translatedLanguage} />
                 </td>
                 <td>
-                    <Link className="text-blue-400" to={"/group/" + this.state.groupId}>
+                    <Link className={colorTheme(400).text} to={"/group/" + this.state.groupId}>
                         {this.state.groupName}
                     </Link>
                 </td>
                 <td>
-                    <Link className="text-blue-400" to={"/user/" + this.state.userId}>
+                    <Link className={colorTheme(400).text} to={"/user/" + this.state.userId}>
                         {this.state.userName}
                     </Link>
                 </td>

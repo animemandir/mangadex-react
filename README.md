@@ -1,9 +1,11 @@
 # mangadex-react
 
-This project started to resemble old version of MangaDex using V5 API. 
+This project started to resemble the old version of MangaDex using V5 API. 
 Due to CORS problems, I'm using electron to make it an desktop application. 
+
 > Probably doesn't work if the window width < 1280px
-> This project is for my personal use and I suck at UI (I'm sorry) 
+
+> This project is for personal use and I suck at UI (I'm sorry) 
 ## Major Dependencies
 
 * [MangaDex API](https://api.mangadex.org/swagger.html)

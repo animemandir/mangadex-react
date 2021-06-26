@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { isLogged } from "../util/loginUtil.js";
+import { colorTheme } from "../util/colorTheme";
 import axios from 'axios';
 
 class Header extends React.Component{
@@ -149,7 +150,7 @@ class Header extends React.Component{
                                 <div className="relative">
                                     <input onChange={this.handleSearch} onKeyUp={this.handleSearchKeypress} value={this.state.search} type="text" className="h-8 w-96 pl-4 pr-10 rounded focus:outline-none bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500" placeholder="Search" />
                                     <div className="absolute top-0 right-0"> 
-                                        <button onClick={this.searchManga} className="h-8 w-8 text-white rounded focus:outline-none bg-blue-500 hover:bg-blue-400">
+                                        <button onClick={this.searchManga} className={"h-8 w-8 text-white rounded focus:outline-none " + colorTheme(500).bg + " hover:" + colorTheme(400).bg}>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mx-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>

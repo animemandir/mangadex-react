@@ -10,8 +10,7 @@ import TitleTableRow from '../component/TitleTableRow.js';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import toast, { Toaster } from 'react-hot-toast';
-
-
+import { colorTheme } from "../util/colorTheme";
 class Title extends React.Component{
     constructor(props){
         super(props);
@@ -250,10 +249,10 @@ class Title extends React.Component{
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
 
         var authors = this.state.author.map((au) => 
-            <Link className="text-blue-500 mr-4" to={"/search?author="+au.id}>{au.name}</Link>
+            <Link className={"mr-4 " + colorTheme(500).text} to={"/search?author="+au.id}>{au.name}</Link>
         );
         var artists = this.state.artist.map((ar) => 
-            <Link className="text-blue-500 mr-4" to={"/search?artist="+ar.id}>{ar.name}</Link>
+            <Link className={"mr-4 " + colorTheme(500).text} to={"/search?artist="+ar.id}>{ar.name}</Link>
         );
 
 

@@ -4,7 +4,7 @@ import { withRouter } from "react-router";
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import LanguageFlag  from '../component/LanguageFlag.js';
-
+import { colorTheme } from "../util/colorTheme";
 class Chapter extends React.Component{
     constructor(props){
         super(props);
@@ -323,7 +323,7 @@ class Chapter extends React.Component{
             showProgress: localStorage.showProgressBar,
         });
         let nextPrevController = this.state.nextPrevController;
-        let scrollbar = (localStorage.showProgressBar === "show") ? "scrollbar-blue" : "no-scrollbar";
+        let scrollbar = (localStorage.showProgressBar === "show") ? colorTheme().scrollbar : "no-scrollbar";
         switch(localStorage.readerlayout){
             case "right":
                 nextPrevController.leftTitle = "Previous";
@@ -517,7 +517,7 @@ class Chapter extends React.Component{
                 if((a+1) < progress){
                     progressBar.push(
                         <div 
-                            className="flex-grow cursor-pointer bg-blue-300 border-b-2 border-gray-300 dark:border-gray-900" 
+                            className={"flex-grow cursor-pointer border-b-2 border-gray-300 dark:border-gray-900 " + colorTheme(300).bg} 
                             title={a+1} 
                             onClick={() => this.goToPage(a+1)}></div>
                     );
@@ -533,7 +533,7 @@ class Chapter extends React.Component{
                 if((a+1) == progress){
                     progressBar.push(
                         <div 
-                            className="flex-grow cursor-pointer bg-blue-600 border-b-2 border-gray-300 dark:border-gray-900" 
+                            className={"flex-grow cursor-pointer border-b-2 border-gray-300 dark:border-gray-900 " + colorTheme(600).bg}
                             title={a+1} 
                             onClick={() => this.goToPage(a+1)}></div>
                     );
@@ -549,7 +549,7 @@ class Chapter extends React.Component{
                 if((a+1) > progress){
                     progressBar.push(
                         <div 
-                            className="flex-grow cursor-pointer bg-blue-200 border-b-2 border-gray-300 dark:border-gray-900" 
+                            className={"flex-grow cursor-pointer border-b-2 border-gray-300 dark:border-gray-900 " + colorTheme(200).bg}
                             title={a+1} 
                             onClick={() => this.goToPage(a+1)}></div>
                     );
@@ -615,7 +615,7 @@ class Chapter extends React.Component{
                             </div>
                             <div className="flex-1 flex flex-col h-screen justify-between">  
                                 <div className="text-center text-lg py-2 border-b-2  border-gray-200 dark:border-gray-900">
-                                    <Link className="hover:opacity-75 text-blue-500" to={"/title/" + this.state.mangaId}>{this.state.manga}</Link>
+                                    <Link className={"hover:opacity-75 " + colorTheme(500).text} to={"/title/" + this.state.mangaId}>{this.state.manga}</Link>
                                 </div>
                                 <div className="flex flex-wrap border-b-2 pb-1 border-gray-200 dark:border-gray-900">
                                     <div className="w-1/6 cursor-pointer justify-center items-center flex">
@@ -626,7 +626,7 @@ class Chapter extends React.Component{
                                         </div>
                                     </div>
                                     <div className="w-4/6 content-center">
-                                        <select className="w-full p-1 m-2 focus:outline-none dark:bg-gray-700 scrollbar-blue" value={this.state.id} onChange={this.changeChapter}>
+                                        <select className={"w-full p-1 m-2 focus:outline-none dark:bg-gray-700 " + colorTheme().scrollbar} value={this.state.id} onChange={this.changeChapter}>
                                             {chapterList}
                                         </select>
                                     </div>
@@ -642,11 +642,11 @@ class Chapter extends React.Component{
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                                     </svg>
-                                    <Link className="hover:opacity-75 text-blue-500" to={"/group/" + this.state.groupId}>{this.state.group}</Link>
+                                    <Link className={"hover:opacity-75 " + colorTheme(500).text} to={"/group/" + this.state.groupId}>{this.state.group}</Link>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                     </svg>
-                                    <Link className="hover:opacity-75 text-blue-500 mr-3" to={"/user/" + this.state.userId}>{this.state.user}</Link>
+                                    <Link className={"hover:opacity-75 mr-3 " + colorTheme(500).text} to={"/user/" + this.state.userId}>{this.state.user}</Link>
                                     <LanguageFlag language={this.state.translatedLanguage} />
                                 </div>             
                                 <div className="flex-grow mt-4">
@@ -704,7 +704,7 @@ class Chapter extends React.Component{
                                         <span>Page {this.state.progress}/{this.state.data.length}</span> 
                                     </div>
                                     <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
-                                        <Link className="text-blue-600 hover:opacity-75" to={"/"}>Home</Link>
+                                        <Link className={"hover:opacity-75 " + colorTheme(600).text} to={"/"}>Home</Link>
                                     </div>
                                 </footer>
                             </div>

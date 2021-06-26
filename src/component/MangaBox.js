@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
-
+import { colorTheme } from "../util/colorTheme";
 class MangaBox extends React.Component{
     constructor(props){
         super(props);
@@ -17,7 +17,7 @@ class MangaBox extends React.Component{
                     alt={this.props.data.mangaName}
                     src={this.props.data.cover} />
                 <div className="item-body w-4/5 pl-2">
-                    <p className="text-left pb-1 border-b flex dark:border-gray-900 text-blue-600">
+                    <p className={"text-left pb-1 border-b flex dark:border-gray-900 " + colorTheme(600).text}>
                         <LanguageFlag language={this.props.data.originalLanguage} />
                         <Link className="ml-2" to={"/title/" + this.props.data.mangaId}>{this.props.data.mangaName}</Link>
                     </p>
