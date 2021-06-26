@@ -284,7 +284,6 @@ class Title extends React.Component{
             </tr>;
         }
         if(artists.length > 0){
-            console.log(this.state.artist);
             trArtist = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                 <td width="20%" className="font-semibold">Artist:</td>

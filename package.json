@@ -2,9 +2,9 @@
   "name": "mangadex-react",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "npm": "7.15.1",
-    "node": "16.3.0"
+  "author": {
+    "name": "Saymon600",
+    "email": "samuel.y.yamaguchi@gmail.com"
   },
   "main": "public/electron.js",
   "homepage": "./",
@@ -17,7 +17,6 @@
     "autoprefixer": "^9.8.6",
     "axios": "^0.21.1",
     "electron-is-dev": "^2.0.0",
-    "http-server": "^0.12.3",
     "luxon": "^1.27.0",
     "postcss": "^7.0.35",
     "react": "^17.0.2",
@@ -26,7 +25,6 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-select": "^4.3.1",
-    "serve": "^12.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4",
     "web-vitals": "^1.1.2"
   },
@@ -37,7 +35,11 @@
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-pack": "electron-builder -c.extraMetadata.main=build/electron.js",
-    "preelectron-pack": "craco build"
+    "electron-pack-win": "electron-builder -c.extraMetadata.main=build/electron.js --win --x64",
+    "electron-pack-deb": "electron-builder -c.extraMetadata.main=build/electron.js --linux deb",
+    "preelectron-pack": "craco build",
+    "preelectron-pack-win": "craco build",
+    "preelectron-pack-deb": "craco build"
   },
   "eslintConfig": {
     "extends": [
