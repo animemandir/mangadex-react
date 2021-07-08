@@ -18,15 +18,15 @@ class HomeUpdates extends React.Component{
                     alt={this.props.data.mangaName}
                     src={this.props.data.cover} />
                 <div className="item-body w-4/5 pl-2">
-                    <p className={"text-left flex pb-1 border-b dark:border-gray-900 " + colorTheme(600).text}>
-                        <Link className="flex flex-row flex-wrap" to={"/title/" + this.props.data.mangaId}>
-                           <div className="inline mr-2">
+                    <div className={"text-left flex flex-wrap pb-1 border-b dark:border-gray-900 " + colorTheme(600).text}>
+                        <Link className="flex" to={"/title/" + this.props.data.mangaId}>
+                            <LanguageFlag language={this.props.data.originalLanguage} />
+                            <span className="ml-2">
                                 {this.props.data.mangaName}  
-                           </div>
-                           <LanguageFlag language={this.props.data.originalLanguage} />
+                            </span>
                         </Link> 
                         
-                    </p>
+                    </div>
                     <p className={"text-left flex mt-1 " + colorTheme(500).text}>
                         <Link className="flex mr-1" to={"/chapter/" + this.props.data.chapterId + "/1"}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

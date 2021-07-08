@@ -72,7 +72,7 @@ class Follow extends React.Component{
                 translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user","manga"],
                 offset: this.state.chapterOffset,
-                limit: 100
+                limit: 50
             },
             headers: {  
                 Authorization: bearer
@@ -80,11 +80,17 @@ class Follow extends React.Component{
         })
         .then(function(response){
             let list = [];
+            let mangaList = [];
             for(let i = 0; i < response.data.results.length; i++){
                 list.push(response.data.results[i].data.id);
+                response.data.results[i].relationships.map((relation) => {
+                    if(relation.type === "manga"){
+                        mangaList.push(relation.id);
+                    }
+                });
             }
 
-            $this.getChapterInfo(list,response.data.total);
+            $this.getChapterRead(list,mangaList,response.data.total);
         })
         .catch(function(error){
             toast.error('Error retrieving chapter feed list.',{
@@ -94,7 +100,31 @@ class Follow extends React.Component{
         });
     }
 
-    getChapterInfo = (list,totalOffset) => {
+    getChapterRead = (chapterList,mangaList,totalOffset) => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/manga/read',{
+            params: {
+                ids: mangaList,
+                grouped: true
+            },
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            let readList = response.data.data;
+            $this.getChapterInfo(chapterList,readList,totalOffset);
+        })
+        .catch(function(error){
+            toast.error('Error retrieving read markers list.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    getChapterInfo = (list,readList,totalOffset) => {
         var translatedLanguage = ["en"];
         if(localStorage.language){
             translatedLanguage = JSON.parse(localStorage.language);
@@ -105,16 +135,24 @@ class Follow extends React.Component{
                 ids: list,
                 translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user","manga"],
-                limit: 100
+                limit: 50
             }
         })
         .then(function(response){
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.results.length; i++){
+                response.data.results[i].read = false;
+                response.data.results[i].relationships.map((relation) => {
+                    if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
+                        if(readList[relation.id].indexOf(response.data.results[i].data.id) > -1){
+                            response.data.results[i].read = true;
+                        }
+                    }
+                });
                 list.push(<FollowChapterRow data={response.data.results[i]}/>)
             }
 
-            let offset = parseInt($this.state.chapterOffset) + 100;
+            let offset = parseInt($this.state.chapterOffset) + 50;
             let showMore = true;
             if(offset >= totalOffset){
                 showMore = false;

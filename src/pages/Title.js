@@ -11,6 +11,8 @@ import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import toast, { Toaster } from 'react-hot-toast';
 import { colorTheme } from "../util/colorTheme";
+import { isLogged } from "../util/loginUtil.js";
+
 class Title extends React.Component{
     constructor(props){
         super(props);
@@ -34,6 +36,7 @@ class Title extends React.Component{
             offset: 0,
             chapterList: [],
             coverList: [],
+            chapterRead: [],
 
             tabControl: {
                 active: "chapter",
@@ -51,8 +54,14 @@ class Title extends React.Component{
         this.setState({id:id});
         
         this.getMangaInfo(id);
-        this.getChapterList(id,0);
         this.getCoverList(id);
+
+        let logged = isLogged();
+        if(logged){
+            this.getChapterRead(id);
+        }else{
+            this.getChapterList(id,0);
+        }
     }
 
     getMangaInfo = (id) => {
@@ -148,6 +157,36 @@ class Title extends React.Component{
         });
     }
 
+    getChapterRead = (id) => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/manga/read',{
+            params: {
+                ids: [id],
+                grouped: true
+            },
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            if(Object.keys(response.data.data).length > 0){
+                console.log(response.data.data[id]);
+                $this.setState({
+                    chapterRead: response.data.data[id]
+                },$this.getChapterList(id,0));
+            }else{
+                $this.getChapterList(id,0)
+            }
+        })
+        .catch(function(error){
+            toast.error('Error retrieving read markers list.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
     getChapterList = (id,offset) => {
         var translatedLanguage = ["en"];
         if(localStorage.language){
@@ -166,6 +205,10 @@ class Title extends React.Component{
         .then(function(response){
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.results.length; i++){
+                response.data.results[i].read = false;
+                if($this.state.chapterRead.indexOf(response.data.results[i].data.id) > -1){
+                    response.data.results[i].read = true;
+                }
                 list.push(<TitleTableRow data={response.data.results[i]}/>)
             }
 
@@ -175,6 +218,7 @@ class Title extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving chapter list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -411,7 +455,7 @@ class Title extends React.Component{
                             <div className={this.state.tabControl.contentChapter}>
                                 <table class="table-auto w-full p-2">
                                     <thead className="h-8 border-b-2 border-gray-200 dark:border-gray-900">
-                                        <th className="hidden" title="Read">
+                                        <th title="Read">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />

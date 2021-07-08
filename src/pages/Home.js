@@ -105,7 +105,7 @@ class Home extends React.Component{
 
     getLCCovers = (chapters,mangaIds) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/cover',{
+        axios.get('https://api.mangadex.org/cover?order[volume]=desc',{
             params: {
                 manga: mangaIds,
                 limit: 100

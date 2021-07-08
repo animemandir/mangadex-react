@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import LanguageFlag  from '../component/LanguageFlag.js';
 import { colorTheme } from "../util/colorTheme";
+import { isLogged } from "../util/loginUtil.js";
 class Chapter extends React.Component{
     constructor(props){
         super(props);
@@ -60,6 +61,14 @@ class Chapter extends React.Component{
 
         this.initReader();
         this.getChapter(id);
+        let logged = isLogged();
+        if(logged){
+            this.markChapterRead(id);
+        }
+    }
+
+    refresh = () => {
+        window.location.reload();
     }
 
     getChapter = (id) => {
@@ -217,6 +226,30 @@ class Chapter extends React.Component{
         })
         .catch(function(error){
             toast.error('Error retrieving chapter list.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    markChapterRead = (id) => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.post('https://api.mangadex.org/chapter/' + id + '/read',null,{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            if(response.data.result === "ok"){
+                toast.success('Chapter marked as read.',{
+                    duration: 1000,
+                    position: 'top-right',
+                });
+            }
+        })
+        .catch(function(error){
+            toast.error('Error marking chapter.',{
                 duration: 4000,
                 position: 'top-right',
             });
@@ -705,6 +738,14 @@ class Chapter extends React.Component{
                                     </div>
                                     <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
                                         <Link className={"hover:opacity-75 " + colorTheme(600).text} to={"/"}>Home</Link>
+                                        <span className="mx-1">|</span>
+                                        <Link className={"hover:opacity-75 " + colorTheme(600).text} to={"/follow"}>Follows</Link>
+                                        <span className="mx-1">|</span>
+                                        <button onClick={this.refresh} className="hover:opacity-75 cursor-pointer focus:outline-none" title="Refresh">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={"h-4 w-4 " + colorTheme(600).text}  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </footer>
                             </div>
