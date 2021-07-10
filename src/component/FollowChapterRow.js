@@ -29,7 +29,6 @@ class FollowChapterRow extends React.Component{
         if(this.props.data.data.attributes.title){
             label += "- " + this.props.data.data.attributes.title;
         }
-        console.log(this.props.data);
 
         this.props.data.relationships.map((relation) => {
             switch(relation.type){

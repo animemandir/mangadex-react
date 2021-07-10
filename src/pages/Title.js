@@ -12,6 +12,7 @@ import Footer from '../component/Footer.js';
 import toast, { Toaster } from 'react-hot-toast';
 import { colorTheme } from "../util/colorTheme";
 import { isLogged } from "../util/loginUtil.js";
+import Loading from '../component/Loading.js';
 
 class Title extends React.Component{
     constructor(props){
@@ -37,6 +38,10 @@ class Title extends React.Component{
             chapterList: [],
             coverList: [],
             chapterRead: [],
+            chapterOffset: 0,
+            chapterShowMore: false,
+            coverOffset: 0,
+            coverShowMore: false,
 
             tabControl: {
                 active: "chapter",
@@ -44,6 +49,14 @@ class Title extends React.Component{
                 btnCover: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                 contentCover: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
+            },
+            loadChapterControl: {
+                btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                btnLabel: "Load More"
+            },
+            loadCoverControl: {
+                btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                btnLabel: "Load More"
             }
         };
     }
@@ -51,22 +64,26 @@ class Title extends React.Component{
     componentDidMount = () => {
         document.title = "Manga - Mangadex";
         const id = this.props.match.params.id;
-        this.setState({id:id});
+        this.setState({id:id},() => this.init());
         
-        this.getMangaInfo(id);
-        this.getCoverList(id);
+        
+    }
+
+    init = () => {
+        this.getMangaInfo();
+        this.getCoverList();
 
         let logged = isLogged();
         if(logged){
-            this.getChapterRead(id);
+            this.getChapterRead();
         }else{
-            this.getChapterList(id,0);
+            this.getChapterList();
         }
     }
 
-    getMangaInfo = (id) => {
+    getMangaInfo = () => {
         var $this = this;
-        axios.get('https://api.mangadex.org/manga/' + id + '?includes[]=author&includes[]=artist&includes[]=cover_art')
+        axios.get('https://api.mangadex.org/manga/' + this.state.id + '?includes[]=author&includes[]=artist&includes[]=cover_art')
         .then(function(response){
             let authors = [];
             let artists = [];
@@ -79,7 +96,7 @@ class Title extends React.Component{
                         authors.push({id:relation.id,name:relation.attributes.name});
                     break;
                     case "cover_art":
-                        let coverFile = "https://uploads.mangadex.org/covers/" +  id + "/" + relation.attributes.fileName + ".512.jpg";
+                        let coverFile = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + relation.attributes.fileName + ".512.jpg";
                         $this.setState({coverFile:coverFile});
                     break;
                 } 
@@ -157,12 +174,12 @@ class Title extends React.Component{
         });
     }
 
-    getChapterRead = (id) => {
+    getChapterRead = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
         axios.get('https://api.mangadex.org/manga/read',{
             params: {
-                ids: [id],
+                ids: [this.state.id],
                 grouped: true
             },
             headers: {  
@@ -171,12 +188,11 @@ class Title extends React.Component{
         })
         .then(function(response){
             if(Object.keys(response.data.data).length > 0){
-                console.log(response.data.data[id]);
                 $this.setState({
-                    chapterRead: response.data.data[id]
-                },$this.getChapterList(id,0));
+                    chapterRead: response.data.data[$this.state.id]
+                },$this.getChapterList());
             }else{
-                $this.getChapterList(id,0)
+                $this.getChapterList()
             }
         })
         .catch(function(error){
@@ -187,7 +203,17 @@ class Title extends React.Component{
         });
     }
 
-    getChapterList = (id,offset) => {
+    getChapterList = () => {
+        this.setState({
+            loadChapterControl: {
+                btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                btnLabel:  
+                <div className="inline-flex">
+                    <span className="mr-2">Loading</span> 
+                    <img className="w-6 h-6" alt="Loading" src={process.env.PUBLIC_URL + '/spin.svg'} />
+                </div>
+            }
+        });
         var translatedLanguage = ["en"];
         if(localStorage.language){
             translatedLanguage = JSON.parse(localStorage.language);
@@ -195,10 +221,10 @@ class Title extends React.Component{
         var $this = this;
         axios.get('https://api.mangadex.org/chapter?order[chapter]=desc',{
             params: {
-                manga: id,
+                manga: this.state.id,
                 translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user"],
-                offset: offset,
+                offset: this.state.chapterOffset,
                 limit: 100
             }
         })
@@ -212,10 +238,21 @@ class Title extends React.Component{
                 list.push(<TitleTableRow data={response.data.results[i]}/>)
             }
 
-            $this.setState({chapterList: list});
-            if(response.data.total >= (offset+100)){
-                $this.getChapterList(id,offset+100);
+            let offset = parseInt($this.state.chapterOffset) + 100;
+            let showMore = true;
+            if(offset >= response.data.total){
+                showMore = false;
             }
+
+            $this.setState({
+                chapterList: list,
+                chapterOffset: offset,
+                chapterLoadMore: showMore,
+                loadChapterControl: {
+                    btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                    btnLabel: "Load More"
+                }
+            });
         })
         .catch(function(error){
             console.log(error);
@@ -226,19 +263,30 @@ class Title extends React.Component{
         });
     }
 
-    getCoverList = (id) => {
+    getCoverList = () => {
+        this.setState({
+            loadCoverControl: {
+                btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                btnLabel:  
+                <div className="inline-flex">
+                    <span className="mr-2">Loading</span> 
+                    <img className="w-6 h-6" alt="Loading" src={process.env.PUBLIC_URL + '/spin.svg'} />
+                </div>
+            }
+        });
         var $this = this;
         axios.get('https://api.mangadex.org/cover?order[volume]=desc',{
             params: {
-                manga: [id],
-                limit: 100
+                manga: [this.state.id],
+                limit: 100,
+                offset: this.state.coverOffset
             }
         })
         .then(function(response){
             let list = $this.state.coverList;
             for(let i = 0; i < response.data.results.length; i++){
-                let fileFull = "https://uploads.mangadex.org/covers/" +  id + "/" + response.data.results[i].data.attributes.fileName;
-                let file = "https://uploads.mangadex.org/covers/" +  id + "/" + response.data.results[i].data.attributes.fileName + ".512.jpg";
+                let fileFull = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.results[i].data.attributes.fileName;
+                let file = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.results[i].data.attributes.fileName + ".512.jpg";
                 let title = (response.data.results[i].data.attributes.volume) ? "Volume " + response.data.results[i].data.attributes.volume : "Cover"; 
                 list.push(
                     <a href={fileFull} target="_blank"  className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
@@ -250,9 +298,23 @@ class Title extends React.Component{
                 );
             }
 
-            $this.setState({coverList: list});
+            let offset = parseInt($this.state.coverOffset) + 100;
+            let showMore = true;
+            if(offset >= response.data.total){
+                showMore = false;
+            }
+            $this.setState({
+                coverList: list,
+                coverOffset: offset,
+                coverLoadMore: showMore,
+                loadCoverControl: {
+                    btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                    btnLabel: "Load More"
+                }
+            });
         })
         .catch(function(error){
+            console.log(error)
             toast.error('Error retrieving covers.',{
                 duration: 4000,
                 position: 'top-right',
@@ -383,6 +445,21 @@ class Title extends React.Component{
             </tr>;
         }
 
+        var chapterLoading = (this.state.chapterList.length <= 0) ? <Loading /> : "";
+        var coverLoading = (this.state.coverList.length <= 0) ? <Loading /> : "";
+        var chapterLoadMore = (this.state.chapterLoadMore) ? 
+        <button 
+            onClick={this.getChapterList} 
+            className={this.state.loadChapterControl.btnClass} >
+            {this.state.loadChapterControl.btnLabel}
+        </button> : "";
+        var coverLoadMore = (this.state.coverLoadMore) ? 
+        <button 
+            onClick={this.getCoverList} 
+            className={this.state.loadCoverControl.btnClass} >
+            {this.state.loadCoverControl.btnLabel}
+        </button> : "";
+
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
@@ -453,6 +530,7 @@ class Title extends React.Component{
                             </button>
 
                             <div className={this.state.tabControl.contentChapter}>
+                                {chapterLoading}
                                 <table class="table-auto w-full p-2">
                                     <thead className="h-8 border-b-2 border-gray-200 dark:border-gray-900">
                                         <th title="Read">
@@ -496,13 +574,16 @@ class Title extends React.Component{
                                     <tbody>
                                         {this.state.chapterList}
                                     </tbody>
+                                    {chapterLoadMore}
                                 </table>
                             </div>
                         
                             <div className={this.state.tabControl.contentCover}>
+                                {coverLoading}
                                 <div className="flex flex-wrap mx-auto content-center">
                                     {this.state.coverList}
-                                </div>                               
+                                </div>
+                                {coverLoadMore}                               
                             </div>
                         </div>
                     </div>

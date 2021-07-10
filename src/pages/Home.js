@@ -74,10 +74,16 @@ class Home extends React.Component{
                     translatedLanguage: chapter.data.attributes.translatedLanguage,
                     originalLanguage:originalLanguage
                 };
-                if(localStorage.content){
-                    let content = JSON.parse(localStorage.content);
-                    if(content.length > 0){
-                        if(content.indexOf(contentRating) > -1){
+
+                if(Object.keys(chapters).indexOf(mangaId) <= -1){
+                    if(localStorage.content){
+                        let content = JSON.parse(localStorage.content);
+                        if(content.length > 0){
+                            if(content.indexOf(contentRating) > -1){
+                                mangaIds.push(mangaId);
+                                chapters[mangaId] = temp;
+                            }
+                        }else if(contentRating != "erotica" && contentRating != "pornographic"){
                             mangaIds.push(mangaId);
                             chapters[mangaId] = temp;
                         }
@@ -85,9 +91,6 @@ class Home extends React.Component{
                         mangaIds.push(mangaId);
                         chapters[mangaId] = temp;
                     }
-                }else if(contentRating != "erotica" && contentRating != "pornographic"){
-                    mangaIds.push(mangaId);
-                    chapters[mangaId] = temp;
                 }
             });
 
@@ -178,7 +181,7 @@ class Home extends React.Component{
                             <div className="text-center border-b-2 pb-1 border-gray-200 dark:border-gray-900">
                                 Top Chapters
                             </div>
-                            <div>
+                            {/* <div>
                                 <button className="w-1/3 text-center p-2 border-b-2 border-r-2 border-gray-200 dark:border-gray-900">
                                     6h
                                 </button>
@@ -188,10 +191,10 @@ class Home extends React.Component{
                                 <button className="w-1/3 text-center p-2 border-b-2 border-gray-200 dark:border-gray-900">
                                     7d
                                 </button>
-                            </div>
+                            </div> */}
                             <div className="h-auto p-4">
                                 {/* <p>Coming when api supports it</p> */}
-                                <Loading />
+                                {/* <Loading /> */}
                             </div>
                         </div>
                     </div>

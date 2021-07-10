@@ -57,6 +57,7 @@ class Header extends React.Component{
     searchManga = () => {
         if(this.state.search.length > 2){
             window.location = "#/search?manga=" + encodeURIComponent(this.state.search);
+            window.location.reload();
         }
     }
 

@@ -13,7 +13,7 @@ class Follow extends React.Component{
         this.state = {
             chapterList: [],
             chapterOffset: 0,
-            showChapterLoad: true,
+            showChapterLoad: false,
             tabControl: {
                 btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                 btnManga: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
@@ -64,9 +64,13 @@ class Follow extends React.Component{
         this.setState({
             loadControl: {
                 btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
-                btnLabel: "Loading..."
+                btnLabel:  
+                <div className="inline-flex">
+                    <span className="mr-2">Loading</span> 
+                    <img className="w-6 h-6" alt="Loading" src={process.env.PUBLIC_URL + '/spin.svg'} />
+                </div>
             }
-        })
+        });
         axios.get('https://api.mangadex.org/user/follows/manga/feed?order[publishAt]=desc',{
             params: {
                 translatedLanguage: translatedLanguage,
