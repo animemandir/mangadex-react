@@ -40,11 +40,13 @@ class TitleTableRow extends React.Component{
                     });
                 break;
                 case "user":
-                    let userName = relation.attributes.username;
-                    this.setState({
-                        userId: relation.id,
-                        userName: userName
-                    });
+                    if(relation.attributes){
+                        let userName = relation.attributes.username;
+                        this.setState({
+                            userId: relation.id,
+                            userName: userName
+                        });
+                    }
                 break;
             } 
         });

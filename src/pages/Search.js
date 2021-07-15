@@ -596,10 +596,10 @@ class Search extends React.Component{
                                     </tr>
                                 </table>
                                 <div className="w-full">
-                                    <button onClick={() => this.searchManga(0)} className="w-auto float-right mx-2 border-2 py-2 px-4 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
+                                    <button onClick={() => this.searchManga(0)} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
                                         Search
                                     </button>
-                                    <button onClick={() => this.randomManga()} className="w-auto float-right mx-2 border-2 py-2 px-4 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
+                                    <button onClick={() => this.randomManga()} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
                                         Ignore everything and yolo
                                     </button>
                                 </div>

@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import FollowChapterRow from '../component/FollowChapterRow.js';
 import Loading from '../component/Loading.js';
 import MangaBox from '../component/MangaBox.js';
-
+import { isLogged } from "../util/loginUtil.js";
 class Follow extends React.Component{
     constructor(props){
         super(props);
@@ -15,18 +15,18 @@ class Follow extends React.Component{
             chapterOffset: 0,
             showChapterLoad: false,
             tabControl: {
-                btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                btnManga: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                 contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
             },
             titleTabControl:{
-                btnReading: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                btnReReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                btnCompleted: "text-center px-3  mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                btnOnHold: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                btnPlan: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                btnDropped: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnReading: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                btnReReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnCompleted: "text-center px-3  mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnOnHold: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 contentReading: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                 contentReReading: "hidden",
                 contentCompleted: "hidden",
@@ -35,7 +35,7 @@ class Follow extends React.Component{
                 contentDropped: "hidden",
             },
             loadControl: {
-                btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                btnClass: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
                 btnLabel: "Load More"
             },
             boxReading: [],
@@ -50,8 +50,16 @@ class Follow extends React.Component{
     }
     componentDidMount = () => {
         document.title = "Follows - MangaDex";
-        this.getChapterFeed();
-        this.getTitleStatus();
+        let logged = isLogged();
+        if(logged){
+            var $this = this;
+            setTimeout(function(){
+                $this.getChapterFeed();
+                // $this.getTitleStatus();
+            },100);
+        }else{
+            window.location = "#/";
+        }
     }
 
     getChapterFeed = () => {
@@ -63,7 +71,7 @@ class Follow extends React.Component{
         var bearer = "Bearer " + localStorage.authToken;
         this.setState({
             loadControl: {
-                btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                btnClass: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
                 btnLabel:  
                 <div className="inline-flex">
                     <span className="mr-2">Loading</span> 
@@ -167,7 +175,7 @@ class Follow extends React.Component{
                 chapterOffset: offset,
                 showChapterLoad: showMore,
                 loadControl: {
-                    btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
+                    btnClass: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
                     btnLabel: "Load More"
                 }
             });
@@ -179,7 +187,6 @@ class Follow extends React.Component{
             });
         });
     }
-
 
     getTitleInfo = (ids,status) => {
         var $this = this;
@@ -277,11 +284,11 @@ class Follow extends React.Component{
         });
     }
 
-    getTitleStatus = () => {
+    getTitleStatus = (readStatus) => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
 
-        axios.get('https://api.mangadex.org/manga/status',{
+        axios.get('https://api.mangadex.org/manga/status?status=' + readStatus,{
             headers: {  
                 Authorization: bearer
             }
@@ -370,17 +377,20 @@ class Follow extends React.Component{
         switch(tab){
             case "chapter":
                 this.setState({tabControl: {
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    btnManga: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                     contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
                 }});
                 
             break;
             case "manga":
+                if(this.state.boxReading.length === 0){
+                    this.getTitleStatus("reading");
+                }
                 this.setState({tabControl: {
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    btnManga: "text-center px-3 py-1 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                     contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
                     contentManga: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
                 }});
@@ -391,14 +401,17 @@ class Follow extends React.Component{
     changeTitleTabs = (tab) => {
         switch(tab){
             case "reading":
+                if(this.state.boxReading.length === 0){
+                    this.getTitleStatus("reading");
+                }
                 this.setState({
                     titleTabControl:{
-                        btnReading: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReading: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnReReading: "text-center px-3 mr-3 mb-3 hover:opacity-75 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnCompleted: "text-center px-3  mr-3 mb-3 hover:opacity-75 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnOnHold: "text-center px-3 mr-3 mb-3 hover:opacity-75 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentReading: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                         contentReReading: "hidden",
                         contentCompleted: "hidden",
@@ -409,14 +422,17 @@ class Follow extends React.Component{
                 });
             break;
             case "rereading":
+                if(this.state.boxReReading.length === 0){
+                    this.getTitleStatus("re_reading");
+                }
                 this.setState({
                     titleTabControl:{
-                        btnReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnReReading: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReReading: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentReading: "hidden",
                         contentReReading: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                         contentCompleted: "hidden",
@@ -427,14 +443,17 @@ class Follow extends React.Component{
                 });
             break;
             case "completed":
+                if(this.state.boxCompleted.length === 0){
+                    this.getTitleStatus("completed");
+                }
                 this.setState({
                     titleTabControl:{
-                        btnReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnCompleted: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnCompleted: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentReading: "hidden",
                         contentReReading: "hidden",
                         contentCompleted: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
@@ -445,14 +464,17 @@ class Follow extends React.Component{
                 });
             break;
             case "onhold":
+                if(this.state.boxOnHold.length === 0){
+                    this.getTitleStatus("on_hold");
+                }
                 this.setState({
                     titleTabControl:{
-                        btnReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnOnHold: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnOnHold: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentReading: "hidden",
                         contentReReading: "hidden",
                         contentCompleted: "hidden",
@@ -463,14 +485,17 @@ class Follow extends React.Component{
                 });
             break;
             case "plan":
+                if(this.state.boxPlan.length === 0){
+                    this.getTitleStatus("plan_to_read");
+                }
                 this.setState({
                     titleTabControl:{
-                        btnReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnPlan: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnPlan: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentReading: "hidden",
                         contentReReading: "hidden",
                         contentCompleted: "hidden",
@@ -481,14 +506,17 @@ class Follow extends React.Component{
                 });
             break;
             case "dropped":
+                if(this.state.boxDropped.length === 0){
+                    this.getTitleStatus("dropped");
+                }
                 this.setState({
                     titleTabControl:{
-                        btnReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnDropped: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnReReading: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnCompleted: "text-center px-3  mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnOnHold: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnDropped: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                         contentReading: "hidden",
                         contentReReading: "hidden",
                         contentCompleted: "hidden",
@@ -577,41 +605,41 @@ class Follow extends React.Component{
                         
                             <div className={this.state.tabControl.contentManga}>
                                 <button onClick={() => this.changeTitleTabs("reading")} className={this.state.titleTabControl.btnReading} >
-                                    Reading ({this.state.boxReading.length})
+                                    {this.state.boxReading.length > 0 ? "Reading (" + this.state.boxReading.length + ")" : "Reading"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("rereading")} className={this.state.titleTabControl.btnReReading} >
-                                    Rereading ({this.state.boxReReading.length})
+                                    {this.state.boxReReading.length > 0 ? "Rereading (" + this.state.boxReReading.length + ")" : "Rereading"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("completed")} className={this.state.titleTabControl.btnCompleted} >
-                                    Completed ({this.state.boxCompleted.length})
+                                    {this.state.boxCompleted.length > 0 ? "Completed (" + this.state.boxCompleted.length + ")" : "Completed"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("onhold")} className={this.state.titleTabControl.btnOnHold} >
-                                    On Hold ({this.state.boxOnHold.length})
+                                    {this.state.boxOnHold.length > 0 ? "On Hold (" + this.state.boxOnHold.length + ")" : "On Hold"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("plan")} className={this.state.titleTabControl.btnPlan} >
-                                    Plan to Read ({this.state.boxPlan.length})
+                                    {this.state.boxPlan.length > 0 ? "Plan to Read (" + this.state.boxPlan.length + ")" : "Plan to Read"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("dropped")} className={this.state.titleTabControl.btnDropped} >
-                                    Dropped ({this.state.boxDropped.length})
+                                    {this.state.boxDropped.length > 0 ? "Dropped (" + this.state.boxDropped.length + ")" : "Dropped"}
                                 </button>
 
                                 <div className={this.state.titleTabControl.contentReading}>
-                                    {this.state.boxReading}
+                                    {this.state.boxReading.length > 0 ? this.state.boxReading : <Loading /> }
                                 </div>
                                 <div className={this.state.titleTabControl.contentReReading}>
-                                    {this.state.boxReReading}
+                                    {this.state.boxReReading.length > 0 ? this.state.boxReReading : <Loading /> }
                                 </div>
                                 <div className={this.state.titleTabControl.contentCompleted}>
-                                    {this.state.boxCompleted}
+                                    {this.state.boxCompleted.length > 0 ? this.state.boxCompleted : <Loading /> }
                                 </div>
                                 <div className={this.state.titleTabControl.contentOnHold}>
-                                    {this.state.boxOnHold}
+                                    {this.state.boxOnHold.length > 0 ? this.state.boxOnHold : <Loading /> }
                                 </div>
                                 <div className={this.state.titleTabControl.contentPlan}>
-                                    {this.state.boxPlan}
+                                    {this.state.boxPlan.length > 0 ? this.state.boxPlan : <Loading /> }
                                 </div>
                                 <div className={this.state.titleTabControl.contentDropped}>
-                                    {this.state.boxDropped}
+                                    {this.state.boxDropped.length > 0 ? this.state.boxDropped : <Loading /> }
                                 </div>
                             </div>
                         </div>

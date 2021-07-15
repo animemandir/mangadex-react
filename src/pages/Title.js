@@ -1,7 +1,7 @@
 import React from "react";
 import axios from 'axios';
 import { withRouter } from "react-router";
-import { demographic,mangaStatus,mangaContentRating } from '../util/static.js';
+import { demographic,mangaStatus,mangaContentRating,mangaReadingStatus } from '../util/static.js';
 import { linkParser } from '../util/linkParser.js';
 import { Link } from "react-router-dom";
 import Tags from '../component/Tags.js';
@@ -42,11 +42,14 @@ class Title extends React.Component{
             chapterShowMore: false,
             coverOffset: 0,
             coverShowMore: false,
+            following: false,
+            isLogged: false,
+            readingStatus: "",
 
             tabControl: {
                 active: "chapter",
-                btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                btnCover: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                btnCover: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                 contentCover: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
             },
@@ -65,17 +68,21 @@ class Title extends React.Component{
         document.title = "Manga - Mangadex";
         const id = this.props.match.params.id;
         this.setState({id:id},() => this.init());
-        
-        
     }
 
     init = () => {
         this.getMangaInfo();
-        this.getCoverList();
+        // this.getCoverList();
 
         let logged = isLogged();
         if(logged){
-            this.getChapterRead();
+            var $this = this;
+            setTimeout(function(){
+                $this.setState({isLogged:true});
+                $this.getChapterRead();
+                $this.checkFollow();
+                $this.checkReadingStatus();
+            },100);
         }else{
             this.getChapterList();
         }
@@ -322,23 +329,157 @@ class Title extends React.Component{
         });
     }
 
+    checkFollow = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/user/follows/manga/' + this.state.id,{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            $this.setState({
+                following: true
+            });
+        })
+        .catch(function(error){
+            console.log(error);
+            $this.setState({
+                following: false
+            });
+        });
+    }
+
+    followManga = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.post('https://api.mangadex.org/manga/' + this.state.id + '/follow',null,{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            if(response.data.result === "ok"){
+                toast.success('Following',{
+                    duration: 1000,
+                    position: 'top-right',
+                });
+                $this.checkFollow();
+            }
+        })
+        .catch(function(error){
+            toast.error('Error following manga.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    unfollowManga = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.delete('https://api.mangadex.org/manga/' + this.state.id + '/follow',{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            if(response.data.result === "ok"){
+                toast.success('Unfollowed',{
+                    duration: 1000,
+                    position: 'top-right',
+                });
+                $this.checkFollow();
+            }
+        })
+        .catch(function(error){
+            toast.error('Error unfollowing manga.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    checkReadingStatus = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/manga/' + this.state.id + '/status',{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            let status = response.data.status;
+            if(status === null){
+                status = "";
+            }
+            $this.setState({
+                readingStatus: response.data.status
+            });
+        })
+        .catch(function(error){
+            console.log(error);
+            $this.setState({
+                readingStatus: ""
+            });
+        });
+    }
+
+    changeReadingStatus = (e) => {
+        let newStatus = e.target.value;
+        if(newStatus === ""){
+            newStatus = null;
+        }
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.post('https://api.mangadex.org/manga/' + this.state.id + '/status',
+            {status: newStatus},
+            {
+                headers: {  
+                    Authorization: bearer
+                }
+            }
+        )
+        .then(function(response){
+            if(response.data.result === "ok"){
+                $this.setState({
+                    readingStatus: newStatus
+                });
+                toast.success('Updated Status',{
+                    duration: 1000,
+                    position: 'top-right',
+                });
+                $this.checkReadingStatus();
+            }
+        })
+        .catch(function(error){
+            toast.error('Error updating reading status.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
     changeTabs = (tab) => {
         switch(tab){
             case "chapter":
                 this.setState({tabControl: {
                     active: "chapter",
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    btnCover: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnCover: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                     contentCover: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
                 }});
                 
             break;
             case "cover":
+                if(this.state.coverList.length === 0){
+                    this.getCoverList();
+                }
                 this.setState({tabControl: {
                     active: "cover",
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    btnCover: "text-center px-3 py-1 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnCover: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
                     contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
                     contentCover: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
                 }});
@@ -372,6 +513,7 @@ class Title extends React.Component{
         var trOfficial = "";
         var trRetail = "";
         var trInformation = "";
+        var trActions = "";
         if(altTitles.length > 0){
             trAltTitles = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -444,6 +586,47 @@ class Title extends React.Component{
                 <td width="80%">{information}</td>
             </tr>;
         }
+        if(this.state.isLogged){
+            var btnFollow =
+            <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Follow" onClick={this.followManga}>
+                <div className="flex flex-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 mt-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                    </svg>
+                    Follow 
+                </div> 
+            </button>;
+            if(this.state.following){
+                btnFollow =
+                <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Unfollow" onClick={this.unfollowManga}>
+                    <div className="flex flex-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 mt-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                        </svg>
+                        Unfollow 
+                    </div>
+                </button>;
+            }
+
+            trActions = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Actions:</td>
+                <td width="80%" className="flex">
+                    {btnFollow}
+                    <select 
+                        className="w-auto px-3 py-1 my-1 h-9 focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                        value={this.state.readingStatus} 
+                        onChange={this.changeReadingStatus} >
+                        <option value="">None</option>
+                        {
+                            Object.keys(mangaReadingStatus).map((status) => 
+                                <option value={status}>{mangaReadingStatus[status]}</option>
+                            )
+                        }
+                    </select>
+                </td>
+            </tr>
+        }
 
         var chapterLoading = (this.state.chapterList.length <= 0) ? <Loading /> : "";
         var coverLoading = (this.state.coverList.length <= 0) ? <Loading /> : "";
@@ -512,10 +695,7 @@ class Title extends React.Component{
                                                 <td width="20%" className="font-semibold">Reading progress:</td>
                                                 <td width="80%">Coming soon (?)</td>
                                             </tr>
-                                            <tr className="text-left hidden">
-                                                <td width="20%" className="font-semibold">Actions:</td>
-                                                <td width="80%">Coming soon (?)</td>
-                                            </tr>
+                                            {trActions}
                                         </table>
                                     </div>
                                 </div>

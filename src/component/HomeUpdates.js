@@ -29,10 +29,10 @@ class HomeUpdates extends React.Component{
                 <div className="item-body w-4/5 pl-2">
                     <div className={"text-left flex flex-wrap pb-1 border-b dark:border-gray-900 " + colorTheme(600).text}>
                         <Link className="flex" to={"/title/" + this.props.data.mangaId}>
-                            <LanguageFlag language={this.props.data.originalLanguage} />
-                            <span className="ml-2">
+                            <span className="mr-2">
                                 {this.props.data.mangaName}  
                             </span>
+                            <LanguageFlag language={this.props.data.originalLanguage} />
                         </Link> 
                         
                     </div>
