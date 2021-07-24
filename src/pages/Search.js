@@ -33,6 +33,7 @@ class Search extends React.Component{
                 {value: 'ko', label: 'Korean'},
                 {value: 'zh', label: 'Chinese'},
                 {value: 'zh-hk', label: 'Chinese (HK)'},
+                {value: 'id', label: 'Indonesia'},
             ],
             optionDemographic: [],
             optionPublication: [],

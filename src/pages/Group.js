@@ -34,16 +34,16 @@ class Group extends React.Component{
             let members = [];
 
             name = response.data.data.attributes.name;
-            leader.push({
-                id: response.data.data.attributes.leader.id,
-                name: response.data.data.attributes.leader.attributes.username
-            });
-            response.data.data.attributes.members.map((member) => {
-                members.push({
-                    id: member.id,
-                    name: member.attributes.username
-                });
-            });
+            // leader.push({
+            //     id: response.data.data.attributes.leader.id,
+            //     name: response.data.data.attributes.leader.attributes.username
+            // });
+            // response.data.data.attributes.members.map((member) => {
+            //     members.push({
+            //         id: member.id,
+            //         name: member.attributes.username
+            //     });
+            // });
 
             document.title = "Group: " + name + " - Mangadex";
             $this.setState({
@@ -63,7 +63,7 @@ class Group extends React.Component{
     render = () => {
         var leader = this.state.leader.map((l) => 
             <div className="flex">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 mt-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                 </svg>
                 <Link className={"hover:opacity-75 mr-3 " + colorTheme(500).text} to={"/user/" + l.id}>{l.name}</Link>
@@ -71,7 +71,7 @@ class Group extends React.Component{
         );
         var member = this.state.members.map((m) => 
             <div className="flex flex-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 mt-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                 </svg>
                 <Link className={"hover:opacity-75 mr-3 " + colorTheme(500).text} to={"/user/" + m.id}>{m.name}</Link>
@@ -85,7 +85,7 @@ class Group extends React.Component{
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-left text-lg flex flex-wrap border-b-2 pb-1 px-3 border-gray-200 dark:border-gray-900">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 mt-1" viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                                 </svg>
                                 <span className="ml-2">{this.state.name}</span>

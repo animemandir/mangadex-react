@@ -2,8 +2,7 @@ import React from "react";
 import {
     HashRouter as Router,
     Switch,
-    Route,
-    Link
+    Route
 } from "react-router-dom";
 
 import Home from './pages/Home.js';
@@ -16,6 +15,7 @@ import Follow from './pages/Follow.js';
 import Search from './pages/Search.js';
 import Group from './pages/Group.js';
 import User from './pages/User.js';
+import Author from './pages/Author.js';
 import Error404 from './pages/Error404.js';
 
 
@@ -28,6 +28,9 @@ export default function App() {
                 </Route>
                 <Route path="/title/:id">
                     <Title />
+                </Route>
+                <Route path="/author/:id">
+                    <Author />
                 </Route>
                 <Route path="/user/:id">
                     <User />

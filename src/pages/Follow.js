@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect } from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import axios from 'axios';
@@ -48,15 +48,14 @@ class Follow extends React.Component{
             titleStatus: []
         };
     }
-    componentDidMount = () => {
+
+    async componentDidMount(){    
         document.title = "Follows - MangaDex";
-        let logged = isLogged();
+        let logged = await isLogged();
         if(logged){
             var $this = this;
-            setTimeout(function(){
-                $this.getChapterFeed();
-                // $this.getTitleStatus();
-            },100);
+            $this.getChapterFeed();
+            // $this.getTitleStatus();
         }else{
             window.location = "#/";
         }
@@ -68,7 +67,7 @@ class Follow extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        var bearer = "Bearer " + localStorage.authToken;
+        var bearer = "Bearer " + localStorage.getItem("authToken");
         this.setState({
             loadControl: {
                 btnClass: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
@@ -114,7 +113,7 @@ class Follow extends React.Component{
 
     getChapterRead = (chapterList,mangaList,totalOffset) => {
         var $this = this;
-        var bearer = "Bearer " + localStorage.authToken;
+        var bearer = "Bearer " + localStorage.getItem("authToken");
         axios.get('https://api.mangadex.org/manga/read',{
             params: {
                 ids: mangaList,
@@ -286,7 +285,7 @@ class Follow extends React.Component{
 
     getTitleStatus = (readStatus) => {
         var $this = this;
-        var bearer = "Bearer " + localStorage.authToken;
+        var bearer = "Bearer " + localStorage.getItem("authToken");
 
         axios.get('https://api.mangadex.org/manga/status?status=' + readStatus,{
             headers: {  

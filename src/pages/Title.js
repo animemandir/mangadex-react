@@ -70,19 +70,16 @@ class Title extends React.Component{
         this.setState({id:id},() => this.init());
     }
 
-    init = () => {
+    async init(){
         this.getMangaInfo();
-        // this.getCoverList();
 
-        let logged = isLogged();
+        let logged = await isLogged();
         if(logged){
             var $this = this;
-            setTimeout(function(){
-                $this.setState({isLogged:true});
-                $this.getChapterRead();
-                $this.checkFollow();
-                $this.checkReadingStatus();
-            },100);
+            $this.setState({isLogged:true});
+            $this.getChapterRead();
+            $this.checkFollow();
+            $this.checkReadingStatus();
         }else{
             this.getChapterList();
         }

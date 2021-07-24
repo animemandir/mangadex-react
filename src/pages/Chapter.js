@@ -51,7 +51,7 @@ class Chapter extends React.Component{
     }
 
     // Initialization
-    componentDidMount = () => {
+    async componentDidMount(){
         const id = this.props.match.params.id;
         const page = parseInt(this.props.match.params.page);
         this.setState({
@@ -61,7 +61,7 @@ class Chapter extends React.Component{
 
         this.initReader();
         this.getChapter(id);
-        let logged = isLogged();
+        let logged = await isLogged();
         if(logged){
             this.markChapterRead(id);
         }
