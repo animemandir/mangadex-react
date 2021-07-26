@@ -9,8 +9,7 @@ class FollowChapterRow extends React.Component{
         super(props);
         this.state = {
             chapterLabel: "",
-            groupId: "",
-            groupName: "",
+            groups: [],
             userId: "",
             userName: "",
             mangaId: "",
@@ -33,10 +32,13 @@ class FollowChapterRow extends React.Component{
         this.props.data.relationships.map((relation) => {
             switch(relation.type){
                 case "scanlation_group":
-                    let groupName = relation.attributes.name;
+                    let groups = this.state.groups;
+                    groups.push({
+                        id: relation.id,
+                        name:  relation.attributes.name
+                    });
                     this.setState({
-                        groupId: relation.id,
-                        groupName: groupName
+                        groups: groups
                     });
                 break;
                 case "user":
@@ -84,6 +86,14 @@ class FollowChapterRow extends React.Component{
                 </svg>
             </td>
         }
+
+        var group = this.state.groups.map((g) => 
+        <div className="w-full">
+            <Link className={colorTheme(400).text} to={"/group/" + g.id}>
+                {g.name}
+            </Link>
+        </div>);
+
         return (
             <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
                 {readMarker}
@@ -101,9 +111,7 @@ class FollowChapterRow extends React.Component{
                     <LanguageFlag language={this.props.data.data.attributes.translatedLanguage} />
                 </td>
                 <td>
-                    <Link className={colorTheme(400).text} to={"/group/" + this.state.groupId}>
-                        {this.state.groupName}
-                    </Link>
+                    {group}
                 </td>
                 <td>
                     <Link className={colorTheme(400).text} to={"/user/" + this.state.userId}>

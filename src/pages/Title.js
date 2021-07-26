@@ -493,12 +493,11 @@ class Title extends React.Component{
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
 
         var authors = this.state.author.map((au) => 
-            <Link className={"mr-4 " + colorTheme(500).text} to={"/search?author="+au.id}>{au.name}</Link>
+            <Link className={"mr-4 " + colorTheme(500).text} to={"/author/"+au.id}>{au.name}</Link>
         );
         var artists = this.state.artist.map((ar) => 
-            <Link className={"mr-4 " + colorTheme(500).text} to={"/search?artist="+ar.id}>{ar.name}</Link>
+            <Link className={"mr-4 " + colorTheme(500).text} to={"/author/"+ar.id}>{ar.name}</Link>
         );
-
 
         var trAltTitles = "";
         var trAuthor = "";

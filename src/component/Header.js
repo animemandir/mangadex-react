@@ -14,10 +14,10 @@ class Header extends React.Component{
         };
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         this.setMode();
 
-        let logged = isLogged();
+        let logged = await isLogged();
         this.setState({isLogged:logged});
     }
 

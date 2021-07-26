@@ -21,9 +21,9 @@ class Login extends React.Component{
         this.authLogin = this.authLogin.bind(this);
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         document.title = "Login - MangaDex";
-        let logged = isLogged();
+        let logged = await isLogged();
         if(logged){
             window.location = "#/";
         }

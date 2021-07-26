@@ -72,7 +72,7 @@ class About extends React.Component{
                                 </li>
                             </ul>
 
-                            <h2 className="border-b text-xl my-3">To do list/Waiting for API full support:</h2>
+                            <h2 className="border-b text-xl my-3">To do list/Waiting for API full support/Note to self:</h2>
                             <ul className="list-disc">
                                 <li>Title: stats and ratings</li>
                                 <li>Title: Edit progress</li>
@@ -81,8 +81,6 @@ class About extends React.Component{
                                 <li>Home: Top manga</li>
                                 <li>Search: Order (waiting more options)</li>
                                 <li>Complete user page</li>
-                                <li>Complete group page</li>
-                                <li>Author page</li>
                             </ul>
                         </div>
                     </div>

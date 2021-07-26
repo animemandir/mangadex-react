@@ -2,11 +2,10 @@ import { DateTime } from "luxon";
 import axios from 'axios';
 
 export async function isLogged(){
-    let isLogin = false;
     if(localStorage.authExpire){
         let now = DateTime.now();
         if(localStorage.authExpire > now.toFormat("X")){
-            isLogin = true;
+            return true;
         }else if(localStorage.refreshExpire > now.toFormat("X")){
             return await axios.post('https://api.mangadex.org/auth/refresh',{
                 token: localStorage.authRefresh,
@@ -20,7 +19,6 @@ export async function isLogged(){
                     let nowRef = DateTime.now().plus({days: 30});
                     localStorage.refreshExpire = nowRef.toSeconds();
 
-                    console.log(now);
                     return true;
                 }
 
@@ -33,6 +31,6 @@ export async function isLogged(){
         }
     }
 
-    return isLogin;
+    return false;
 }
 
