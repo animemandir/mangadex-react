@@ -51,7 +51,7 @@ class FollowChapterRow extends React.Component{
                 case "manga":
                     let title = "";
                     Object.keys(relation.attributes.title).map(function(key){
-                        if(key == "en" || title == ""){
+                        if(key === "en" || title === ""){
                             title = relation.attributes.title[key];
                         }
                     });
@@ -60,7 +60,7 @@ class FollowChapterRow extends React.Component{
                         mangaName: title
                     });
                 break;
-            } 
+            }
         });
 
         this.setState({

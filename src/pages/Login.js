@@ -53,7 +53,7 @@ class Login extends React.Component{
             password: this.state.password
         })
         .then(function(response){
-            if(response.data.result == "ok"){
+            if(response.data.result === "ok"){
                 localStorage.authToken = response.data.token.session;
                 localStorage.authUser = $this.state.user;
                 let now = DateTime.now().plus({minutes: 15});

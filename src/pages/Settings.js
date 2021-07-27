@@ -48,7 +48,7 @@ class Settings extends React.Component{
         let language = this.state.language;
         let index = language.indexOf(e.target.value);
         if(e.target.checked){
-            if(index == -1){
+            if(index === -1){
                 language.push(e.target.value);
             }
         }else if(index > -1){
@@ -63,7 +63,7 @@ class Settings extends React.Component{
         let content = this.state.content;
         let index = content.indexOf(e.target.value);
         if(e.target.checked){
-            if(index == -1){
+            if(index === -1){
                 content.push(e.target.value);
             }
         }else if(index > -1){
@@ -123,7 +123,7 @@ class Settings extends React.Component{
                     onChange={this.handleColor}
                     checked={this.state.color === c.value}
                 />
-                <span className={"ml-2 text-sm font-semibold" + " text-"+c.value+"-500"}>
+                <span className={`ml-2 text-sm font-semibold text-${c.value}-500`}>
                     {c.label}
                 </span>
             </label>

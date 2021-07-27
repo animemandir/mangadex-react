@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { withRouter } from 'react-router-dom';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
@@ -149,7 +148,7 @@ class Search extends React.Component{
             response.data.map((tag) => {
                 let label = "";
                 Object.keys(tag.data.attributes.name).map(function(key){
-                    if(key == "en" || label == ""){
+                    if(key === "en" || label === ""){
                         label = tag.data.attributes.name[key];
                     }
                 });
@@ -178,7 +177,7 @@ class Search extends React.Component{
             left: "w-11/12 flex border-b-2 pb-1 cursor-pointer border-gray-200 dark:border-gray-900",
             right: "w-1/12 flex border-b-2 pb-1 pr-3 cursor-pointer border-gray-200 dark:border-gray-900"
         }
-        if(this.state.classForm == "hidden"){
+        if(this.state.classForm === "hidden"){
             form = "flex flex-wrap pt-2 px-4";
         }else{
             form = "hidden"
@@ -252,14 +251,14 @@ class Search extends React.Component{
                 
                 let title = "";
                 Object.keys(result.data.attributes.title).map(function(key){
-                    if(key == "en" || title == ""){
+                    if(key === "en" || title === ""){
                         title = result.data.attributes.title[key];
                     }
                 });
 
                 let description = "";
                 Object.keys(result.data.attributes.description).map(function(key){
-                    if(key == "en" || description == ""){
+                    if(key === "en" || description === ""){
                         description = result.data.attributes.description[key];
                     }
                 });
@@ -303,14 +302,14 @@ class Search extends React.Component{
 
             let title = "";
             Object.keys(response.data.data.attributes.title).map(function(key){
-                if(key == "en" || title == ""){
+                if(key === "en" || title === ""){
                     title = response.data.data.attributes.title[key];
                 }
             });
 
             let description = "";
             Object.keys(response.data.data.attributes.description).map(function(key){
-                if(key == "en" || description == ""){
+                if(key === "en" || description === ""){
                     description = response.data.data.attributes.description[key];
                 }
             });
@@ -373,7 +372,7 @@ class Search extends React.Component{
     }
 
     changeTagIncludeMode = (value) => {
-        if(value == "and"){
+        if(value === "and"){
             this.setState({
                 tagsInclusionModeChecked: [true,false],
                 tagsInclusionMode: value
@@ -387,7 +386,7 @@ class Search extends React.Component{
     }
 
     changeTagExcludeMode = (value) => {
-        if(value == "and"){
+        if(value === "and"){
             this.setState({
                 tagsExclusionModeChecked: [true,false],
                 tagsExclusionMode: value

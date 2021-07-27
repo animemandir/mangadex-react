@@ -45,19 +45,19 @@ class Home extends React.Component{
                 let originalLanguage = "";
                 let contentRating = "";
                 chapter.relationships.map((relation) => {
-                    if(relation.type == "manga"){
+                    if(relation.type === "manga"){
                         mangaId = relation.id;
                         originalLanguage = relation.attributes.originalLanguage;
                         contentRating = relation.attributes.contentRating;
 
                         Object.keys(relation.attributes.title).map(function(key){
-                            if(key == "en" || mangaName == ""){
+                            if(key === "en" || mangaName === ""){
                                 mangaName = relation.attributes.title[key];
                             }
                         });
                     }
 
-                    if(relation.type == "scanlation_group"){
+                    if(relation.type === "scanlation_group"){
                         groupId = relation.id;
                         groupName = relation.attributes.name;
                     }
@@ -83,11 +83,11 @@ class Home extends React.Component{
                                 mangaIds.push(mangaId);
                                 chapters[mangaId] = temp;
                             }
-                        }else if(contentRating != "erotica" && contentRating != "pornographic"){
+                        }else if(contentRating !== "erotica" && contentRating !== "pornographic"){
                             mangaIds.push(mangaId);
                             chapters[mangaId] = temp;
                         }
-                    }else if(contentRating != "erotica" && contentRating != "pornographic"){
+                    }else if(contentRating !== "erotica" && contentRating !== "pornographic"){
                         mangaIds.push(mangaId);
                         chapters[mangaId] = temp;
                     }
@@ -118,7 +118,7 @@ class Home extends React.Component{
             response.data.results.map((cover,i) => {
                 let mangaId = "";
                 cover.relationships.map((relation) => {
-                    if(relation.type == "manga"){
+                    if(relation.type === "manga"){
                         mangaId = relation.id;
                     }
 

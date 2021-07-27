@@ -4,7 +4,6 @@ import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
-import { Link } from "react-router-dom";
 
 class User extends React.Component{
     constructor(props){

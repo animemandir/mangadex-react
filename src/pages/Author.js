@@ -84,14 +84,14 @@ class Author extends React.Component{
                 
                 let title = "";
                 Object.keys(result.data.attributes.title).map(function(key){
-                    if(key == "en" || title == ""){
+                    if(key === "en" || title === ""){
                         title = result.data.attributes.title[key];
                     }
                 });
 
                 let description = "";
                 Object.keys(result.data.attributes.description).map(function(key){
-                    if(key == "en" || description == ""){
+                    if(key === "en" || description === ""){
                         description = result.data.attributes.description[key];
                     }
                 });

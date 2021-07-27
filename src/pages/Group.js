@@ -9,6 +9,7 @@ import { colorTheme } from "../util/colorTheme";
 import Tags from '../component/Tags.js';
 import FollowChapterRow from '../component/FollowChapterRow.js';
 import Loading from '../component/Loading.js';
+import { isLogged } from "../util/loginUtil.js";
 class Group extends React.Component{
     constructor(props){
         super(props);
@@ -24,6 +25,7 @@ class Group extends React.Component{
             site: "",
             leader: [],
             members: [],
+            logged: false,
 
             chapterList: [],
             chapterOffset: 0,
@@ -35,10 +37,14 @@ class Group extends React.Component{
         };
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         document.title = "Group - MangaDex";
         const id = this.props.match.params.id;
-        this.setState({id:id},() => this.getGroupFeed());
+        let logged = await isLogged();
+        this.setState({
+            id:id,
+            logged: logged
+        },() => this.getGroupFeed());
 
         this.getGroupInfo(id);
     }
@@ -48,7 +54,7 @@ class Group extends React.Component{
             return false;
         }
 
-        if(this.state.id != this.props.match.params.id){
+        if(this.state.id !== this.props.match.params.id){
             this.setState({
                 id: this.props.match.params.id,
                 chapterList: [],
@@ -129,7 +135,6 @@ class Group extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        var bearer = "Bearer " + localStorage.getItem("authToken");
         this.setState({
             loadControl: {
                 btnClass: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
@@ -160,7 +165,11 @@ class Group extends React.Component{
                 });
             }
 
-            $this.getChapterRead(list,mangaList,response.data.total);
+            if($this.state.logged){
+                $this.getChapterRead(list,mangaList,response.data.total);
+            }else{
+                $this.getChapterInfo(list,[],response.data.total);
+            }
         })
         .catch(function(error){
             toast.error('Error retrieving chapter feed list.',{

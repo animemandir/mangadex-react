@@ -95,7 +95,7 @@ class Chapter extends React.Component{
                     case "manga":
                         mangaId = relation.id;
                         Object.keys(relation.attributes.title).map(function(key){
-                            if(key == "en" || manga == ""){
+                            if(key === "en" || manga === ""){
                                 manga = relation.attributes.title[key];
                             }
                         });
@@ -203,7 +203,7 @@ class Chapter extends React.Component{
                 $this.getChapterList(id,offset+100);
             }else{
                 for(let a = 0; a < list.length; a++){
-                    if(list[a].id == $this.state.id){
+                    if(list[a].id === $this.state.id){
                         let prev = "";
                         let next = "";
 
@@ -233,7 +233,6 @@ class Chapter extends React.Component{
     }
 
     markChapterRead = (id) => {
-        var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
         axios.post('https://api.mangadex.org/chapter/' + id + '/read',null,{
             headers: {  
@@ -295,12 +294,12 @@ class Chapter extends React.Component{
     }
 
     toggleMenu = () => {
-        localStorage.showReaderMenu = (localStorage.showReaderMenu == 1) ? 0 : 1;
+        localStorage.showReaderMenu = (parseInt(localStorage.showReaderMenu) === 1) ? 0 : 1;
         this.setMenu();
     }
 
     setMenu = () => {
-        if(localStorage.showReaderMenu == 1){
+        if(parseInt(localStorage.showReaderMenu) === 1){
             this.setState({
                 classMenuA: "w-3/12 flex flex-wrap",
                 classMenuB: "hidden",
@@ -542,10 +541,10 @@ class Chapter extends React.Component{
         window.history.pushState({path: path}, '', path);
         imageLoad.push(<div className="invisible" ref={this.scrollTop}></div>);
 
-        if(localStorage.readerlayout != "single"){
+        if(localStorage.readerlayout !== "single"){
             for(let a = 0; a < this.state.data.length; a++){
-                let imageOriginal = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
-                let imageSaver = this.state.baseUrl + "/" + "data-saver" + "/" + this.state.hash + "/" + this.state.dataSaver[a];
+                let imageOriginal = `${this.state.baseUrl}/data/${this.state.hash}/${this.state.data[a]}`;
+                let imageSaver = `${this.state.baseUrl}/data-saver/${this.state.hash}/${this.state.dataSaver[a]}`;
                 let image = (this.state.imageSource === "original") ? imageOriginal : imageSaver; 
                 if((a+1) < progress){
                     progressBar.push(
@@ -563,7 +562,7 @@ class Chapter extends React.Component{
                         </div>
                     );
                 }
-                if((a+1) == progress){
+                if((a+1) === progress){
                     progressBar.push(
                         <div 
                             className={"flex-grow cursor-pointer border-b-2 border-gray-300 dark:border-gray-900 " + colorTheme(600).bg}
@@ -600,7 +599,7 @@ class Chapter extends React.Component{
             }
         }else{
             for(let a = 0; a < this.state.data.length; a++){
-                let image = this.state.baseUrl + "/" + "data" + "/" + this.state.hash + "/" + this.state.data[a];
+                let image = `${this.state.baseUrl}/data/${this.state.hash}/${this.state.data[a]}`;
                 imageLoad.push(
                     <div className="flex flex-row justify-center items-center">
                         <img 

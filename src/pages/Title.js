@@ -112,7 +112,7 @@ class Title extends React.Component{
 
             let title = "";
             Object.keys(response.data.data.attributes.title).map(function(key){
-                if(key == "en" || title == ""){
+                if(key === "en" || title === ""){
                     title = response.data.data.attributes.title[key];
                 }
             });
@@ -149,7 +149,7 @@ class Title extends React.Component{
             let status = mangaStatus[response.data.data.attributes.status];
             let description = "";
             Object.keys(response.data.data.attributes.description).map(function(key){
-                if(key == "en" || description == ""){
+                if(key === "en" || description === ""){
                     description = response.data.data.attributes.description[key];
                 }
             });
@@ -293,7 +293,7 @@ class Title extends React.Component{
                 let file = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.results[i].data.attributes.fileName + ".512.jpg";
                 let title = (response.data.results[i].data.attributes.volume) ? "Volume " + response.data.results[i].data.attributes.volume : "Cover"; 
                 list.push(
-                    <a href={fileFull} target="_blank"  className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
+                    <a href={fileFull} target="_blank" rel="noreferrer" className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
                         <img 
                             src={file}                            
                             alt={title}

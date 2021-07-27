@@ -1,4 +1,4 @@
-import React,{ useEffect } from "react";
+import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import axios from 'axios';
@@ -209,14 +209,14 @@ class Follow extends React.Component{
                 
                 let title = "";
                 Object.keys(result.data.attributes.title).map(function(key){
-                    if(key == "en" || title == ""){
+                    if(key === "en" || title === ""){
                         title = result.data.attributes.title[key];
                     }
                 });
 
                 let description = "";
                 Object.keys(result.data.attributes.description).map(function(key){
-                    if(key == "en" || description == ""){
+                    if(key === "en" || description === ""){
                         description = result.data.attributes.description[key];
                     }
                 });
@@ -230,44 +230,45 @@ class Follow extends React.Component{
                 });
             });
             
+            var list = [];
             switch(status){
                 case "reading":
-                    var list = $this.state.boxReading;
+                    list = $this.state.boxReading;
                     mangaList.map((manga) => {
                         list.push(<MangaBox data={manga} />);
                     });
                     $this.setState({boxReading:list});
                 break;
                 case "on_hold":
-                    var list = $this.state.boxOnHold;
+                    list = $this.state.boxOnHold;
                     mangaList.map((manga) => {
                         list.push(<MangaBox data={manga} />);
                     });
                     $this.setState({boxOnHold:list});
                 break;
                 case "plan_to_read":
-                    var list = $this.state.boxPlan;
+                    list = $this.state.boxPlan;
                     mangaList.map((manga) => {
                         list.push(<MangaBox data={manga} />);
                     });
                     $this.setState({boxPlan:list});
                 break;
                 case "dropped":
-                    var list = $this.state.boxDropped;
+                    list = $this.state.boxDropped;
                     mangaList.map((manga) => {
                         list.push(<MangaBox data={manga} />);
                     });
                     $this.setState({boxDropped:list});
                 break;
                 case "re_reading":
-                    var list = $this.state.boxReReading;
+                    list = $this.state.boxReReading;
                     mangaList.map((manga) => {
                         list.push(<MangaBox data={manga} />);
                     });
                     $this.setState({boxReReading:list});
                 break;
                 case "completed":
-                    var list = $this.state.boxCompleted;
+                    list = $this.state.boxCompleted;
                     mangaList.map((manga) => {
                         list.push(<MangaBox data={manga} />);
                     });
@@ -303,42 +304,42 @@ class Follow extends React.Component{
                 switch(response.data.statuses[key]){
                     case "reading":
                         reading.push(key);
-                        if(reading.length == 100){
+                        if(reading.length === 100){
                             $this.getTitleInfo(reading,"reading");
                             reading = [];
                         }
                     break;
                     case "on_hold":
                         onhold.push(key);
-                        if(onhold.length == 100){
+                        if(onhold.length === 100){
                             $this.getTitleInfo(onhold,"on_hold");
                             onhold = [];
                         }
                     break;
                     case "plan_to_read":
                         plan.push(key);
-                        if(plan.length == 100){
+                        if(plan.length === 100){
                             $this.getTitleInfo(plan,"plan_to_read");
                             plan = [];
                         }
                     break;
                     case "dropped":
                         dropped.push(key);
-                        if(dropped.length == 100){
+                        if(dropped.length === 100){
                             $this.getTitleInfo(dropped,"dropped");
                             dropped = [];
                         }
                     break;
                     case "re_reading":
                         rereading.push(key);
-                        if(rereading.length == 100){
+                        if(rereading.length === 100){
                             $this.getTitleInfo(rereading,"re_reading");
                             rereading = [];
                         }
                     break;
                     case "completed":
                         completed.push(key);
-                        if(completed.length == 100){
+                        if(completed.length === 100){
                             $this.getTitleInfo(completed,"completed");
                             completed = [];
                         }
