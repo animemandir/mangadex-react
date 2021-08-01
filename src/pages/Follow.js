@@ -45,7 +45,13 @@ class Follow extends React.Component{
             boxPlan: [],
             boxDropped: [],
             titleList: [],
-            titleStatus: []
+            titleStatus: [],
+            totalReading: -1,
+            totalOnHold: -1,
+            totalPlanToRead: -1,
+            totalDropped: -1,
+            totalReReading: -1,
+            totalCompleted: -1,
         };
     }
 
@@ -300,6 +306,81 @@ class Follow extends React.Component{
             var dropped = [];
             var rereading = [];
             var completed = [];
+
+            switch(readStatus){
+                case "reading":
+                    $this.setState({totalReading: Object.keys(response.data.statuses).length});
+                    if(Object.keys(response.data.statuses).length === 0){
+                        let emptyBox = [];
+                        emptyBox.push(
+                            <span className="h-10 mt-2">
+                                No titles found.
+                            </span>
+                        )
+                        $this.setState({boxReading: emptyBox});
+                    }
+                break;
+                case "on_hold":
+                    $this.setState({totalOnHold: Object.keys(response.data.statuses).length});
+                    if(Object.keys(response.data.statuses).length === 0){
+                        let emptyBox = [];
+                        emptyBox.push(
+                            <span className="h-10 mt-2">
+                                No titles found.
+                            </span>
+                        )
+                        $this.setState({boxOnHold: emptyBox});
+                    }
+                break;
+                case "plan_to_read":
+                    $this.setState({totalPlanToRead: Object.keys(response.data.statuses).length});
+                    if(Object.keys(response.data.statuses).length === 0){
+                        let emptyBox = [];
+                        emptyBox.push(
+                            <span className="h-10 mt-2">
+                                No titles found.
+                            </span>
+                        )
+                        $this.setState({boxPlan: emptyBox});
+                    }
+                break;
+                case "dropped":
+                    $this.setState({totalDropped: Object.keys(response.data.statuses).length});
+                    if(Object.keys(response.data.statuses).length === 0){
+                        let emptyBox = [];
+                        emptyBox.push(
+                            <span className="h-10 mt-2">
+                                No titles found.
+                            </span>
+                        )
+                        $this.setState({boxDropped: emptyBox});
+                    }
+                break;
+                case "re_reading":
+                    $this.setState({totalReReading: Object.keys(response.data.statuses).length});
+                    if(Object.keys(response.data.statuses).length === 0){
+                        let emptyBox = [];
+                        emptyBox.push(
+                            <span className="h-10 mt-2">
+                                No titles found.
+                            </span>
+                        )
+                        $this.setState({boxReReading: emptyBox});
+                    }
+                break;
+                case "completed":
+                    $this.setState({totalCompleted: Object.keys(response.data.statuses).length});
+                    if(Object.keys(response.data.statuses).length === 0){
+                        let emptyBox = [];
+                        emptyBox.push(
+                            <span className="h-10 mt-2">
+                                No titles found.
+                            </span>
+                        )
+                        $this.setState({boxCompleted: emptyBox});
+                    }
+                break;
+            }
             Object.keys(response.data.statuses).map(function(key){
                 switch(response.data.statuses[key]){
                     case "reading":
@@ -549,10 +630,10 @@ class Follow extends React.Component{
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full py-2 my-4 mx-2">
                             <button onClick={() => this.changeTabs("chapter")} className={this.state.tabControl.btnChapter} >
-                                Chapters
+                                Last Updates
                             </button>
                             <button onClick={() => this.changeTabs("manga")} className={this.state.tabControl.btnManga}>
-                                Titles
+                                Reading List
                             </button>
 
                             <div className={this.state.tabControl.contentChapter}>
@@ -605,22 +686,22 @@ class Follow extends React.Component{
                         
                             <div className={this.state.tabControl.contentManga}>
                                 <button onClick={() => this.changeTitleTabs("reading")} className={this.state.titleTabControl.btnReading} >
-                                    {this.state.boxReading.length > 0 ? "Reading (" + this.state.boxReading.length + ")" : "Reading"}
+                                    {this.state.totalReading > -1 ? "Reading (" + this.state.totalReading + ")" : "Reading"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("rereading")} className={this.state.titleTabControl.btnReReading} >
-                                    {this.state.boxReReading.length > 0 ? "Rereading (" + this.state.boxReReading.length + ")" : "Rereading"}
+                                    {this.state.totalReReading > -1 ? "Rereading (" + this.state.totalReReading + ")" : "Rereading"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("completed")} className={this.state.titleTabControl.btnCompleted} >
-                                    {this.state.boxCompleted.length > 0 ? "Completed (" + this.state.boxCompleted.length + ")" : "Completed"}
+                                    {this.state.totalCompleted > -1 ? "Completed (" + this.state.totalCompleted + ")" : "Completed"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("onhold")} className={this.state.titleTabControl.btnOnHold} >
-                                    {this.state.boxOnHold.length > 0 ? "On Hold (" + this.state.boxOnHold.length + ")" : "On Hold"}
+                                    {this.state.totalOnHold > -1 ? "On Hold (" + this.state.totalOnHold + ")" : "On Hold"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("plan")} className={this.state.titleTabControl.btnPlan} >
-                                    {this.state.boxPlan.length > 0 ? "Plan to Read (" + this.state.boxPlan.length + ")" : "Plan to Read"}
+                                    {this.state.totalPlanToRead > -1 ? "Plan to Read (" + this.state.totalPlanToRead + ")" : "Plan to Read"}
                                 </button>
                                 <button onClick={() => this.changeTitleTabs("dropped")} className={this.state.titleTabControl.btnDropped} >
-                                    {this.state.boxDropped.length > 0 ? "Dropped (" + this.state.boxDropped.length + ")" : "Dropped"}
+                                    {this.state.totalDropped > -1 ? "Dropped (" + this.state.totalDropped + ")" : "Dropped"}
                                 </button>
 
                                 <div className={this.state.titleTabControl.contentReading}>

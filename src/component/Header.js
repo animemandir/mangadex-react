@@ -48,7 +48,6 @@ class Header extends React.Component{
 
     handleSearchKeypress = (e) => {
         e.preventDefault();
-        console.log(e.key);
         if(e.key === "Enter"){
             this.searchManga();
         }

@@ -45,6 +45,13 @@ class Login extends React.Component{
         this.setState({password: e.target.value});
     }
 
+    handlePwdKeypress = (e) => {
+        e.preventDefault();
+        if(e.key === "Enter"){
+            this.authLogin(e);
+        }
+    }
+
     authLogin = (e) => {
         var $this = this;
         e.preventDefault();
@@ -56,7 +63,7 @@ class Login extends React.Component{
             if(response.data.result === "ok"){
                 localStorage.authToken = response.data.token.session;
                 localStorage.authUser = $this.state.user;
-                let now = DateTime.now().plus({minutes: 15});
+                let now = DateTime.now().plus({minutes: 5});
                 localStorage.authExpire = now.toSeconds();
                 localStorage.authRefresh = response.data.token.refresh;
                 let nowRef = DateTime.now().plus({days: 30});
@@ -111,6 +118,7 @@ class Login extends React.Component{
                                                     placeholder="Password"
                                                     value={this.state.password}
                                                     onChange={this.handlePassword}
+                                                    onKeyUp={this.handlePwdKeypress}
                                                 />
                                             </div>
                                             <div className="hidden">

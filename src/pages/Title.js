@@ -239,7 +239,16 @@ class Title extends React.Component{
                 if($this.state.chapterRead.indexOf(response.data.results[i].data.id) > -1){
                     response.data.results[i].read = true;
                 }
-                list.push(<TitleTableRow data={response.data.results[i]}/>)
+                list.push(<TitleTableRow 
+                    data={response.data.results[i]}/>)
+            }
+
+            if(response.data.total === 0){
+                list.push(
+                    <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                        <td>No chapters found.</td>
+                    </tr>
+                )
             }
 
             let offset = parseInt($this.state.chapterOffset) + 100;

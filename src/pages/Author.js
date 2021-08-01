@@ -34,14 +34,6 @@ class Author extends React.Component{
         var $this = this;
         axios.get('https://api.mangadex.org/author/' + this.state.id)
         .then(function(response){
-            let manga = []
-            response.data.relationships.map((relation) => {
-                if(relation.type === "manga"){
-                    manga.push(relation.id);
-                }
-            });
-            $this.getMangaList(manga);
-
             let name = response.data.data.attributes.name;
             let version = response.data.data.attributes.version;
             let image = response.data.data.attributes.imageUrl;
@@ -54,6 +46,7 @@ class Author extends React.Component{
                 biography: biography,
             });
             document.title = name + " - Mangadex";
+            $this.getMangaList();
         })
         .catch(function(error){
             toast.error('Error retrieving manga data.',{
@@ -63,11 +56,19 @@ class Author extends React.Component{
         });
     }
 
-    getMangaList = (list) => {
+    getMangaList = () => {
+        var contentRating = [];
+        if(localStorage.content){
+            let content = JSON.parse(localStorage.content);
+            contentRating = content.map(c => c);
+        }
+
         var $this = this;
         axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{
             params: {
-                ids: list
+                limit: 100,            
+                authors: [this.state.id],
+                contentRating: contentRating
             }
         })
         .then(function(response){
