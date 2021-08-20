@@ -8,7 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import MangaBox from '../component/MangaBox.js';
 import Loading from '../component/Loading.js';
-
+import Paginator from '../component/Paginator.js';
 class Search extends React.Component{
     constructor(props){
         super(props);
@@ -137,7 +137,7 @@ class Search extends React.Component{
             demographic: demo,
             contentRating: contentRating,
             tagsInclude: tag
-        },() => this.searchManga(0));
+        },() => this.searchManga(1));
     }
 
     getTags = () => {
@@ -193,8 +193,12 @@ class Search extends React.Component{
         });
     }
 
-    searchManga = (offset) => {
+    searchManga = (page) => {
         this.setState({resultList:[<Loading />]});
+        var offset = 0;
+        if(page > 1){
+            offset = (100 * page) - 100;
+        }
 
         var searchParams = {limit: 100,offset: offset};
         if(this.state.manga.length > 2){
@@ -273,7 +277,19 @@ class Search extends React.Component{
             });
             
             let list = mangaList.map((manga) => <MangaBox data={manga} />);
-            $this.setState({resultList:list});
+
+            let total = 0;
+            total = (response.data.total/100);
+            total = Math.ceil(total);
+            if(total < 1){
+                total = 1;
+            }
+
+            $this.setState({
+                resultList:list,
+                pages: total,
+                activePage: page
+            });
         })
         .catch(function(error){
             toast.error('Error retrieving search data.',{
@@ -596,7 +612,7 @@ class Search extends React.Component{
                                     </tr>
                                 </table>
                                 <div className="w-full">
-                                    <button onClick={() => this.searchManga(0)} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
+                                    <button onClick={() => this.searchManga(1)} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
                                         Search
                                     </button>
                                     <button onClick={() => this.randomManga()} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
@@ -609,6 +625,7 @@ class Search extends React.Component{
                         <div className="box-border w-full min-h-screen pt-2 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="flex flex-wrap p-2">
                                 {this.state.resultList}
+                                <Paginator active={this.state.activePage} pages={this.state.pages} func={(page) => this.searchManga(page)}/>
                             </div>
                         </div>
                     </div>

@@ -13,6 +13,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { colorTheme } from "../util/colorTheme";
 import { isLogged } from "../util/loginUtil.js";
 import Loading from '../component/Loading.js';
+import Paginator from '../component/Paginator.js';
 
 class Title extends React.Component{
     constructor(props){
@@ -38,13 +39,13 @@ class Title extends React.Component{
             chapterList: [],
             coverList: [],
             chapterRead: [],
-            chapterOffset: 0,
-            chapterShowMore: false,
             coverOffset: 0,
             coverShowMore: false,
             following: false,
             isLogged: false,
             readingStatus: "",
+            activePage: 1,
+            pages: 0,
 
             tabControl: {
                 active: "chapter",
@@ -81,7 +82,7 @@ class Title extends React.Component{
             $this.checkFollow();
             $this.checkReadingStatus();
         }else{
-            this.getChapterList();
+            this.getChapterList(1);
         }
     }
 
@@ -194,9 +195,9 @@ class Title extends React.Component{
             if(Object.keys(response.data.data).length > 0){
                 $this.setState({
                     chapterRead: response.data.data[$this.state.id]
-                },$this.getChapterList());
+                },$this.getChapterList(1));
             }else{
-                $this.getChapterList()
+                $this.getChapterList(1)
             }
         })
         .catch(function(error){
@@ -207,40 +208,37 @@ class Title extends React.Component{
         });
     }
 
-    getChapterList = () => {
-        this.setState({
-            loadChapterControl: {
-                btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
-                btnLabel:  
-                <div className="inline-flex">
-                    <span className="mr-2">Loading</span> 
-                    <img className="w-6 h-6" alt="Loading" src={process.env.PUBLIC_URL + '/spin.svg'} />
-                </div>
-            }
-        });
+    getChapterList = (page) => {
+        var $this = this;
         var translatedLanguage = ["en"];
         if(localStorage.language){
             translatedLanguage = JSON.parse(localStorage.language);
         }
-        var $this = this;
+        var offset = 0;
+        if(page > 1){
+            offset = (100 * page) - 100;
+        }
+        this.setState({
+            chapterList: []
+        });
+        
         axios.get('https://api.mangadex.org/chapter?order[chapter]=desc',{
             params: {
                 manga: this.state.id,
                 translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user"],
-                offset: this.state.chapterOffset,
+                offset: offset,
                 limit: 100
             }
         })
         .then(function(response){
-            let list = $this.state.chapterList;
+            let list = [];
             for(let i = 0; i < response.data.results.length; i++){
                 response.data.results[i].read = false;
                 if($this.state.chapterRead.indexOf(response.data.results[i].data.id) > -1){
                     response.data.results[i].read = true;
                 }
-                list.push(<TitleTableRow 
-                    data={response.data.results[i]}/>)
+                list.push(<TitleTableRow data={response.data.results[i]}/>);
             }
 
             if(response.data.total === 0){
@@ -251,20 +249,17 @@ class Title extends React.Component{
                 )
             }
 
-            let offset = parseInt($this.state.chapterOffset) + 100;
-            let showMore = true;
-            if(offset >= response.data.total){
-                showMore = false;
+            let total = 0;
+            total = (response.data.total/100);
+            total = Math.ceil(total);
+            if(total < 1){
+                total = 1;
             }
 
             $this.setState({
                 chapterList: list,
-                chapterOffset: offset,
-                chapterLoadMore: showMore,
-                loadChapterControl: {
-                    btnClass: "text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4",
-                    btnLabel: "Load More"
-                }
+                pages: total,
+                activePage: page
             });
         })
         .catch(function(error){
@@ -633,14 +628,9 @@ class Title extends React.Component{
             </tr>
         }
 
+        var chapterList = this.state.chapterList;
         var chapterLoading = (this.state.chapterList.length <= 0) ? <Loading /> : "";
         var coverLoading = (this.state.coverList.length <= 0) ? <Loading /> : "";
-        var chapterLoadMore = (this.state.chapterLoadMore) ? 
-        <button 
-            onClick={this.getChapterList} 
-            className={this.state.loadChapterControl.btnClass} >
-            {this.state.loadChapterControl.btnLabel}
-        </button> : "";
         var coverLoadMore = (this.state.coverLoadMore) ? 
         <button 
             onClick={this.getCoverList} 
@@ -759,8 +749,8 @@ class Title extends React.Component{
                                     <tbody>
                                         {this.state.chapterList}
                                     </tbody>
-                                    {chapterLoadMore}
                                 </table>
+                                <Paginator active={this.state.activePage} pages={this.state.pages} func={(page) => this.getChapterList(page)}/>
                             </div>
                         
                             <div className={this.state.tabControl.contentCover}>

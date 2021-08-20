@@ -1,7 +1,7 @@
 # mangadex-react
 
 This project started because I wanted a manga reader to resemble the old version of MangaDex using V5 API. 
-Due to CORS problems, I'm using electron to make it an desktop application. 
+Due to CORS, I'm using electron to make it an desktop application. 
 
 > Probably doesn't work if the window width < 1280px
 
