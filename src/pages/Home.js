@@ -23,13 +23,18 @@ class Home extends React.Component{
 
     getLastChapters = () => {
         var translatedLanguage = ["en"];
+        var originalLanguage = ["ja"];
         if(localStorage.language){
             translatedLanguage = JSON.parse(localStorage.language);
+        }
+        if(localStorage.original){
+            originalLanguage = JSON.parse(localStorage.original);
         }
         var $this = this;
         axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
             params: {
                 translatedLanguage: translatedLanguage,
+                originalLanguage: originalLanguage,
                 includes: ["scanlation_group","manga"],
                 limit: 100,
             }

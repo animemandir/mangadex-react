@@ -1,7 +1,7 @@
 import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
-import { mangaContentRating } from '../util/static.js';
+import { mangaContentRating,originalLanguage } from '../util/static.js';
 
 
 class Settings extends React.Component{
@@ -22,7 +22,9 @@ class Settings extends React.Component{
                 {value:"purple",label:"Purple"},
                 {value:"pink",label:"Pink"},
             ],
+            originalLanguageList: [],
             language: ["en"],
+            original: [],
             content: [],
             color: "blue"
         };
@@ -33,6 +35,10 @@ class Settings extends React.Component{
         if(localStorage.language){
             let language = JSON.parse(localStorage.language);
             this.setState({language:language});
+        }
+        if(localStorage.original){
+            let original = JSON.parse(localStorage.original);
+            this.setState({original:original});
         }
         if(localStorage.content){
             let content = JSON.parse(localStorage.content);
@@ -57,6 +63,21 @@ class Settings extends React.Component{
 
         localStorage.language = JSON.stringify(language);
         this.setState({language:language});
+    }
+
+    handleOriginalLanguage = (e) => {
+        let original = this.state.original;
+        let index = original.indexOf(e.target.value);
+        if(e.target.checked){
+            if(index === -1){
+                original.push(e.target.value);
+            }
+        }else if(index > -1){
+            original.splice(index,1);
+        }
+
+        localStorage.original = JSON.stringify(original);
+        this.setState({original:original});
     }
 
     handleContentRating = (e) => {
@@ -97,6 +118,23 @@ class Settings extends React.Component{
                 </span>
             </label>
         </div>);
+
+        var originalLanguageList = Object.keys(originalLanguage).map((lan) => 
+        <div className="inline-flex mr-2">
+            <label className="inline-flex items-center cursor-pointer">
+                <input
+                    type="checkbox"
+                    value={lan}
+                    className="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5"
+                    onChange={this.handleOriginalLanguage}
+                    checked={this.state.original.indexOf(lan) > -1}
+                />
+                <span className="ml-2 text-sm font-semibold">
+                    {originalLanguage[lan]}
+                </span>
+            </label>
+        </div>);
+
         var contentRating = Object.keys(mangaContentRating).map((content) => 
         <div className="inline-flex mr-2">
             <label className="inline-flex items-center cursor-pointer">
@@ -112,6 +150,7 @@ class Settings extends React.Component{
                 </span>
             </label>
         </div>);
+
         var colors = this.state.colorList.map(c => 
         <div className="inline-flex mr-2">
             <label className="inline-flex items-center cursor-pointer">
@@ -128,6 +167,7 @@ class Settings extends React.Component{
                 </span>
             </label>
         </div>);
+
         return (
             <div class="flex flex-col h-screen justify-between">
                 <Header />
@@ -143,6 +183,14 @@ class Settings extends React.Component{
                         </div>
                         <div className="box-border w-full py-1 my-1 mx-2">
                             <div className="w-full border-b border-gray-200 dark:border-gray-900">
+                                Original Languages
+                            </div>
+                            <div className="w-full py-3">
+                                {originalLanguageList}
+                            </div>
+                        </div>
+                        <div className="box-border w-full py-1 my-1 mx-2">
+                            <div className="w-full border-b border-gray-200 dark:border-gray-900">
                                 Content Rating
                             </div>
                             <div className="w-full py-3">
@@ -151,7 +199,7 @@ class Settings extends React.Component{
                         </div>
                         <div className="box-border w-full py-1 my-1 mx-2">
                             <div className="w-full border-b border-gray-200 dark:border-gray-900">
-                                Color Theme (soon?)
+                                Color Theme
                             </div>
                             <div className="w-full py-3">
                                 {colors}

@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import Select from 'react-select';
-import { demographic,mangaStatus,mangaContentRating } from '../util/static.js';
+import { demographic,mangaStatus,mangaContentRating,originalLanguage } from '../util/static.js';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import MangaBox from '../component/MangaBox.js';
@@ -27,13 +27,7 @@ class Search extends React.Component{
             tagsInclusionModeChecked: [true,false],
             tagsExclusionModeChecked: [true,false],
             
-            optionLanguage: [
-                {value: 'ja', label: 'Japanese'},
-                {value: 'ko', label: 'Korean'},
-                {value: 'zh', label: 'Chinese'},
-                {value: 'zh-hk', label: 'Chinese (HK)'},
-                {value: 'id', label: 'Indonesia'},
-            ],
+            optionLanguage: [],
             optionDemographic: [],
             optionPublication: [],
             optionContentRating: [],
@@ -54,7 +48,10 @@ class Search extends React.Component{
         var listDemographic = [];
         var listPublication = [];
         var listMangaContentRating = [];
+        var listOriginal = [];
         var contentRating = [];
+        var originalLang  = [];
+
         Object.keys(demographic).map(function(key){
             listDemographic.push({
                 value: key,
@@ -76,16 +73,31 @@ class Search extends React.Component{
             });
         });
 
+        Object.keys(originalLanguage).map(function(key){
+            listOriginal.push({
+                value: key,
+                label: originalLanguage[key]
+            });
+        });
+
         
         if(localStorage.content){
             let content = JSON.parse(localStorage.content);
             contentRating = content.map(c => {return {value: c,label: mangaContentRating[c]}});
         }
+
+        if(localStorage.original){
+            let original = JSON.parse(localStorage.original);
+            originalLang = original.map(o => {return {value: o,label: originalLanguage[o]}});
+        }
+
         this.setState({
             optionDemographic: listDemographic,
             optionPublication: listPublication,
             optionContentRating: listMangaContentRating,
-            contentRating: contentRating
+            optionLanguage: listOriginal,
+            contentRating: contentRating,
+            originalLanguage: originalLang
         });
 
         this.getTags();
@@ -627,7 +639,9 @@ class Search extends React.Component{
                         <div className="box-border w-full min-h-screen pt-2 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="flex flex-wrap p-2">
                                 {this.state.resultList}
-                                <Paginator active={this.state.activePage} pages={this.state.pages} func={(page) => this.searchManga(page)}/>
+                                <div className="w-full">
+                                    <Paginator active={this.state.activePage} pages={this.state.pages} func={(page) => this.searchManga(page)}/>
+                                </div>
                             </div>
                         </div>
                     </div>

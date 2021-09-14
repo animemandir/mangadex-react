@@ -28,6 +28,14 @@ const mangaContentRating = {
     pornographic: "Pornographic",
 }
 
+const originalLanguage = {
+    ja: 'Japanese',
+    ko:'Korean',
+    zh: 'Chinese',
+    'zh-hk': 'Chinese (HK)',
+    id: 'Indonesia',
+}
+
 const customListVisibility = {
     public: "Public",
     private: "Private"
@@ -53,5 +61,6 @@ export{
     mangaReadingStatus,
     mangaContentRating,
     customListVisibility,
-    mangaLinks
+    mangaLinks,
+    originalLanguage
 }
