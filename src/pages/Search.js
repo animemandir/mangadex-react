@@ -145,15 +145,15 @@ class Search extends React.Component{
         axios.get('https://api.mangadex.org/manga/tag')
         .then(function(response){
             var tagList = [];
-            response.data.map((tag) => {
+            response.data.data.map((tag) => {
                 let label = "";
-                Object.keys(tag.data.attributes.name).map(function(key){
+                Object.keys(tag.attributes.name).map(function(key){
                     if(key === "en" || label === ""){
-                        label = tag.data.attributes.name[key];
+                        label = tag.attributes.name[key];
                     }
                 });
                 tagList.push({
-                    value: tag.data.id,
+                    value: tag.id,
                     label: label
                 });
             });
@@ -243,35 +243,35 @@ class Search extends React.Component{
         })
         .then(function(response){
             var mangaList = [];
-            response.data.results.map((result) => {
+            response.data.data.map((result) => {
                 let coverFile = "";
                 result.relationships.map((relation) => {
                     switch(relation.type){
                         case "cover_art":
-                            coverFile = "https://uploads.mangadex.org/covers/" +  result.data.id + "/" + relation.attributes.fileName + ".512.jpg";
+                            coverFile = "https://uploads.mangadex.org/covers/" +  result.id + "/" + relation.attributes.fileName + ".512.jpg";
                         break;
                     } 
                 });
                 
                 let title = "";
-                Object.keys(result.data.attributes.title).map(function(key){
+                Object.keys(result.attributes.title).map(function(key){
                     if(key === "en" || title === ""){
-                        title = result.data.attributes.title[key];
+                        title = result.attributes.title[key];
                     }
                 });
 
                 let description = "";
-                Object.keys(result.data.attributes.description).map(function(key){
+                Object.keys(result.attributes.description).map(function(key){
                     if(key === "en" || description === ""){
-                        description = result.data.attributes.description[key];
+                        description = result.attributes.description[key];
                     }
                 });
 
                 mangaList.push({
-                    mangaId: result.data.id,
+                    mangaId: result.id,
                     mangaName: title,
                     cover: coverFile,
-                    originalLanguage: result.data.attributes.originalLanguage,
+                    originalLanguage: result.attributes.originalLanguage,
                     description: description
                 });
             });
@@ -292,6 +292,7 @@ class Search extends React.Component{
             });
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving search data.',{
                 duration: 4000,
                 position: 'top-right',
@@ -308,7 +309,7 @@ class Search extends React.Component{
             var mangaList = [];
 
             let coverFile = "";
-            response.data.relationships.map((relation) => {
+            response.data.data.relationships.map((relation) => {
                 switch(relation.type){
                     case "cover_art":
                         coverFile = "https://uploads.mangadex.org/covers/" +  response.data.data.id + "/" + relation.attributes.fileName + ".512.jpg";
@@ -317,6 +318,7 @@ class Search extends React.Component{
             });
 
             let title = "";
+            console.log(response.data.data);
             Object.keys(response.data.data.attributes.title).map(function(key){
                 if(key === "en" || title === ""){
                     title = response.data.data.attributes.title[key];

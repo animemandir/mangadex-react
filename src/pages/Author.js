@@ -49,6 +49,7 @@ class Author extends React.Component{
             $this.getMangaList();
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving manga data.',{
                 duration: 4000,
                 position: 'top-right',
@@ -73,35 +74,35 @@ class Author extends React.Component{
         })
         .then(function(response){
             var mangaList = [];
-            response.data.results.map((result) => {
+            response.data.data.map((result) => {
                 let coverFile = "";
                 result.relationships.map((relation) => {
                     switch(relation.type){
                         case "cover_art":
-                            coverFile = "https://uploads.mangadex.org/covers/" +  result.data.id + "/" + relation.attributes.fileName + ".512.jpg";
+                            coverFile = "https://uploads.mangadex.org/covers/" +  result.id + "/" + relation.attributes.fileName + ".512.jpg";
                         break;
                     } 
                 });
                 
                 let title = "";
-                Object.keys(result.data.attributes.title).map(function(key){
+                Object.keys(result.attributes.title).map(function(key){
                     if(key === "en" || title === ""){
-                        title = result.data.attributes.title[key];
+                        title = result.attributes.title[key];
                     }
                 });
 
                 let description = "";
-                Object.keys(result.data.attributes.description).map(function(key){
+                Object.keys(result.attributes.description).map(function(key){
                     if(key === "en" || description === ""){
-                        description = result.data.attributes.description[key];
+                        description = result.attributes.description[key];
                     }
                 });
 
                 mangaList.push({
-                    mangaId: result.data.id,
+                    mangaId: result.id,
                     mangaName: title,
                     cover: coverFile,
-                    originalLanguage: result.data.attributes.originalLanguage,
+                    originalLanguage: result.attributes.originalLanguage,
                     description: description
                 });
             });
@@ -110,6 +111,7 @@ class Author extends React.Component{
             $this.setState({mangaList:list});
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving search data.',{
                 duration: 4000,
                 position: 'top-right',

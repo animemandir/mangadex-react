@@ -37,7 +37,7 @@ class Home extends React.Component{
         .then(function(response){
             let chapters = [];
             let mangaIds = [];
-            response.data.results.map((chapter,i) => {
+            response.data.data.map((chapter,i) => {
                 let mangaId = "";
                 let mangaName = "";
                 let groupId = "";
@@ -64,14 +64,14 @@ class Home extends React.Component{
                 });
                 
                 let temp = {
-                    chapterId: chapter.data.id,
-                    publishAt: chapter.data.attributes.publishAt,
-                    chapter: chapter.data.attributes.chapter,
+                    chapterId: chapter.id,
+                    publishAt: chapter.attributes.publishAt,
+                    chapter: chapter.attributes.chapter,
                     mangaId: mangaId,
                     mangaName: mangaName,
                     groupId: groupId,
                     groupName: groupName,
-                    translatedLanguage: chapter.data.attributes.translatedLanguage,
+                    translatedLanguage: chapter.attributes.translatedLanguage,
                     originalLanguage:originalLanguage
                 };
 
@@ -99,6 +99,7 @@ class Home extends React.Component{
             $this.getLCCovers(chapters,mangaIdsUnique);
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving Last chapters.',{
                 duration: 4000,
                 position: 'top-right',
@@ -115,14 +116,14 @@ class Home extends React.Component{
             }
         })
         .then(function(response){
-            response.data.results.map((cover,i) => {
+            response.data.data.map((cover,i) => {
                 let mangaId = "";
                 cover.relationships.map((relation) => {
                     if(relation.type === "manga"){
                         mangaId = relation.id;
                     }
 
-                    let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + cover.data.attributes.fileName + ".512.jpg";
+                    let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + cover.attributes.fileName + ".512.jpg";
                     if(chapters[mangaId]){
                         chapters[mangaId].cover = coverFile;
                     }
@@ -133,6 +134,7 @@ class Home extends React.Component{
             $this.renderHomeUpdates();
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving Last chapters\'s covers.',{
                 duration: 4000,
                 position: 'top-right',

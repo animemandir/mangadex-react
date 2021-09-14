@@ -98,9 +98,9 @@ class Follow extends React.Component{
         .then(function(response){
             let list = [];
             let mangaList = [];
-            for(let i = 0; i < response.data.results.length; i++){
-                list.push(response.data.results[i].data.id);
-                response.data.results[i].relationships.map((relation) => {
+            for(let i = 0; i < response.data.data.length; i++){
+                list.push(response.data.data[i].id);
+                response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga"){
                         mangaList.push(relation.id);
                     }
@@ -110,6 +110,7 @@ class Follow extends React.Component{
             $this.getChapterRead(list,mangaList,response.data.total);
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving chapter feed list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -134,6 +135,7 @@ class Follow extends React.Component{
             $this.getChapterInfo(chapterList,readList,totalOffset);
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving read markers list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -157,16 +159,16 @@ class Follow extends React.Component{
         })
         .then(function(response){
             let list = $this.state.chapterList;
-            for(let i = 0; i < response.data.results.length; i++){
-                response.data.results[i].read = false;
-                response.data.results[i].relationships.map((relation) => {
+            for(let i = 0; i < response.data.data.length; i++){
+                response.data.data[i].read = false;
+                response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
-                        if(readList[relation.id].indexOf(response.data.results[i].data.id) > -1){
-                            response.data.results[i].read = true;
+                        if(readList[relation.id].indexOf(response.data.data[i].id) > -1){
+                            response.data.data[i].read = true;
                         }
                     }
                 });
-                list.push(<FollowChapterRow data={response.data.results[i]}/>)
+                list.push(<FollowChapterRow data={response.data.data[i]}/>)
             }
 
             let offset = parseInt($this.state.chapterOffset) + 50;
@@ -186,6 +188,7 @@ class Follow extends React.Component{
             });
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving chapter list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -203,35 +206,35 @@ class Follow extends React.Component{
         })
         .then(function(response){
             var mangaList = [];
-            response.data.results.map((result) => {
+            response.data.data.map((result) => {
                 let coverFile = "";
                 result.relationships.map((relation) => {
                     switch(relation.type){
                         case "cover_art":
-                            coverFile = "https://uploads.mangadex.org/covers/" +  result.data.id + "/" + relation.attributes.fileName + ".512.jpg";
+                            coverFile = "https://uploads.mangadex.org/covers/" +  result.id + "/" + relation.attributes.fileName + ".512.jpg";
                         break;
                     } 
                 });
                 
                 let title = "";
-                Object.keys(result.data.attributes.title).map(function(key){
+                Object.keys(result.attributes.title).map(function(key){
                     if(key === "en" || title === ""){
-                        title = result.data.attributes.title[key];
+                        title = result.attributes.title[key];
                     }
                 });
 
                 let description = "";
-                Object.keys(result.data.attributes.description).map(function(key){
+                Object.keys(result.attributes.description).map(function(key){
                     if(key === "en" || description === ""){
-                        description = result.data.attributes.description[key];
+                        description = result.attributes.description[key];
                     }
                 });
 
                 mangaList.push({
-                    mangaId: result.data.id,
+                    mangaId: result.id,
                     mangaName: title,
                     cover: coverFile,
-                    originalLanguage: result.data.attributes.originalLanguage,
+                    originalLanguage: result.attributes.originalLanguage,
                     description: description
                 });
             });
@@ -283,6 +286,7 @@ class Follow extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving search data.',{
                 duration: 4000,
                 position: 'top-right',
@@ -447,6 +451,7 @@ class Follow extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving title status.',{
                 duration: 4000,
                 position: 'top-right',

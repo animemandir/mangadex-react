@@ -19,14 +19,14 @@ class FollowChapterRow extends React.Component{
 
     componentDidMount = () => {
         let label = "";
-        if(this.props.data.data.attributes.volume){
-            label += "Volume " + this.props.data.data.attributes.volume + " ";
+        if(this.props.data.attributes.volume){
+            label += "Volume " + this.props.data.attributes.volume + " ";
         }
-        if(this.props.data.data.attributes.chapter){
-            label += "Chapter " + this.props.data.data.attributes.chapter + " ";
+        if(this.props.data.attributes.chapter){
+            label += "Chapter " + this.props.data.attributes.chapter + " ";
         }
-        if(this.props.data.data.attributes.title){
-            label += "- " + this.props.data.data.attributes.title;
+        if(this.props.data.attributes.title){
+            label += "- " + this.props.data.attributes.title;
         }
 
         this.props.data.relationships.map((relation) => {
@@ -98,7 +98,7 @@ class FollowChapterRow extends React.Component{
             <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
                 {readMarker}
                 <td>
-                    <Link className={colorTheme(500).text} to={"/chapter/" + this.props.data.data.id + "/1"} title={this.state.chapterLabel}>
+                    <Link className={colorTheme(500).text} to={"/chapter/" + this.props.data.id + "/1"} title={this.state.chapterLabel}>
                         {this.state.chapterLabel}
                     </Link>
                 </td>
@@ -108,7 +108,7 @@ class FollowChapterRow extends React.Component{
                     </Link>
                 </td>
                 <td>
-                    <LanguageFlag language={this.props.data.data.attributes.translatedLanguage} />
+                    <LanguageFlag language={this.props.data.attributes.translatedLanguage} />
                 </td>
                 <td>
                     {group}
@@ -118,8 +118,8 @@ class FollowChapterRow extends React.Component{
                         {this.state.userName}
                     </Link>
                 </td>
-                <td title={this.props.data.data.attributes.publishAt}>
-                    {DateTime.fromISO(this.props.data.data.attributes.publishAt).toRelative()}
+                <td title={this.props.data.attributes.publishAt}>
+                    {DateTime.fromISO(this.props.data.attributes.publishAt).toRelative()}
                 </td>
             </tr>
         );

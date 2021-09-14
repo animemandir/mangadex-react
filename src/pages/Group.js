@@ -92,7 +92,7 @@ class Group extends React.Component{
             locked = response.data.data.attributes.locked;
             site = response.data.data.attributes.website;
             
-            response.data.relationships.map((relation) => {
+            response.data.data.relationships.map((relation) => {
                 if(relation.type === "leader"){
                     leader.push({
                         id: relation.id,
@@ -122,6 +122,7 @@ class Group extends React.Component{
             });
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving group data.',{
                 duration: 4000,
                 position: 'top-right',
@@ -156,9 +157,9 @@ class Group extends React.Component{
         .then(function(response){
             let list = [];
             let mangaList = [];
-            for(let i = 0; i < response.data.results.length; i++){
-                list.push(response.data.results[i].data.id);
-                response.data.results[i].relationships.map((relation) => {
+            for(let i = 0; i < response.data.data.length; i++){
+                list.push(response.data.data[i].id);
+                response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga"){
                         mangaList.push(relation.id);
                     }
@@ -172,6 +173,7 @@ class Group extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving chapter feed list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -196,6 +198,7 @@ class Group extends React.Component{
             $this.getChapterInfo(chapterList,readList,totalOffset);
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving read markers list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -219,16 +222,16 @@ class Group extends React.Component{
         })
         .then(function(response){
             let list = $this.state.chapterList;
-            for(let i = 0; i < response.data.results.length; i++){
-                response.data.results[i].read = false;
-                response.data.results[i].relationships.map((relation) => {
+            for(let i = 0; i < response.data.data.length; i++){
+                response.data.data[i].read = false;
+                response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
-                        if(readList[relation.id].indexOf(response.data.results[i].data.id) > -1){
-                            response.data.results[i].read = true;
+                        if(readList[relation.id].indexOf(response.data.data[i].data.id) > -1){
+                            response.data.data[i].read = true;
                         }
                     }
                 });
-                list.push(<FollowChapterRow data={response.data.results[i]}/>)
+                list.push(<FollowChapterRow data={response.data.data[i]}/>)
             }
 
             let offset = parseInt($this.state.chapterOffset) + 50;
@@ -248,6 +251,7 @@ class Group extends React.Component{
             });
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving chapter list.',{
                 duration: 4000,
                 position: 'top-right',

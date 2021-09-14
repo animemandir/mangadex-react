@@ -90,7 +90,7 @@ class Chapter extends React.Component{
             let data = [];
             let dataSaver = [];
 
-            response.data.relationships.map((relation) => {
+            response.data.data.relationships.map((relation) => {
                 switch(relation.type){
                     case "manga":
                         mangaId = relation.id;
@@ -133,6 +133,7 @@ class Chapter extends React.Component{
             $this.getBaseUrl(id);
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving chapter info.',{
                 duration: 4000,
                 position: 'top-right',
@@ -154,6 +155,7 @@ class Chapter extends React.Component{
             $this.setFit();
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving base url.',{
                 duration: 4000,
                 position: 'top-right',
@@ -178,22 +180,22 @@ class Chapter extends React.Component{
         })
         .then(function(response){
             let list = $this.state.chapterList;
-            for(let i = 0; i < response.data.results.length; i++){
+            for(let i = 0; i < response.data.data.length; i++){
                 let label = "";
-                if(response.data.results[i].data.attributes.volume){
-                    label += "Volume " + response.data.results[i].data.attributes.volume + " ";
+                if(response.data.data[i].attributes.volume){
+                    label += "Volume " + response.data.data[i].attributes.volume + " ";
                 }
-                if(response.data.results[i].data.attributes.chapter){
-                    label += "Chapter " + response.data.results[i].data.attributes.chapter + " ";
+                if(response.data.data[i].attributes.chapter){
+                    label += "Chapter " + response.data.data[i].attributes.chapter + " ";
                 }
                 if(label === ""){
                     label += "Oneshot ";
                 }
-                if(response.data.results[i].data.attributes.title){
-                    label += "- " + response.data.results[i].data.attributes.title;
+                if(response.data.data[i].attributes.title){
+                    label += "- " + response.data.data[i].attributes.title;
                 }
                 list.push({
-                    id: response.data.results[i].data.id,
+                    id: response.data.data[i].id,
                     label: label
                 });
             }
@@ -225,6 +227,7 @@ class Chapter extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving chapter list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -248,6 +251,7 @@ class Chapter extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error marking chapter.',{
                 duration: 4000,
                 position: 'top-right',

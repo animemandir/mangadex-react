@@ -92,7 +92,7 @@ class Title extends React.Component{
         .then(function(response){
             let authors = [];
             let artists = [];
-            response.data.relationships.map((relation) => {
+            response.data.data.relationships.map((relation) => {
                 switch(relation.type){
                     case "artist":
                         artists.push({id:relation.id,name:relation.attributes.name});
@@ -172,6 +172,7 @@ class Title extends React.Component{
             document.title = title + " - Mangadex";
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving manga data.',{
                 duration: 4000,
                 position: 'top-right',
@@ -201,6 +202,7 @@ class Title extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error);
             toast.error('Error retrieving read markers list.',{
                 duration: 4000,
                 position: 'top-right',
@@ -233,12 +235,12 @@ class Title extends React.Component{
         })
         .then(function(response){
             let list = [];
-            for(let i = 0; i < response.data.results.length; i++){
-                response.data.results[i].read = false;
-                if($this.state.chapterRead.indexOf(response.data.results[i].data.id) > -1){
-                    response.data.results[i].read = true;
+            for(let i = 0; i < response.data.data.length; i++){
+                response.data.data[i].read = false;
+                if($this.state.chapterRead.indexOf(response.data.data[i].id) > -1){
+                    response.data.data[i].read = true;
                 }
-                list.push(<TitleTableRow data={response.data.results[i]}/>);
+                list.push(<TitleTableRow data={response.data.data[i]}/>);
             }
 
             if(response.data.total === 0){
@@ -292,10 +294,10 @@ class Title extends React.Component{
         })
         .then(function(response){
             let list = $this.state.coverList;
-            for(let i = 0; i < response.data.results.length; i++){
-                let fileFull = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.results[i].data.attributes.fileName;
-                let file = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.results[i].data.attributes.fileName + ".512.jpg";
-                let title = (response.data.results[i].data.attributes.volume) ? "Volume " + response.data.results[i].data.attributes.volume : "Cover"; 
+            for(let i = 0; i < response.data.data.length; i++){
+                let fileFull = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.data[i].attributes.fileName;
+                let file = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.data[i].attributes.fileName + ".512.jpg";
+                let title = (response.data.data[i].attributes.volume) ? "Volume " + response.data.data[i].attributes.volume : "Cover"; 
                 list.push(
                     <a href={fileFull} target="_blank" rel="noreferrer" className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
                         <img 
