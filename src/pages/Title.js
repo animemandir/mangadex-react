@@ -1,7 +1,7 @@
 import React from "react";
 import axios from 'axios';
 import { withRouter } from "react-router";
-import { demographic,mangaStatus,mangaContentRating,mangaReadingStatus } from '../util/static.js';
+import { demographic,mangaStatus,mangaContentRating,mangaReadingStatus,mangaRelation } from '../util/static.js';
 import { linkParser } from '../util/linkParser.js';
 import { Link } from "react-router-dom";
 import Tags from '../component/Tags.js';
@@ -46,6 +46,7 @@ class Title extends React.Component{
             readingStatus: "",
             activePage: 1,
             pages: 0,
+            relations: [],
 
             tabControl: {
                 active: "chapter",
@@ -86,12 +87,20 @@ class Title extends React.Component{
         }
     }
 
+    componentWillReceiveProps = (nextProps) => {
+        if(nextProps.match.params.id !== this.props.match.params.id){
+            window.location.reload();
+        }
+     }
+     
+
     getMangaInfo = () => {
         var $this = this;
-        axios.get('https://api.mangadex.org/manga/' + this.state.id + '?includes[]=author&includes[]=artist&includes[]=cover_art')
+        axios.get('https://api.mangadex.org/manga/' + this.state.id + '?includes[]=author&includes[]=artist&includes[]=cover_art&includes[]=manga')
         .then(function(response){
             let authors = [];
             let artists = [];
+            let relations = [];
             response.data.data.relationships.map((relation) => {
                 switch(relation.type){
                     case "artist":
@@ -104,11 +113,27 @@ class Title extends React.Component{
                         let coverFile = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + relation.attributes.fileName + ".512.jpg";
                         $this.setState({coverFile:coverFile});
                     break;
+                    case "manga":
+                        if(relation.id !== $this.state.id){
+                            let title = "";
+                            Object.keys(relation.attributes.title).map(function(key){
+                                if(key === "en" || title === ""){
+                                    title = relation.attributes.title[key];
+                                }
+                            });
+                            relations.push({
+                                id: relation.id,
+                                related: mangaRelation[relation.related],
+                                title: title
+                            });
+                        }                        
+                    break;
                 } 
             });
             $this.setState({
                 artist:artists,
-                author:authors
+                author:authors,
+                relations: relations
             });
 
             let title = "";
@@ -497,6 +522,7 @@ class Title extends React.Component{
         var official = this.state.official.map((o) => <Tags name={o.name} url={o.url}/>);
         var retail = this.state.retail.map((r) => <Tags name={r.name}  url={r.url}/>);
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
+        var relations = this.state.relations.map((rel) => <li><Link className={"" + colorTheme(500).text} to={"/title/"+rel.id}>{rel.title}</Link> ({rel.related})</li>);
 
         var authors = this.state.author.map((au) => 
             <Link className={"mr-4 " + colorTheme(500).text} to={"/author/"+au.id}>{au.name}</Link>
@@ -516,6 +542,7 @@ class Title extends React.Component{
         var trRetail = "";
         var trInformation = "";
         var trActions = "";
+        var trRelations = "";
         if(altTitles.length > 0){
             trAltTitles = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -586,6 +613,15 @@ class Title extends React.Component{
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                 <td width="20%" className="font-semibold">Information:</td>
                 <td width="80%">{information}</td>
+            </tr>;
+        }
+        if(relations.length > 0){
+            trRelations = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Relations:</td>
+                <td width="80%">
+                    <ul className="list-disc">{relations}</ul>
+                </td>
             </tr>;
         }
         if(this.state.isLogged){
@@ -685,6 +721,7 @@ class Title extends React.Component{
                                                 <td width="20%" className="font-semibold">Description:</td>
                                                 <td width="80%" className="text-justify">{this.state.description}</td>
                                             </tr>
+                                            {trRelations}
                                             {trOfficial}
                                             {trRetail}
                                             {trInformation}

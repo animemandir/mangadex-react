@@ -107,14 +107,14 @@ class Header extends React.Component{
 
         var mode = (this.state.mode === "dark") ?
         <li className="nav-item" title="Light mode">
-            <button onClick={this.lightDarkMode} className="px-3 py-1 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 cursor-pointer">
+            <button onClick={this.lightDarkMode} className="px-3 py-1 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 cursor-pointer focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
                 </svg>
             </button>
         </li> :
         <li className="nav-item" title="Dark mode">
-            <button onClick={this.lightDarkMode} className="px-3 py-1 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 cursor-pointer">
+            <button onClick={this.lightDarkMode} className="px-3 py-1 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 cursor-pointer focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                 </svg>
@@ -150,7 +150,7 @@ class Header extends React.Component{
                                 {login}
                                 {mode}
                                 <li className="nav-item" title="Refresh">
-                                    <button type="button" onClick={this.refresh} className="px-3 py-1 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 cursor-pointer">
+                                    <button type="button" onClick={this.refresh} className="px-3 py-1 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 cursor-pointer focus:outline-none">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                         </svg>

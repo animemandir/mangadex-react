@@ -26,12 +26,26 @@ class Search extends React.Component{
             tagsExclusionMode: "and",
             tagsInclusionModeChecked: [true,false],
             tagsExclusionModeChecked: [true,false],
+            orderBy: {value: "upload_desc",label: "Lastest Upload"},
             
             optionLanguage: [],
             optionDemographic: [],
             optionPublication: [],
             optionContentRating: [],
             optionTags: [],
+            optionOrder: [
+                {value: "revelance_desc",label: "Best Match"},
+                {value: "upload_desc",label: "Lastest Upload"},
+                {value: "upload_asc",label: "Oldest Upload"},
+                {value: "title_asc",label: "Title Ascending"},
+                {value: "title_desc",label: "Title Descending"},
+                {value: "created_desc",label: "Recently Added"},
+                {value: "created_asc",label: "Oldest Added"},
+                {value: "follow_desc",label: "Most Follows"},
+                {value: "follow_asc",label: "Fewest Follows"},
+                {value: "year_desc",label: "Year Descending"},
+                {value: "year_asc",label: "Year Ascending"},
+            ],
 
             classForm: "flex flex-wrap pt-2 px-4",
             classTop: {
@@ -248,9 +262,59 @@ class Search extends React.Component{
             searchParams.excludedTags = te;
             searchParams.excludedTagsMode = this.state.tagsExclusionMode.toUpperCase();
         }
-      
+
+        let orderIndex = "latestUploadedChapter";
+        let orderValue = "desc";
+        console.log(this.state.orderBy);
+        switch(this.state.orderBy.value){
+            case "revelance_desc":
+                orderIndex = "relevance";
+                orderValue = "desc";
+            break;
+            case "upload_desc":
+                orderIndex = "latestUploadedChapter";
+                orderValue = "desc";
+            break;
+            case "upload_asc":
+                orderIndex = "latestUploadedChapter";
+                orderValue = "asc";
+            break;
+            case "title_asc":
+                orderIndex = "title";
+                orderValue = "asc";
+            break;
+            case "title_desc":
+                orderIndex = "title";
+                orderValue = "desc";
+            break;
+            case "created_desc":
+                orderIndex = "createdAt";
+                orderValue = "desc";
+            break;
+            case "created_asc":
+                orderIndex = "createdAt";
+                orderValue = "asc";
+            break;
+            case "follow_desc":
+                orderIndex = "followedCount";
+                orderValue = "desc";
+            break;
+            case "follow_asc":
+                orderIndex = "followedCount";
+                orderValue = "asc";
+            break;
+            case "year_desc":
+                orderIndex = "year";
+                orderValue = "desc";
+            break;
+            case "year_asc":
+                orderIndex = "year";
+                orderValue = "asc";
+            break;
+        }
+
         var $this = this;
-        axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{
+        axios.get('https://api.mangadex.org/manga?includes[]=cover_art&order[' + orderIndex + ']=' + orderValue,{
             params: searchParams
         })
         .then(function(response){
@@ -390,7 +454,6 @@ class Search extends React.Component{
 
     changeContentRating = (e) => {
         this.setState({contentRating: e ? e.map(x => x) : []});
-        console.log(this.state.contentRating);
     }
 
     changeTagsInclude = (e) => {
@@ -399,6 +462,10 @@ class Search extends React.Component{
 
     changeTagsExclude = (e) => {
         this.setState({tagsExclude: e ? e.map(x => x) : []});
+    }
+
+    changeOrder = (e) => {
+        this.setState({orderBy: e});
     }
 
     changeTagIncludeMode = (value) => {
@@ -457,7 +524,11 @@ class Search extends React.Component{
             multiValueRemove: base => ({
                 ...base,
                 color: "#111827",
-            })
+            }),
+            singleValue: (base,{ isFocused }) => ({
+                ...base,
+                color: "#D1D5DB",
+            }),
         } : {};
         return (
             <div class="flex flex-col justify-between">
@@ -624,8 +695,21 @@ class Search extends React.Component{
                                             </label>
                                         </td>
                                     </tr>
+                                    <tr className="h-12">
+                                        <td width="20%" className="font-semibold text-right px-4">Order By:</td>
+                                        <td width="80%">
+                                        <Select
+                                                isMulti={false}
+                                                options={this.state.optionOrder}
+                                                onChange={this.changeOrder}
+                                                value={this.state.orderBy}
+                                                styles={selectStyle}
+                                                className="text-gray-900 dark:text-gray-200"
+                                            />
+                                        </td>
+                                    </tr>
                                 </table>
-                                <div className="w-full">
+                                <div className="w-full mt-2">
                                     <button onClick={() => this.searchManga(1)} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
                                         Search
                                     </button>

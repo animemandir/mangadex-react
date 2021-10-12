@@ -55,6 +55,24 @@ const mangaLinks = {
     engtl: "Official Translation", //Stored as full URL
 }
 
+const mangaRelation = {
+    monochrome: "Monochrome",
+    main_story: "Main Story",
+    adapted_from: "Adapted from",
+    based_on: "Based on",
+    prequel: "Prequel",
+    side_story: "Side Story",
+    doujinshi: "Doujinshi",
+    same_franchise: "Same Franchise",
+    shared_universe: "Shared Universe",
+    sequel: "Sequel",
+    spin_off: "Spin Off",
+    alternate_story: "Alternate Story",
+    preserialization: "Preserialization",
+    colored: "Colored",
+    serialization: "Serialization"
+}
+
 export{
     demographic,
     mangaStatus,
@@ -62,5 +80,6 @@ export{
     mangaContentRating,
     customListVisibility,
     mangaLinks,
-    originalLanguage
+    originalLanguage,
+    mangaRelation
 }

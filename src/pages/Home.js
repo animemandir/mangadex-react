@@ -114,24 +114,22 @@ class Home extends React.Component{
 
     getLCCovers = (chapters,mangaIds) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/cover?order[volume]=desc',{
+        axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{
             params: {
-                manga: mangaIds,
+                ids: mangaIds,
                 limit: 100
             }
         })
         .then(function(response){
-            response.data.data.map((cover,i) => {
-                let mangaId = "";
-                cover.relationships.map((relation) => {
-                    if(relation.type === "manga"){
-                        mangaId = relation.id;
-                    }
-
-                    let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + cover.attributes.fileName + ".512.jpg";
-                    if(chapters[mangaId]){
-                        chapters[mangaId].cover = coverFile;
-                    }
+            response.data.data.map((manga,i) => {
+                let mangaId = manga.id;
+                manga.relationships.map((relation) => {
+                    if(relation.type === "cover_art"){
+                        let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + relation.attributes.fileName + ".512.jpg";
+                        if(chapters[mangaId]){
+                            chapters[mangaId].cover = coverFile;
+                        }
+                    }                    
                 });
             });
 
