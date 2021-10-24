@@ -22,19 +22,28 @@ class Home extends React.Component{
     }
 
     getLastChapters = () => {
+        var $this = this;
+
         var translatedLanguage = ["en"];
-        var originalLanguage = ["ja"];
         if(localStorage.language){
             translatedLanguage = JSON.parse(localStorage.language);
         }
+
+        var originalLanguage = ["ja"];
         if(localStorage.original){
             originalLanguage = JSON.parse(localStorage.original);
         }
-        var $this = this;
+
+        var contentRating = [];
+        if(localStorage.content){
+            contentRating = JSON.parse(localStorage.content);
+        }
+       
         axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
             params: {
                 translatedLanguage: translatedLanguage,
                 originalLanguage: originalLanguage,
+                contentRating: contentRating,
                 includes: ["scanlation_group","manga"],
                 limit: 100,
             }
@@ -114,9 +123,16 @@ class Home extends React.Component{
 
     getLCCovers = (chapters,mangaIds) => {
         var $this = this;
+
+        var contentRating = [];
+        if(localStorage.content){
+            contentRating = JSON.parse(localStorage.content);
+        }
+
         axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{
             params: {
                 ids: mangaIds,
+                contentRating: contentRating,
                 limit: 100
             }
         })

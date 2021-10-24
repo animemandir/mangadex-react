@@ -164,15 +164,23 @@ class Chapter extends React.Component{
     }
 
     getChapterList = (id,offset) => {
+        var $this = this;
+
         var translatedLanguage = ["en"];
         if(localStorage.language){
             translatedLanguage = JSON.parse(localStorage.language);
         }
-        var $this = this;
+
+        var contentRating = [];
+        if(localStorage.content){
+            contentRating = JSON.parse(localStorage.content);
+        }
+        
         axios.get('https://api.mangadex.org/chapter?order[chapter]=desc',{
             params: {
                 manga: id,
                 translatedLanguage: translatedLanguage,
+                contentRating: contentRating,
                 includes: ["scanlation_group","user"],
                 offset: offset,
                 limit: 100

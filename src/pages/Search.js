@@ -26,7 +26,7 @@ class Search extends React.Component{
             tagsExclusionMode: "and",
             tagsInclusionModeChecked: [true,false],
             tagsExclusionModeChecked: [true,false],
-            orderBy: {value: "upload_desc",label: "Lastest Upload"},
+            orderBy: {value: "revelance_desc",label: "Best Match"},
             
             optionLanguage: [],
             optionDemographic: [],

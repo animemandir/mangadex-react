@@ -1,6 +1,6 @@
 import { mangaLinks } from '../util/static.js';
 
-export let linkParser = (links) => {
+export let linkParser = (links,id) => {
     let official = [];
     let retail = [];
     let information = [];
@@ -84,6 +84,15 @@ export let linkParser = (links) => {
         }
     });
     
+    official.push({
+        name: "MangaDex",
+        url: "https://mangadex.org/title/" + id,
+    });
+
+    official.push({
+        name: "Cubari",
+        url: "https://cubari.moe/read/mangadex/" + id,
+    });
 
     return {
         official: official,

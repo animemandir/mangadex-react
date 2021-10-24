@@ -225,8 +225,9 @@ class Group extends React.Component{
             for(let i = 0; i < response.data.data.length; i++){
                 response.data.data[i].read = false;
                 response.data.data[i].relationships.map((relation) => {
+                    console.log(relation.id);
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
-                        if(readList[relation.id].indexOf(response.data.data[i].data.id) > -1){
+                        if(readList[relation.id].indexOf(response.data.data[i].data) > -1){
                             response.data.data[i].read = true;
                         }
                     }

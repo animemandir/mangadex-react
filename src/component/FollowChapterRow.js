@@ -13,11 +13,17 @@ class FollowChapterRow extends React.Component{
             userId: "",
             userName: "",
             mangaId: "",
-            mangaName: ""
+            mangaName: "",
+            chapterUrl: "",
+            target: "",
+            rel: ""
         };
     }
 
     componentDidMount = () => {
+        let url = (this.props.data.attributes.externalUrl === null) ? "/chapter/" + this.props.data.id + "/1" : this.props.data.attributes.externalUrl;
+        let target = (this.props.data.attributes.externalUrl === null) ? "" : "_blank";
+        let rel = (this.props.data.attributes.externalUrl === null) ? "" : "noreferrer";
         let label = "";
         if(this.props.data.attributes.volume){
             label += "Volume " + this.props.data.attributes.volume + " ";
@@ -64,7 +70,10 @@ class FollowChapterRow extends React.Component{
         });
 
         this.setState({
-            chapterLabel: label
+            chapterLabel: label,
+            chapterUrl: url,
+            target: target,
+            rel: rel
         });
     }
 
@@ -94,13 +103,25 @@ class FollowChapterRow extends React.Component{
             </Link>
         </div>);
 
+        var link = 
+        <Link className={colorTheme(500).text} to={this.state.chapterUrl} title={this.state.chapterLabel} target={this.state.target} rel={this.state.rel}>
+            {this.state.chapterLabel}
+        </Link>
+        if(this.state.target === "_blank"){
+            link = 
+            <a className={colorTheme(500).text} href={this.state.chapterUrl} title={this.state.chapterLabel} target={this.state.target} rel={this.state.rel}>
+                {this.state.chapterLabel}
+                <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </a>
+        }
+
         return (
             <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
                 {readMarker}
                 <td>
-                    <Link className={colorTheme(500).text} to={"/chapter/" + this.props.data.id + "/1"} title={this.state.chapterLabel}>
-                        {this.state.chapterLabel}
-                    </Link>
+                    {link}
                 </td>
                 <td>
                     <Link className={colorTheme(500).text} to={"/title/" + this.state.mangaId} title={this.state.mangaName}>
