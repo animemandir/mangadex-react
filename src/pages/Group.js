@@ -338,10 +338,10 @@ class Group extends React.Component{
             {this.state.loadControl.btnLabel}
         </button> : "";
         return (
-            <div class="flex flex-col justify-between">
+            <div class="flex flex-col justify-between h-screen bg-gray-100 dark:bg-gray-800">
                 <Toaster />
                 <Header />
-                <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
+                <div className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-left text-lg flex flex-wrap border-b-2 pb-1 px-3 border-gray-200 dark:border-gray-900">

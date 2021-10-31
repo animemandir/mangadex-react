@@ -4,6 +4,7 @@ export let colorTheme = (number) => {
     return {
         text: "text-" + color + "-" + number,
         bg: "bg-" + color + "-" + number,
-        scrollbar: "scrollbar-" + color
+        scrollbar: "scrollbar-" + color,
+        border: "border-" + color + "-" + number,
     }
 }

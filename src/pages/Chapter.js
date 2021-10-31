@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import LanguageFlag  from '../component/LanguageFlag.js';
 import { colorTheme } from "../util/colorTheme";
 import { isLogged } from "../util/loginUtil.js";
+import { parse } from "postcss";
 class Chapter extends React.Component{
     constructor(props){
         super(props);
@@ -24,6 +25,7 @@ class Chapter extends React.Component{
             dataSaver: [],
             baseUrl: "",
             chapterList: [],
+            externalUrl: "",
 
             progress: 1,
             progressBar: null,
@@ -89,6 +91,7 @@ class Chapter extends React.Component{
             let hash = "";
             let data = [];
             let dataSaver = [];
+            let externalUrl = "";
 
             response.data.data.relationships.map((relation) => {
                 switch(relation.type){
@@ -115,6 +118,7 @@ class Chapter extends React.Component{
             translatedLanguage = response.data.data.attributes.translatedLanguage;
             data = response.data.data.attributes.data;
             dataSaver = response.data.data.attributes.dataSaver;
+            externalUrl = response.data.data.attributes.externalUrl;
 
             $this.setState({
                 mangaId: mangaId,
@@ -126,7 +130,8 @@ class Chapter extends React.Component{
                 translatedLanguage: translatedLanguage,
                 hash: hash,
                 data: data,
-                dataSaver: dataSaver
+                dataSaver: dataSaver,
+                externalUrl: externalUrl
             });
 
             $this.getChapterList(mangaId,0);
@@ -204,7 +209,8 @@ class Chapter extends React.Component{
                 }
                 list.push({
                     id: response.data.data[i].id,
-                    label: label
+                    label: label,
+                    chapter:  response.data.data[i].attributes.chapter
                 });
             }
 
@@ -212,26 +218,31 @@ class Chapter extends React.Component{
             if(response.data.total >= (offset+100)){
                 $this.getChapterList(id,offset+100);
             }else{
+                let prev = "";
+                let next = "";
+                let index = 0;
+                let chapterIndex = "";
                 for(let a = 0; a < list.length; a++){
                     if(list[a].id === $this.state.id){
-                        let prev = "";
-                        let next = "";
-
                         document.title = list[a].label + " - " + $this.state.manga + " - MangaDex";
-                        if(a < (list.length) && a > 0){
-                            next = list[a-1].id;
-                        }
-
-                        if(a <= (list.length-2)){
-                            prev = list[a+1].id;
-                        }
-
-                        let nextPrevController = $this.state.nextPrevController;
-                        nextPrevController.prevId = prev;
-                        nextPrevController.nextId = next;
-                        $this.setState({nextPrevController:nextPrevController});
+                        index = a;
+                        chapterIndex = parseFloat(list[a].chapter);                        
                     }
                 }
+                for(let a = 0; a < list.length; a++){
+                    if(a < index && parseFloat(list[a].chapter) !== chapterIndex){
+                        next = list[a].id;
+                    }
+                }
+                for(let a = list.length-1; a >= 0; a--){
+                    if(a > index && parseFloat(list[a].chapter) !== chapterIndex){
+                        prev = list[a].id;
+                    }
+                }
+                let nextPrevController = $this.state.nextPrevController;
+                nextPrevController.prevId = prev;
+                nextPrevController.nextId = next;
+                $this.setState({nextPrevController:nextPrevController});
             }
         })
         .catch(function(error){
@@ -633,6 +644,15 @@ class Chapter extends React.Component{
 
     render = () => {
         var chapterList = this.state.chapterList.map((i) => <option value={i.id}>{i.label}</option>);
+        var externalUrl = (this.state.externalUrl !== "" && this.state.externalUrl !== undefined && this.state.externalUrl !== null) ? 
+        <div className="flex flex-row px-3 pb-3">
+            <a className={colorTheme(500).text + " " + colorTheme(500).border + " text-center text-lg px-3 py-2 focus:outline-none border-2 h-12 mt-2 w-full"} href={this.state.externalUrl} target="_blank" title={this.state.externalUrl}>
+                Open External Link
+                <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </a> 
+        </div>: "";
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
@@ -694,6 +714,7 @@ class Chapter extends React.Component{
                                     <LanguageFlag language={this.state.translatedLanguage} />
                                 </div>             
                                 <div className="flex-grow mt-4">
+                                    {externalUrl}
                                     <div className="flex flex-row px-3">
                                         <select 
                                             className="w-full p-1 pl-4 h-12 text-lg focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 

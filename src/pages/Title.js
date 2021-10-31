@@ -15,6 +15,7 @@ import { isLogged } from "../util/loginUtil.js";
 import Loading from '../component/Loading.js';
 import Paginator from '../component/Paginator.js';
 
+
 class Title extends React.Component{
     constructor(props){
         super(props);
