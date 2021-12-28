@@ -11,6 +11,8 @@ class Chapter extends React.Component{
     constructor(props){
         super(props);
         this.scrollTop = React.createRef();
+        this.KbListener = React.createRef();
+        this.ofListener = React.createRef();
         this.state = {
             id: "",
             mangaId: "",
@@ -47,7 +49,7 @@ class Chapter extends React.Component{
                 prevId: "",
                 nextId: ""
             },
-            imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
+            imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar",
             progressBarClass: "w-2 flex flex-col",
         };
     }
@@ -67,6 +69,8 @@ class Chapter extends React.Component{
         if(logged){
             this.markChapterRead(id);
         }
+        this.KBSettings();
+        this.ofListener.current.focus();
     }
 
     refresh = () => {
@@ -88,9 +92,6 @@ class Chapter extends React.Component{
             let userId = "";
             let user = "";
             let translatedLanguage = "";
-            let hash = "";
-            let data = [];
-            let dataSaver = [];
             let externalUrl = "";
 
             response.data.data.relationships.map((relation) => {
@@ -114,10 +115,7 @@ class Chapter extends React.Component{
                 }
             });
 
-            hash = response.data.data.attributes.hash;
-            translatedLanguage = response.data.data.attributes.translatedLanguage;
-            data = response.data.data.attributes.data;
-            dataSaver = response.data.data.attributes.dataSaver;
+            translatedLanguage = response.data.data.attributes.translatedLanguage;            
             externalUrl = response.data.data.attributes.externalUrl;
 
             $this.setState({
@@ -128,9 +126,7 @@ class Chapter extends React.Component{
                 userId: userId,
                 user: user,
                 translatedLanguage: translatedLanguage,
-                hash: hash,
-                data: data,
-                dataSaver: dataSaver,
+                
                 externalUrl: externalUrl
             });
 
@@ -151,10 +147,19 @@ class Chapter extends React.Component{
         axios.get('https://api.mangadex.org/at-home/server/' + id)
         .then(function(response){
             let baseUrl = "";
+            let hash = "";
+            let data = [];
+            let dataSaver = [];
             baseUrl = response.data.baseUrl;
+            hash = response.data.chapter.hash;
+            data = response.data.chapter.data;
+            dataSaver = response.data.chapter.dataSaver;
 
             $this.setState({
-                baseUrl: baseUrl
+                baseUrl: baseUrl,
+                hash: hash,
+                data: data,
+                dataSaver: dataSaver
             });
 
             $this.setFit();
@@ -385,7 +390,7 @@ class Chapter extends React.Component{
                 nextPrevController.rightTitle = "Next";
                 this.setState({
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
+                    imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar",
                     progressBarClass: (localStorage.showProgressBar === "show") ? "w-2 flex flex-col" : "hidden",
                 },() => this.updateReader("update"));
             break;
@@ -394,7 +399,7 @@ class Chapter extends React.Component{
                 nextPrevController.rightTitle = "Next";
                 this.setState({
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-auto " + scrollbar,
+                    imgContainerClass: "flex-1 overflow-y-scroll " + scrollbar,
                     progressBarClass: "hidden",
                 },() => this.updateReader("single"));            
             break;
@@ -404,7 +409,7 @@ class Chapter extends React.Component{
                 nextPrevController.rightTitle = "Previous";
                 this.setState({
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-auto cursor-pointer no-scrollbar",
+                    imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar",
                     progressBarClass: (localStorage.showProgressBar === "show") ? "w-2 flex flex-col" : "hidden",
                 },() => this.updateReader("update"));
             break;
@@ -593,10 +598,10 @@ class Chapter extends React.Component{
                             onClick={() => this.goToPage(a+1)}></div>
                     );
                     imageLoad.push(
-                        <div className="flex flex-row justify-center items-center">
+                        <div className="flex flex-row justify-center items-center" >
                             <img 
                                 alt={"Page " + progress}
-                                className={this.state.classImg}
+                                className={this.state.classImg + " overflow-scroll"}
                                 src={image} />
                         </div>
                     );
@@ -634,12 +639,33 @@ class Chapter extends React.Component{
             }
         }
          
-
         this.setState({
             progress: progress,
             progressBar: progressBar,
             imageLoad: imageLoad,
-        },() => this.scrollTop.current.scrollIntoView());
+        },() => {
+            this.scrollTop.current.scrollIntoView();
+            this.ofListener.current.focus();
+        });
+    }
+
+    KBSettings = () => {
+        this.KbListener.current.addEventListener('keydown',this.KbController);
+    } 
+
+    KbController = (e) => {
+        switch(e.keyCode){
+            case 38: //arrow up
+            break;
+            case 40: //arrow down
+            break;
+            case 37: //arrow left
+                this.leftSide();
+            break;
+            case 39: //arrow right
+                this.rightSide();
+            break;
+        }
     }
 
     render = () => {
@@ -654,12 +680,12 @@ class Chapter extends React.Component{
             </a> 
         </div>: "";
         return (
-            <div class="flex flex-col justify-between">
+            <div class="flex flex-col justify-between" ref={this.KbListener} tabIndex={0}>
                 <Toaster />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="flex h-screen">
                         <div className="flex-1 flex overflow-hidden" id="mainReader" onClick={this.clickListener} >
-                            <div className={this.state.imgContainerClass}>
+                            <div className={this.state.imgContainerClass} ref={this.ofListener} tabIndex={0}>
                                 {this.state.imageLoad}
                             </div>   
                         </div>
