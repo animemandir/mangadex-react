@@ -95,12 +95,12 @@ class Header extends React.Component{
 
         var login = (!this.state.isLogged) ? 
         <li className="nav-item">
-            <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/login">
+            <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 focus:outline-none" to="/login">
                 Login
             </Link>
         </li> : 
         <li className="nav-item">
-            <button onClick={this.logout} type="button" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75">
+            <button onClick={this.logout} type="button" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 focus:outline-none">
                 Logout ({localStorage.authUser})
             </button>
         </li>;

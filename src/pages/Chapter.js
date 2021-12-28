@@ -49,7 +49,7 @@ class Chapter extends React.Component{
                 prevId: "",
                 nextId: ""
             },
-            imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar",
+            imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar focus:outline-none",
             progressBarClass: "w-2 flex flex-col",
         };
     }
@@ -390,7 +390,7 @@ class Chapter extends React.Component{
                 nextPrevController.rightTitle = "Next";
                 this.setState({
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar",
+                    imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar focus:outline-none",
                     progressBarClass: (localStorage.showProgressBar === "show") ? "w-2 flex flex-col" : "hidden",
                 },() => this.updateReader("update"));
             break;
@@ -399,7 +399,7 @@ class Chapter extends React.Component{
                 nextPrevController.rightTitle = "Next";
                 this.setState({
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-scroll " + scrollbar,
+                    imgContainerClass: "flex-1 overflow-y-scroll focus:outline-none" + scrollbar,
                     progressBarClass: "hidden",
                 },() => this.updateReader("single"));            
             break;
@@ -409,7 +409,7 @@ class Chapter extends React.Component{
                 nextPrevController.rightTitle = "Previous";
                 this.setState({
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar",
+                    imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar focus:outline-none",
                     progressBarClass: (localStorage.showProgressBar === "show") ? "w-2 flex flex-col" : "hidden",
                 },() => this.updateReader("update"));
             break;
@@ -654,6 +654,8 @@ class Chapter extends React.Component{
     } 
 
     KbController = (e) => {
+        this.ofListener.current.focus();
+        console.log(e.keyCode);
         switch(e.keyCode){
             case 38: //arrow up
             break;
@@ -664,6 +666,9 @@ class Chapter extends React.Component{
             break;
             case 39: //arrow right
                 this.rightSide();
+            break;
+            case 27: //ESC
+                this.toggleMenu();
             break;
         }
     }
@@ -684,7 +689,7 @@ class Chapter extends React.Component{
                 <Toaster />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="flex h-screen">
-                        <div className="flex-1 flex overflow-hidden" id="mainReader" onClick={this.clickListener} >
+                        <div className="flex-1 flex overflow-hidden focus:outline-none" id="mainReader" onClick={this.clickListener} >
                             <div className={this.state.imgContainerClass} ref={this.ofListener} tabIndex={0}>
                                 {this.state.imageLoad}
                             </div>   
