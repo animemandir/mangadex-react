@@ -5,8 +5,10 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import FollowChapterRow from '../component/FollowChapterRow.js';
 import Loading from '../component/Loading.js';
-import MangaBox from '../component/MangaBox.js';
 import { isLogged } from "../util/loginUtil.js";
+import ReadingListRow from '../component/ReadingListRow.js';
+import ReadingListTable from '../component/ReadingListTable.js';
+
 class Follow extends React.Component{
     constructor(props){
         super(props);
@@ -198,7 +200,7 @@ class Follow extends React.Component{
 
     getTitleInfo = (ids,status) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{
+        axios.get('https://api.mangadex.org/manga?includes[]=cover_art&includes[]=author&includes[]=artist',{
             params: {
                 ids: ids,
                 limit: 100
@@ -208,8 +210,16 @@ class Follow extends React.Component{
             var mangaList = [];
             response.data.data.map((result) => {
                 let coverFile = "";
+                let authors = [];
+                let artists = [];
                 result.relationships.map((relation) => {
                     switch(relation.type){
+                        case "artist":
+                            artists.push({id:relation.id,name:relation.attributes.name});
+                        break;
+                        case "author":
+                            authors.push({id:relation.id,name:relation.attributes.name});
+                        break;
                         case "cover_art":
                             coverFile = "https://uploads.mangadex.org/covers/" +  result.id + "/" + relation.attributes.fileName + ".512.jpg";
                         break;
@@ -235,7 +245,9 @@ class Follow extends React.Component{
                     mangaName: title,
                     cover: coverFile,
                     originalLanguage: result.attributes.originalLanguage,
-                    description: description
+                    description: description,
+                    artist:artists,
+                    author:authors
                 });
             });
             
@@ -244,42 +256,42 @@ class Follow extends React.Component{
                 case "reading":
                     list = $this.state.boxReading;
                     mangaList.map((manga) => {
-                        list.push(<MangaBox data={manga} />);
+                        list.push(<ReadingListRow data={manga} />);
                     });
                     $this.setState({boxReading:list});
                 break;
                 case "on_hold":
                     list = $this.state.boxOnHold;
                     mangaList.map((manga) => {
-                        list.push(<MangaBox data={manga} />);
+                        list.push(<ReadingListRow data={manga} />);
                     });
                     $this.setState({boxOnHold:list});
                 break;
                 case "plan_to_read":
                     list = $this.state.boxPlan;
                     mangaList.map((manga) => {
-                        list.push(<MangaBox data={manga} />);
+                        list.push(<ReadingListRow data={manga} />);
                     });
                     $this.setState({boxPlan:list});
                 break;
                 case "dropped":
                     list = $this.state.boxDropped;
                     mangaList.map((manga) => {
-                        list.push(<MangaBox data={manga} />);
+                        list.push(<ReadingListRow data={manga} />);
                     });
                     $this.setState({boxDropped:list});
                 break;
                 case "re_reading":
                     list = $this.state.boxReReading;
                     mangaList.map((manga) => {
-                        list.push(<MangaBox data={manga} />);
+                        list.push(<ReadingListRow data={manga} />);
                     });
                     $this.setState({boxReReading:list});
                 break;
                 case "completed":
                     list = $this.state.boxCompleted;
                     mangaList.map((manga) => {
-                        list.push(<MangaBox data={manga} />);
+                        list.push(<ReadingListRow data={manga} />);
                     });
                     $this.setState({boxCompleted:list});
                 break;
@@ -317,9 +329,13 @@ class Follow extends React.Component{
                     if(Object.keys(response.data.statuses).length === 0){
                         let emptyBox = [];
                         emptyBox.push(
-                            <span className="h-10 mt-2">
-                                No titles found.
-                            </span>
+                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                                <td></td>
+                                <td>No titles found.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         )
                         $this.setState({boxReading: emptyBox});
                     }
@@ -329,9 +345,13 @@ class Follow extends React.Component{
                     if(Object.keys(response.data.statuses).length === 0){
                         let emptyBox = [];
                         emptyBox.push(
-                            <span className="h-10 mt-2">
-                                No titles found.
-                            </span>
+                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                                <td></td>
+                                <td>No titles found.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         )
                         $this.setState({boxOnHold: emptyBox});
                     }
@@ -341,9 +361,13 @@ class Follow extends React.Component{
                     if(Object.keys(response.data.statuses).length === 0){
                         let emptyBox = [];
                         emptyBox.push(
-                            <span className="h-10 mt-2">
-                                No titles found.
-                            </span>
+                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                                <td></td>
+                                <td>No titles found.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         )
                         $this.setState({boxPlan: emptyBox});
                     }
@@ -353,9 +377,13 @@ class Follow extends React.Component{
                     if(Object.keys(response.data.statuses).length === 0){
                         let emptyBox = [];
                         emptyBox.push(
-                            <span className="h-10 mt-2">
-                                No titles found.
-                            </span>
+                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                                <td></td>
+                                <td>No titles found.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         )
                         $this.setState({boxDropped: emptyBox});
                     }
@@ -365,9 +393,13 @@ class Follow extends React.Component{
                     if(Object.keys(response.data.statuses).length === 0){
                         let emptyBox = [];
                         emptyBox.push(
-                            <span className="h-10 mt-2">
-                                No titles found.
-                            </span>
+                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                                <td></td>
+                                <td>No titles found.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         )
                         $this.setState({boxReReading: emptyBox});
                     }
@@ -377,9 +409,13 @@ class Follow extends React.Component{
                     if(Object.keys(response.data.statuses).length === 0){
                         let emptyBox = [];
                         emptyBox.push(
-                            <span className="h-10 mt-2">
-                                No titles found.
-                            </span>
+                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                                <td></td>
+                                <td>No titles found.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         )
                         $this.setState({boxCompleted: emptyBox});
                     }
@@ -498,7 +534,7 @@ class Follow extends React.Component{
                         btnOnHold: "text-center px-3 mr-3 mb-3 hover:opacity-75 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        contentReading: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
+                        contentReading: "w-full flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                         contentReReading: "hidden",
                         contentCompleted: "hidden",
                         contentOnHold: "hidden",
@@ -520,7 +556,7 @@ class Follow extends React.Component{
                         btnPlan: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentReading: "hidden",
-                        contentReReading: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
+                        contentReReading: "w-full flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                         contentCompleted: "hidden",
                         contentOnHold: "hidden",
                         contentPlan: "hidden",
@@ -542,7 +578,7 @@ class Follow extends React.Component{
                         btnDropped: "text-center px-3 mr-3 mb-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentReading: "hidden",
                         contentReReading: "hidden",
-                        contentCompleted: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
+                        contentCompleted: "w-full flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                         contentOnHold: "hidden",
                         contentPlan: "hidden",
                         contentDropped: "hidden",
@@ -564,7 +600,7 @@ class Follow extends React.Component{
                         contentReading: "hidden",
                         contentReReading: "hidden",
                         contentCompleted: "hidden",
-                        contentOnHold: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
+                        contentOnHold: "w-full flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                         contentPlan: "hidden",
                         contentDropped: "hidden",
                     }
@@ -586,7 +622,7 @@ class Follow extends React.Component{
                         contentReReading: "hidden",
                         contentCompleted: "hidden",
                         contentOnHold: "hidden",
-                        contentPlan: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
+                        contentPlan: "w-full flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                         contentDropped: "hidden",
                     }
                 });
@@ -608,7 +644,7 @@ class Follow extends React.Component{
                         contentCompleted: "hidden",
                         contentOnHold: "hidden",
                         contentPlan: "hidden",
-                        contentDropped: "w-full min-h-screen flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
+                        contentDropped: "w-full flex flex-wrap p-3 border-t-2 border-gray-200 dark:border-gray-900",
                     }
                 });
             break;
@@ -632,7 +668,7 @@ class Follow extends React.Component{
                 <Toaster />
                 <Header />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
-                    <div className="container mx-auto px-4 flex flex-wrap justify-between">
+                    <div className="container mx-auto px-4 flex flex-wrap justify-between min-h-screen">
                         <div className="box-border w-full py-2 my-4 mx-2">
                             <button onClick={() => this.changeTabs("chapter")} className={this.state.tabControl.btnChapter} >
                                 Last Updates
@@ -710,22 +746,46 @@ class Follow extends React.Component{
                                 </button>
 
                                 <div className={this.state.titleTabControl.contentReading}>
-                                    {this.state.boxReading.length > 0 ? this.state.boxReading : <Loading /> }
+                                    {
+                                        this.state.boxReading.length > 0 ? 
+                                        <ReadingListTable data={this.state.boxReading} /> : 
+                                        <Loading /> 
+                                    }
                                 </div>
                                 <div className={this.state.titleTabControl.contentReReading}>
-                                    {this.state.boxReReading.length > 0 ? this.state.boxReReading : <Loading /> }
+                                    {
+                                        this.state.boxReReading.length > 0 ? 
+                                        <ReadingListTable data={this.state.boxReReading} /> : 
+                                        <Loading /> 
+                                    }
                                 </div>
                                 <div className={this.state.titleTabControl.contentCompleted}>
-                                    {this.state.boxCompleted.length > 0 ? this.state.boxCompleted : <Loading /> }
+                                    {
+                                        this.state.boxCompleted.length > 0 ? 
+                                        <ReadingListTable data={this.state.boxCompleted} /> : 
+                                        <Loading /> 
+                                    }
                                 </div>
                                 <div className={this.state.titleTabControl.contentOnHold}>
-                                    {this.state.boxOnHold.length > 0 ? this.state.boxOnHold : <Loading /> }
+                                    {
+                                        this.state.boxOnHold.length > 0 ? 
+                                        <ReadingListTable data={this.state.boxOnHold} /> : 
+                                        <Loading /> 
+                                    }
                                 </div>
                                 <div className={this.state.titleTabControl.contentPlan}>
-                                    {this.state.boxPlan.length > 0 ? this.state.boxPlan : <Loading /> }
+                                    {
+                                        this.state.boxPlan.length > 0 ? 
+                                        <ReadingListTable data={this.state.boxPlan} /> : 
+                                        <Loading /> 
+                                    }
                                 </div>
                                 <div className={this.state.titleTabControl.contentDropped}>
-                                    {this.state.boxDropped.length > 0 ? this.state.boxDropped : <Loading /> }
+                                    {
+                                        this.state.boxDropped.length > 0 ? 
+                                        <ReadingListTable data={this.state.boxDropped} /> : 
+                                        <Loading /> 
+                                    }
                                 </div>
                             </div>
                         </div>

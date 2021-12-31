@@ -1,6 +1,6 @@
 {
   "name": "mangadex-react",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": true,
   "author": {
     "name": "Saymon600",
@@ -9,7 +9,7 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
-    "@craco/craco": "^6.1.2",
+    "@craco/craco": "^5.9.0",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@testing-library/jest-dom": "^5.13.0",
     "@testing-library/react": "^11.2.7",
@@ -23,7 +23,7 @@
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.0.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^2.1.3",
     "react-select": "^4.3.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4",
     "web-vitals": "^1.1.2"

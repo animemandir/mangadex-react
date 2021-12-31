@@ -265,7 +265,6 @@ class Search extends React.Component{
 
         let orderIndex = "latestUploadedChapter";
         let orderValue = "desc";
-        console.log(this.state.orderBy);
         switch(this.state.orderBy.value){
             case "revelance_desc":
                 orderIndex = "relevance";

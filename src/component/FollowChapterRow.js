@@ -85,6 +85,9 @@ class FollowChapterRow extends React.Component{
         if(this.props.data.attributes.chapter){
             label += "Chapter " + this.props.data.attributes.chapter + " ";
         }
+        if(label === ""){
+            label += "Oneshot ";
+        }
         if(this.props.data.attributes.title){
             label += "- " + this.props.data.attributes.title;
         }

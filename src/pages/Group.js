@@ -166,10 +166,24 @@ class Group extends React.Component{
                 });
             }
 
-            if($this.state.logged){
-                $this.getChapterRead(list,mangaList,response.data.total);
+            if(response.data.total > 0){
+                if($this.state.logged){
+                    $this.getChapterRead(list,mangaList,response.data.total);
+                }else{
+                    $this.getChapterInfo(list,[],response.data.total);
+                }
             }else{
-                $this.getChapterInfo(list,[],response.data.total);
+                $this.setState({
+                    chapterList: 
+                    <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                        <td></td>
+                        <td>No chapters found</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                })
             }
         })
         .catch(function(error){
@@ -225,9 +239,8 @@ class Group extends React.Component{
             for(let i = 0; i < response.data.data.length; i++){
                 response.data.data[i].read = false;
                 response.data.data[i].relationships.map((relation) => {
-                    console.log(relation.id);
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
-                        if(readList[relation.id].indexOf(response.data.data[i].data) > -1){
+                        if(readList[relation.id].indexOf(response.data.data[i].id) > -1){
                             response.data.data[i].read = true;
                         }
                     }

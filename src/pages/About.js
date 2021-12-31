@@ -79,7 +79,6 @@ class About extends React.Component{
                                 <li>MangaBox: stats and ratings</li>
                                 <li>Home: Top chapters</li>
                                 <li>Home: Top manga</li>
-                                <li>Complete user page</li>
                             </ul>
                         </div>
                     </div>

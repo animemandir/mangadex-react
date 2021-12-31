@@ -6,14 +6,29 @@ import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import MangaBox from '../component/MangaBox.js';
 import Loading from '../component/Loading.js';
+import Tags from '../component/Tags.js';
+
 class Author extends React.Component{
     constructor(props){
         super(props);
         this.state = {
             id: "",
             name: "",
-            image: "",
+            image: process.env.PUBLIC_URL + "notfound.png",
             version: "",
+            twitter: null,
+            pixiv: null,
+            melonBook: null,
+            fanBox: null,
+            booth: null,
+            nicoVideo: null,
+            skeb: null,
+            fantia: null,
+            tumblr: null,
+            youtube: null,
+            weibo: null,
+            naver: null,
+            website: null,
             biography: [],
             box: [],
             mangaList: [<Loading />]
@@ -36,14 +51,40 @@ class Author extends React.Component{
         .then(function(response){
             let name = response.data.data.attributes.name;
             let version = response.data.data.attributes.version;
-            let image = response.data.data.attributes.imageUrl;
+            let image = (response.data.data.attributes.imageUrl !== null) ? response.data.data.attributes.imageUrl : process.env.PUBLIC_URL + "notfound.png";
             let biography = response.data.data.attributes.biography;
+            let twitter = response.data.data.attributes.twitter;
+            let pixiv = response.data.data.attributes.pixiv;
+            let melonBook = response.data.data.attributes.melonBook;
+            let fanBox = response.data.data.attributes.fanBox;
+            let booth = response.data.data.attributes.booth;
+            let nicoVideo = response.data.data.attributes.nicoVideo;
+            let skeb = response.data.data.attributes.skeb;
+            let fantia = response.data.data.attributes.fantia;
+            let tumblr = response.data.data.attributes.tumblr;
+            let youtube = response.data.data.attributes.youtube;
+            let weibo = response.data.data.attributes.weibo;
+            let naver = response.data.data.attributes.naver;
+            let website = response.data.data.attributes.website;
 
             $this.setState({
                 name:name,
                 version:version,
                 image: image,
                 biography: biography,
+                twitter: twitter,
+                pixiv: pixiv,
+                melonBook: melonBook,
+                fanBox: fanBox,
+                booth: booth,
+                nicoVideo: nicoVideo,
+                skeb: skeb,
+                fantia: fantia,
+                tumblr: tumblr,
+                youtube: youtube,
+                weibo: weibo,
+                naver: naver,
+                website: website,
             });
             document.title = name + " - Mangadex";
             $this.getMangaList();
@@ -120,6 +161,21 @@ class Author extends React.Component{
     }
 
     render = () => {
+        var twitter = (this.state.twitter !== null && this.state.twitter !== undefined) ? <Tags name="Twitter" url={this.state.twitter}/> : "";
+        var pixiv = (this.state.pixiv !== null && this.state.pixiv !== undefined) ? <Tags name="Pixiv" url={this.state.pixiv}/> : "";
+        var melonBook = (this.state.melonBook !== null && this.state.melonBook !== undefined) ? <Tags name="Melon Books" url={this.state.melonBook}/> : "";
+        var fanBox = (this.state.fanBox !== null && this.state.fanBox !== undefined) ? <Tags name="Fanbox" url={this.state.fanBox}/> : "";
+        var booth = (this.state.booth !== null && this.state.booth !== undefined) ? <Tags name="Booth" url={this.state.booth}/> : "";
+        var nicoVideo = (this.state.nicoVideo !== null && this.state.nicoVideo !== undefined) ? <Tags name="Nico Video" url={this.state.nicoVideo}/> : "";
+        var skeb = (this.state.skeb !== null && this.state.skeb !== undefined) ? <Tags name="Skeb" url={this.state.skeb}/> : "";
+        var fantia = (this.state.fantia !== null && this.state.fantia !== undefined) ? <Tags name="Fantia" url={this.state.fantia}/> : "";
+        var tumblr = (this.state.tumblr !== null && this.state.tumblr !== undefined) ? <Tags name="Tumblr" url={this.state.tumblr}/> : "";
+        var youtube = (this.state.youtube !== null && this.state.youtube !== undefined) ? <Tags name="YouTube" url={this.state.youtube}/> : "";
+        var weibo = (this.state.weibo !== null && this.state.weibo !== undefined) ? <Tags name="Weibo" url={this.state.weibo}/> : "";
+        var naver = (this.state.naver !== null && this.state.naver !== undefined) ? <Tags name="Naver" url={this.state.naver}/> : "";
+        var website = (this.state.website !== null && this.state.website !== undefined) ? <Tags name="Website" url={this.state.website}/> : "";
+        var links = <div>{twitter} {pixiv} {melonBook} {fanBox} {booth} {nicoVideo} {skeb} {fantia} {tumblr} {youtube} {weibo} {naver} {website}</div>; 
+
         var bio = this.state.biography.map((b) => 
             <div className="text-justify">
                 {b}
@@ -154,6 +210,10 @@ class Author extends React.Component{
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Biography:</td>
                                                 <td width="80%" className="text-justify">{bio}</td>
+                                            </tr>
+                                            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                                                <td width="20%" className="font-semibold">Links:</td>
+                                                <td width="80%" className="text-justify">{links}</td>
                                             </tr>
                                         </table>
                                     </div>
