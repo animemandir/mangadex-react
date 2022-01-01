@@ -9,10 +9,13 @@ import axios from 'axios';
 import MangaBox from '../component/MangaBox.js';
 import Loading from '../component/Loading.js';
 import Paginator from '../component/Paginator.js';
+import { isLogged } from "../util/loginUtil.js";
+
 class Search extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            isLogged: false,
             manga: "",
             author: "",
             artist: "",
@@ -56,7 +59,7 @@ class Search extends React.Component{
         };
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         document.title = "Search - MangaDex";
 
         var listDemographic = [];
@@ -156,7 +159,11 @@ class Search extends React.Component{
         if(hide){
             this.toggleForm();
         }
+
+        let logged = await isLogged();
+
         this.setState({
+            isLogged: logged,
             manga:manga,
             author:author,
             artist:artist,
@@ -351,20 +358,34 @@ class Search extends React.Component{
                 });
             });
             
-            let list = mangaList.map((manga) => <MangaBox data={manga} />);
+            if($this.state.isLogged){
+                let total = 0;
+                total = (response.data.total/100);
+                total = Math.ceil(total);
+                if(total < 1){
+                    total = 1;
+                }
 
-            let total = 0;
-            total = (response.data.total/100);
-            total = Math.ceil(total);
-            if(total < 1){
-                total = 1;
+                $this.setState({
+                    pages: total,
+                    activePage: page
+                },() => $this.getStatistics(mangaList));
+            }else{
+                let list = mangaList.map((manga) => <MangaBox data={manga} />);
+
+                let total = 0;
+                total = (response.data.total/100);
+                total = Math.ceil(total);
+                if(total < 1){
+                    total = 1;
+                }
+
+                $this.setState({
+                    resultList:list,
+                    pages: total,
+                    activePage: page
+                });
             }
-
-            $this.setState({
-                resultList:list,
-                pages: total,
-                activePage: page
-            });
         })
         .catch(function(error){
             console.log(error);
@@ -375,60 +396,57 @@ class Search extends React.Component{
         });
     }
 
-    randomManga = () => {
-        this.setState({resultList:[<Loading />]});
-
+    getStatistics = (mangaList) => {
+        let idList = [];
+        for(let a = 0; a < mangaList.length; a++){
+            idList.push(mangaList[a].mangaId);
+        }
         var $this = this;
-        axios.get('https://api.mangadex.org/manga/random?includes[]=cover_art')
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/statistics/manga',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                manga: idList
+            }
+        })
         .then(function(response){
-            var mangaList = [];
-
-            let coverFile = "";
-            response.data.data.relationships.map((relation) => {
-                switch(relation.type){
-                    case "cover_art":
-                        coverFile = "https://uploads.mangadex.org/covers/" +  response.data.data.id + "/" + relation.attributes.fileName + ".512.jpg";
-                    break;
-                } 
-            });
-
-            let title = "";
-            console.log(response.data.data);
-            Object.keys(response.data.data.attributes.title).map(function(key){
-                if(key === "en" || title === ""){
-                    title = response.data.data.attributes.title[key];
+            for(let a = 0; a < mangaList.length; a++){
+                let mean = 0;
+                if(response.data.statistics[mangaList[a].mangaId] !== undefined){
+                    mean = response.data.statistics[mangaList[a].mangaId].rating.average;
+                    if(mean === undefined || mean === null){
+                        mean = 0;
+                    }
                 }
-            });
+                mangaList[a].meanRating = mean.toFixed(2);
+            }
 
-            let description = "";
-            Object.keys(response.data.data.attributes.description).map(function(key){
-                if(key === "en" || description === ""){
-                    description = response.data.data.attributes.description[key];
-                }
-            });
-
-            mangaList.push({
-                mangaId: response.data.data.id,
-                mangaName: title,
-                cover: coverFile,
-                originalLanguage: response.data.data.attributes.originalLanguage,
-                description: description
+            let list = mangaList.map((manga) => <MangaBox data={manga} />);
+            $this.setState({
+                resultList:list
             });
             
-            let list = mangaList.map((manga) => <MangaBox data={manga} />);
-            $this.setState({resultList:list});
         })
         .catch(function(error){
-            console.log(error)
-            toast.error('Error retrieving random data.',{
+            console.log(error);
+            toast.error('Error retrieving statistics.',{
                 duration: 4000,
                 position: 'top-right',
             });
         });
     }
 
-    changeManga = (e) => {
+    changeManga = (e) => {   
         this.setState({manga: e.target.value});
+    }
+
+    keypressManga = (e) => {
+        e.preventDefault();
+        if(e.key === "Enter"){
+            this.searchManga(1);
+        }
     }
 
     changeAuthor = (e) => {
@@ -553,9 +571,9 @@ class Search extends React.Component{
                             <div className={this.state.classForm}>
                                 <table className="table-auto w-full p-4">
                                     <tr className="h-12">
-                                        <td width="20%" className="font-semibold text-right px-4">Manga:</td>
+                                        <td width="20%" className="font-semibold text-right px-4">Name:</td>
                                         <td width="80%">
-                                            <input type="text" value={this.state.manga}  onChange={this.changeManga} className="w-full px-2 h-8 rounded dark:bg-gray-600 border dark:border-gray-900" /> 
+                                            <input type="text" value={this.state.manga}  onChange={this.changeManga} onKeyUp={this.keypressManga} className="w-full px-2 h-8 rounded dark:bg-gray-600 border dark:border-gray-900" /> 
                                         </td>
                                     </tr>
                                     <tr className="h-12">
@@ -711,9 +729,6 @@ class Search extends React.Component{
                                 <div className="w-full mt-2">
                                     <button onClick={() => this.searchManga(1)} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
                                         Search
-                                    </button>
-                                    <button onClick={() => this.randomManga()} className="w-auto float-right mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
-                                        Ignore everything and yolo
                                     </button>
                                 </div>
                             </div>

@@ -44,6 +44,9 @@ class Title extends React.Component{
             following: false,
             isLogged: false,
             readingStatus: "",
+            personalRating: "",
+            meanRating: 0,
+            usersRating: 0,
             activePage: 1,
             pages: 0,
             relations: [],
@@ -82,6 +85,8 @@ class Title extends React.Component{
             $this.getChapterRead();
             $this.checkFollow();
             $this.checkReadingStatus();
+            $this.checkRating();
+            $this.checkStatistics();
         }else{
             this.getChapterList(1);
         }
@@ -496,6 +501,128 @@ class Title extends React.Component{
         });
     }
 
+    checkRating = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/rating',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                manga: [$this.state.id]
+            }
+        })
+        .then(function(response){
+            let rating = response.data.ratings[$this.state.id].rating;
+            if(rating === undefined || rating === null){
+                rating = "";
+            }
+            $this.setState({
+                personalRating: rating
+            });
+        })
+        .catch(function(error){
+            console.log(error);
+            $this.setState({
+                personalRating: ""
+            });
+        });
+    }
+
+    changeRating = (e) => {
+        let newRating = e.target.value;
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        if(newRating === ""){
+            axios.delete('https://api.mangadex.org/rating/' + this.state.id,
+                {
+                    headers: {  
+                        Authorization: bearer
+                    }
+                }
+            )
+            .then(function(response){
+                if(response.data.result === "ok"){
+                    $this.setState({
+                        personalRating: ""
+                    });
+                    toast.success('Deleted Rating',{
+                        duration: 1000,
+                        position: 'top-right',
+                    });
+                    $this.checkRating();
+                }
+            })
+            .catch(function(error){
+                toast.error('Error updating rating.',{
+                    duration: 4000,
+                    position: 'top-right',
+                });
+            });
+        }else{
+            axios.post('https://api.mangadex.org/rating/' + this.state.id,
+                {rating: parseInt(newRating)},
+                {
+                    headers: {  
+                        Authorization: bearer
+                    }
+                }
+            )
+            .then(function(response){
+                if(response.data.result === "ok"){
+                    $this.setState({
+                        personalRating: newRating
+                    });
+                    toast.success('Updated Rating',{
+                        duration: 1000,
+                        position: 'top-right',
+                    });
+                    $this.checkRating();
+                }
+            })
+            .catch(function(error){
+                toast.error('Error updating rating.',{
+                    duration: 4000,
+                    position: 'top-right',
+                });
+            });
+        }
+    }
+
+    checkStatistics = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/statistics/manga',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                manga: [$this.state.id]
+            }
+        })
+        .then(function(response){
+            let mean = response.data.statistics[$this.state.id].rating.average;
+            if(mean === undefined || mean === null){
+                mean = 0;
+            }
+            let users = 0;
+            Object.keys(response.data.statistics[$this.state.id].rating.distribution).map(function(key){
+                users += parseInt(response.data.statistics[$this.state.id].rating.distribution[key]);
+            });
+            $this.setState({
+                meanRating: mean.toFixed(2),
+                usersRating: users
+            });
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error retrieving statistics.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
     changeTabs = (tab) => {
         switch(tab){
             case "chapter":
@@ -551,6 +678,7 @@ class Title extends React.Component{
         var trInformation = "";
         var trActions = "";
         var trRelations = "";
+        var trRating = "";
         if(altTitles.length > 0){
             trAltTitles = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -632,6 +760,24 @@ class Title extends React.Component{
                 </td>
             </tr>;
         }
+        if(this.state.meanRating > 0){
+            trRating =
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Rating:</td>
+                <td width="80%">
+                    <div className="flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-1 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                        {this.state.meanRating}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-1 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        {this.state.usersRating}
+                    </div>
+                </td>
+            </tr>
+        }
         if(this.state.isLogged){
             var btnFollow =
             <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Follow" onClick={this.followManga}>
@@ -663,12 +809,28 @@ class Title extends React.Component{
                         className="w-auto px-3 py-1 my-1 h-9 focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
                         value={this.state.readingStatus} 
                         onChange={this.changeReadingStatus} >
-                        <option value="">None</option>
+                        <option value="">Status (None)</option>
                         {
                             Object.keys(mangaReadingStatus).map((status) => 
                                 <option value={status}>{mangaReadingStatus[status]}</option>
                             )
                         }
+                    </select>
+                    <select 
+                        className="w-auto px-3 py-1 my-1 ml-1 h-9 focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                        value={this.state.personalRating} 
+                        onChange={this.changeRating} >
+                        <option value="">Rating (None)</option>
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
                     </select>
                 </td>
             </tr>
@@ -712,10 +874,7 @@ class Title extends React.Component{
                                             {trGenre}
                                             {trTheme}
                                             {trContentRating}
-                                            <tr className="text-left hidden border-b border-gray-200 dark:border-gray-900">
-                                                <td width="20%" className="font-semibold">Rating:</td>
-                                                <td width="80%">Coming soon (?)</td>
-                                            </tr>
+                                            {trRating}
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Pub. status:</td>
                                                 <td width="80%">{this.state.status}</td>

@@ -7,11 +7,13 @@ import Footer from '../component/Footer.js';
 import MangaBox from '../component/MangaBox.js';
 import Loading from '../component/Loading.js';
 import Tags from '../component/Tags.js';
+import { isLogged } from "../util/loginUtil.js";
 
 class Author extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            isLogged: false,
             id: "",
             name: "",
             image: process.env.PUBLIC_URL + "notfound.png",
@@ -35,10 +37,14 @@ class Author extends React.Component{
         };
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         document.title = "Author - Mangadex";
         const id = this.props.match.params.id;
-        this.setState({id:id},() => this.init());
+        let logged = await isLogged();
+        this.setState({
+            id:id,
+            isLogged: logged
+        },() => this.init());
     }
 
     init = () => {
@@ -52,7 +58,13 @@ class Author extends React.Component{
             let name = response.data.data.attributes.name;
             let version = response.data.data.attributes.version;
             let image = (response.data.data.attributes.imageUrl !== null) ? response.data.data.attributes.imageUrl : process.env.PUBLIC_URL + "notfound.png";
-            let biography = response.data.data.attributes.biography;
+            let biography = "";
+            Object.keys(response.data.data.attributes.biography).map(function(key){
+                if(key === "en" || biography === ""){
+                    biography = response.data.data.attributes.biography[key];
+                }
+            });
+            
             let twitter = response.data.data.attributes.twitter;
             let pixiv = response.data.data.attributes.pixiv;
             let melonBook = response.data.data.attributes.melonBook;
@@ -86,7 +98,7 @@ class Author extends React.Component{
                 naver: naver,
                 website: website,
             });
-            document.title = name + " - Mangadex";
+            document.title = "Author: " + name + " - Mangadex";
             $this.getMangaList();
         })
         .catch(function(error){
@@ -147,13 +159,59 @@ class Author extends React.Component{
                     description: description
                 });
             });
+            if($this.state.isLogged){
+                $this.getStatistics(mangaList);
+            }else{
+                let list = mangaList.map((manga) => <MangaBox data={manga} />);
+                $this.setState({mangaList:list});
+            }
             
-            let list = mangaList.map((manga) => <MangaBox data={manga} />);
-            $this.setState({mangaList:list});
         })
         .catch(function(error){
             console.log(error);
             toast.error('Error retrieving search data.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    getStatistics = (mangaList) => {
+        let idList = [];
+        for(let a = 0; a < mangaList.length; a++){
+            idList.push(mangaList[a].mangaId);
+        }
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/statistics/manga',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                manga: idList
+            }
+        })
+        .then(function(response){
+            for(let a = 0; a < mangaList.length; a++){
+                let mean = 0;
+                if(response.data.statistics[mangaList[a].mangaId] !== undefined){
+                    mean = response.data.statistics[mangaList[a].mangaId].rating.average;
+                    if(mean === undefined || mean === null){
+                        mean = 0;
+                    }
+                }
+                mangaList[a].meanRating = mean.toFixed(2);
+            }
+
+            let list = mangaList.map((manga) => <MangaBox data={manga} />);
+            $this.setState({
+                mangaList:list
+            });
+            
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error retrieving statistics.',{
                 duration: 4000,
                 position: 'top-right',
             });
@@ -176,11 +234,6 @@ class Author extends React.Component{
         var website = (this.state.website !== null && this.state.website !== undefined) ? <Tags name="Website" url={this.state.website}/> : "";
         var links = <div>{twitter} {pixiv} {melonBook} {fanBox} {booth} {nicoVideo} {skeb} {fantia} {tumblr} {youtube} {weibo} {naver} {website}</div>; 
 
-        var bio = this.state.biography.map((b) => 
-            <div className="text-justify">
-                {b}
-            </div>
-        )
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
@@ -209,7 +262,7 @@ class Author extends React.Component{
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Biography:</td>
-                                                <td width="80%" className="text-justify">{bio}</td>
+                                                <td width="80%" className="text-justify">{this.state.biography}</td>
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Links:</td>
