@@ -16,6 +16,7 @@ import Search from './pages/Search.js';
 import Group from './pages/Group.js';
 import User from './pages/User.js';
 import Author from './pages/Author.js';
+import History from './pages/History.js';
 import Error404 from './pages/Error404.js';
 
 
@@ -49,6 +50,9 @@ export default function App() {
                 </Route>
                 <Route path="/about">
                     <About />
+                </Route>
+                <Route path="/history">
+                    <History />
                 </Route>
                 <Route path="/login">
                     <Login />

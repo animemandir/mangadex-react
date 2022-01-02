@@ -15,7 +15,7 @@ class Tags extends React.Component{
                 {this.props.name}
             </span>
         }else if(this.props.url.startsWith('http') || this.props.url.startsWith('mailto')){
-            component = <a href={this.props.url} target="_blank" rel="noreferrer">
+            component = <a href={this.props.url} target="_blank" rel="noopener noreferrer">
                 <span className="text-gray-700 bg-gray-300 text-xs font-semibold py-1 px-2 uppercase rounded mr-1">
                     {this.props.name}
                 </span>

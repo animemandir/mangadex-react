@@ -3,7 +3,6 @@ const { app, BrowserWindow } = electron;
 const path = require('path');
 const isDev = require('electron-is-dev');
 
-
 let mainWindow = null;
 app.on('ready',createWindow);
 app.on('window-all-closed',function(){

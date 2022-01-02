@@ -29,7 +29,7 @@ class About extends React.Component{
                             </p>
                             <p className="w-full text-justify">
                                 This app was made in order to review React, electron and such, I ended doing almost everything I wanted already. 
-                                For more information about the project structure, access the <a className={colorTheme(500).text} href="https://github.com/Saymon600/mangadex-react" target="_blank" rel="noreferrer"> GitHub repository</a>.
+                                For more information about the project structure, access the <a className={colorTheme(500).text} href="https://github.com/Saymon600/mangadex-react" target="_blank" rel="noopener noreferrer"> GitHub repository</a>.
                             </p>
                             <p className="w-full text-justify">
                                 I have no plans to add features such as <i>upload chapters</i>, <i>report</i>, <i>create a new account</i>, <i>password recover</i> and others.
@@ -37,7 +37,7 @@ class About extends React.Component{
                             </p>
                             <p className="w-full text-justify">
                                 I plan to give some support to this project, if you want another language on settings, bug report or some new feature, please open an issue on 
-                                <a className={colorTheme(500).text} href="https://github.com/Saymon600/mangadex-react/issues" target="_blank" rel="noreferrer"> GitHub</a>.
+                                <a className={colorTheme(500).text} href="https://github.com/Saymon600/mangadex-react/issues" target="_blank" rel="noopener noreferrer"> GitHub</a>.
                             </p>
 
                             <h2 className="border-b text-xl my-3">Alternatives:</h2>
@@ -45,28 +45,28 @@ class About extends React.Component{
                                 <li>
                                     <a 
                                         className={colorTheme(500).text} 
-                                        href="https://mangadex.org/" target="_blank" rel="noreferrer"> 
+                                        href="https://mangadex.org/" target="_blank" rel="noopener noreferrer"> 
                                         Official MangaDex Client
                                     </a>
                                 </li>
                                 <li>
                                     <a 
                                         className={colorTheme(500).text} 
-                                        href="https://proxy.cubari.moe/#/" target="_blank" rel="noreferrer"> 
+                                        href="https://proxy.cubari.moe/#/" target="_blank" rel="noopener noreferrer"> 
                                         Cubari.moe
                                     </a>
                                 </li>
                                 <li>
                                     <a 
                                         className={colorTheme(500).text} 
-                                        href="https://tachiyomi.org/" target="_blank" rel="noreferrer"> 
+                                        href="https://tachiyomi.org/" target="_blank" rel="noopener noreferrer"> 
                                         Tachiyomi (Android)
                                     </a>
                                 </li>
                                 <li>
                                     <a 
                                         className={colorTheme(500).text} 
-                                        href="https://paperback.moe/" target="_blank" rel="noreferrer"> 
+                                        href="https://paperback.moe/" target="_blank" rel="noopener noreferrer"> 
                                         Paperback (iOS)
                                     </a>
                                 </li>
@@ -74,7 +74,7 @@ class About extends React.Component{
 
                             <h2 className="border-b text-xl my-3">To do list/Waiting for API full support/Note to self:</h2>
                             <ul className="list-disc">
-                                <li>Reading History</li>
+                                <li>Reading List: edit status, follow, rating</li>
                                 <li>Title: Edit progress</li>
                                 <li>Title: stats</li>
                                 <li>MangaBox: stats</li>

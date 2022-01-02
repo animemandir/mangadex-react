@@ -2,7 +2,8 @@ import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import { mangaContentRating,originalLanguage } from '../util/static.js';
-
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 class Settings extends React.Component{
     constructor(props){
@@ -100,6 +101,25 @@ class Settings extends React.Component{
 
         localStorage.color = color;
         this.setState({color:color});
+    }
+
+    clearReadingHistory = () => {
+        confirmAlert({
+            title: 'Clear Reading History',
+            message: 'Are you sure?',
+            buttons: [
+              {
+                label: 'Yes',
+                onClick: () => {
+                    localStorage.removeItem('readingHistory');
+                }
+              },
+              {
+                label: 'No',
+                onClick: () => {}
+              }
+            ]
+        });
     }
 
     render = () => {
@@ -203,6 +223,16 @@ class Settings extends React.Component{
                             </div>
                             <div className="w-full py-3">
                                 {colors}
+                            </div>
+                        </div>
+                        <div className="box-border w-full py-1 my-1 mx-2">
+                            <div className="w-full border-b border-gray-200 dark:border-gray-900">
+                                Reading History
+                            </div>
+                            <div className="w-full py-3">
+                                <button onClick={this.clearReadingHistory} className="w-auto mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
+                                    Clear Reading History
+                                </button>
                             </div>
                         </div>
                     </div>

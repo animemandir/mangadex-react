@@ -16,11 +16,11 @@ class Footer extends React.Component{
                         <div className="sm:w-2/3 text-center py-6">
                             <p className="text-sm text-gray-800 dark:text-gray-100 font-bold mb-2">
                                 © 2021 
-                                <a className={colorTheme(500).text} href="https://mangadex.org/" target="_blank" rel="noreferrer"> MangaDex (Official)</a>
+                                <a className={colorTheme(500).text} href="https://mangadex.org/" target="_blank" rel="noopener noreferrer"> MangaDex (Official)</a>
                                 <span className="mx-1">|</span>
                                 <Link className={colorTheme(500).text} to="/about"> About</Link>
                                 <span className="mx-1">|</span>
-                                <a className={colorTheme(500).text} href="https://github.com/Saymon600/mangadex-react" target="_blank" rel="noreferrer"> GitHub</a>
+                                <a className={colorTheme(500).text} href="https://github.com/Saymon600/mangadex-react" target="_blank" rel="noopener noreferrer"> GitHub</a>
                             </p>
                         </div>
                     </div>

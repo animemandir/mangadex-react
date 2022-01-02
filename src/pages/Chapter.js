@@ -6,7 +6,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import LanguageFlag  from '../component/LanguageFlag.js';
 import { colorTheme } from "../util/colorTheme";
 import { isLogged } from "../util/loginUtil.js";
-import { parse } from "postcss";
+import { DateTime } from "luxon";
+
 class Chapter extends React.Component{
     constructor(props){
         super(props);
@@ -54,7 +55,6 @@ class Chapter extends React.Component{
         };
     }
 
-    // Initialization
     async componentDidMount(){
         const id = this.props.match.params.id;
         const page = parseInt(this.props.match.params.page);
@@ -85,6 +85,9 @@ class Chapter extends React.Component{
             }
         })
         .then(function(response){
+            let chapterId = "";
+            let chapter = "";
+            let title = "";
             let mangaId = "";
             let manga = "";
             let groupId = "";
@@ -117,6 +120,9 @@ class Chapter extends React.Component{
 
             translatedLanguage = response.data.data.attributes.translatedLanguage;            
             externalUrl = response.data.data.attributes.externalUrl;
+            chapterId = response.data.data.id;
+            chapter = response.data.data.attributes.chapter;
+            title = response.data.data.attributes.title;
 
             $this.setState({
                 mangaId: mangaId,
@@ -129,6 +135,38 @@ class Chapter extends React.Component{
                 
                 externalUrl: externalUrl
             });
+
+            let readingHistory = [];
+            let inReadingHistory = false;
+            if(localStorage.readingHistory){
+                readingHistory = JSON.parse(localStorage.readingHistory);
+            }
+
+            if(readingHistory.length > 0){
+                for(let a = 0; a < readingHistory.length; a++){
+                    if(readingHistory[a].chapterId === chapterId){
+                        inReadingHistory = true;
+                    }
+                }
+            }
+
+            if(!inReadingHistory){
+                readingHistory.push({
+                    chapterId: chapterId,
+                    chapter: chapter,
+                    title: title,
+                    mangaId: mangaId,
+                    manga: manga,
+                    groupId: groupId,
+                    group: group,
+                    userId: userId,
+                    user: user,
+                    translatedLanguage: translatedLanguage,
+                    externalUrl: externalUrl,
+                    readAt: DateTime.now().toISO()
+                });
+                localStorage.readingHistory = JSON.stringify(readingHistory);
+            }
 
             $this.getChapterList(mangaId,0);
             $this.getBaseUrl(id);
@@ -677,7 +715,7 @@ class Chapter extends React.Component{
         var chapterList = this.state.chapterList.map((i) => <option value={i.id}>{i.label}</option>);
         var externalUrl = (this.state.externalUrl !== "" && this.state.externalUrl !== undefined && this.state.externalUrl !== null) ? 
         <div className="flex flex-row px-3 pb-3">
-            <a className={colorTheme(500).text + " " + colorTheme(500).border + " text-center text-lg px-3 py-2 focus:outline-none border-2 h-12 mt-2 w-full"} href={this.state.externalUrl} target="_blank" title={this.state.externalUrl}>
+            <a className={colorTheme(500).text + " " + colorTheme(500).border + " text-center text-lg px-3 py-2 focus:outline-none border-2 h-12 mt-2 w-full"} href={this.state.externalUrl} target="_blank" title={this.state.externalUrl} rel="noopener noreferrer">
                 Open External Link
                 <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

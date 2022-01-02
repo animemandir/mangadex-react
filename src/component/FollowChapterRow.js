@@ -4,7 +4,7 @@ import LanguageFlag  from './LanguageFlag.js';
 import { DateTime } from "luxon";
 import { colorTheme } from "../util/colorTheme";
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 class FollowChapterRow extends React.Component{
     constructor(props){
         super(props);

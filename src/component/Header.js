@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { isLogged } from "../util/loginUtil.js";
 import { colorTheme } from "../util/colorTheme";
 import axios from 'axios';
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 class Header extends React.Component{
     constructor(props){
@@ -61,23 +63,38 @@ class Header extends React.Component{
     }
 
     logout = () => {
-        var $this = this;
-        var bearer = "Bearer " + localStorage.authToken
-        axios.post('https://api.mangadex.org/auth/logout',{
-            'headers': {  
-                Authorization: bearer
-            }
-        })
-        .then(function(response){
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("authUser");
-            localStorage.removeItem("authExpire");
-            localStorage.removeItem("authRefresh");
-            localStorage.removeItem("refreshExpire");
-            $this.setState({isLogged:false});
-        })
-        .catch(function(error){
-            console.log(error);
+        confirmAlert({
+            title: 'Logout',
+            message: 'Are you sure?',
+            buttons: [
+              {
+                label: 'Yes',
+                onClick: () => {
+                    var $this = this;
+                    var bearer = "Bearer " + localStorage.authToken
+                    axios.post('https://api.mangadex.org/auth/logout',{
+                        'headers': {  
+                            Authorization: bearer
+                        }
+                    })
+                    .then(function(response){
+                        localStorage.removeItem("authToken");
+                        localStorage.removeItem("authUser");
+                        localStorage.removeItem("authExpire");
+                        localStorage.removeItem("authRefresh");
+                        localStorage.removeItem("refreshExpire");
+                        $this.setState({isLogged:false});
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                    });
+                }
+              },
+              {
+                label: 'No',
+                onClick: () => {}
+              }
+            ]
         });
     }
 
@@ -138,15 +155,15 @@ class Header extends React.Component{
                                 </li>
                                 {follow}
                                 <li className="nav-item">
+                                    <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/history">
+                                        History
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/settings">
                                         Settings
                                     </Link>
                                 </li>
-                                {/* <li className="nav-item">
-                                    <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/about">
-                                        About
-                                    </Link>
-                                </li> */}
                                 {login}
                                 {mode}
                                 <li className="nav-item" title="Refresh">

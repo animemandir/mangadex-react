@@ -337,7 +337,7 @@ class Title extends React.Component{
                 let file = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.data[i].attributes.fileName + ".512.jpg";
                 let title = (response.data.data[i].attributes.volume) ? "Volume " + response.data.data[i].attributes.volume : "Cover"; 
                 list.push(
-                    <a href={fileFull} target="_blank" rel="noreferrer" className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
+                    <a href={fileFull} target="_blank" rel="noopener noreferrer" className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
                         <img 
                             src={file}                            
                             alt={title}
@@ -806,7 +806,7 @@ class Title extends React.Component{
                 <td width="80%" className="flex">
                     {btnFollow}
                     <select 
-                        className="w-auto px-3 py-1 my-1 h-9 focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                        className="w-auto px-3 py-1 my-1 h-9 hover:opacity-75 cursor-pointer focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
                         value={this.state.readingStatus} 
                         onChange={this.changeReadingStatus} >
                         <option value="">Status (None)</option>
@@ -817,7 +817,7 @@ class Title extends React.Component{
                         }
                     </select>
                     <select 
-                        className="w-auto px-3 py-1 my-1 ml-1 h-9 focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
+                        className="w-auto px-3 py-1 my-1 ml-1 h-9 hover:opacity-75 cursor-pointer focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
                         value={this.state.personalRating} 
                         onChange={this.changeRating} >
                         <option value="">Rating (None)</option>

@@ -141,10 +141,12 @@ class Home extends React.Component{
                 let mangaId = manga.id;
                 manga.relationships.map((relation) => {
                     if(relation.type === "cover_art"){
-                        let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + relation.attributes.fileName + ".512.jpg";
-                        if(chapters[mangaId]){
-                            chapters[mangaId].cover = coverFile;
-                        }
+                        if(relation.attributes !== undefined){
+                            let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + relation.attributes.fileName + ".512.jpg";
+                            if(chapters[mangaId]){
+                                chapters[mangaId].cover = coverFile;
+                            }
+                        }                        
                     }                    
                 });
             });
