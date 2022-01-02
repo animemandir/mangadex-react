@@ -18,7 +18,7 @@ class Follow extends React.Component{
             showChapterLoad: false,
             tabControl: {
                 btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnManga: "text-center px-3 py-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                 contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
             },
@@ -54,6 +54,9 @@ class Follow extends React.Component{
             totalDropped: -1,
             totalReReading: -1,
             totalCompleted: -1,
+            follows: [],
+            blockReadingList: true,
+            followOffset: 0
         };
     }
 
@@ -61,9 +64,8 @@ class Follow extends React.Component{
         document.title = "Follows - MangaDex";
         let logged = await isLogged();
         if(logged){
-            var $this = this;
-            $this.getChapterFeed();
-            // $this.getTitleStatus();
+            this.getChapterFeed();
+            this.getFollows();
         }else{
             window.location = "#/";
         }
@@ -192,114 +194,6 @@ class Follow extends React.Component{
         .catch(function(error){
             console.log(error);
             toast.error('Error retrieving chapter list.',{
-                duration: 4000,
-                position: 'top-right',
-            });
-        });
-    }
-
-    getTitleInfo = (ids,status) => {
-        var $this = this;
-        axios.get('https://api.mangadex.org/manga?includes[]=cover_art&includes[]=author&includes[]=artist',{
-            params: {
-                ids: ids,
-                limit: 100
-            }
-        })
-        .then(function(response){
-            var mangaList = [];
-            response.data.data.map((result) => {
-                let coverFile = "";
-                let authors = [];
-                let artists = [];
-                result.relationships.map((relation) => {
-                    switch(relation.type){
-                        case "artist":
-                            artists.push({id:relation.id,name:relation.attributes.name});
-                        break;
-                        case "author":
-                            authors.push({id:relation.id,name:relation.attributes.name});
-                        break;
-                        case "cover_art":
-                            coverFile = "https://uploads.mangadex.org/covers/" +  result.id + "/" + relation.attributes.fileName + ".512.jpg";
-                        break;
-                    } 
-                });
-                
-                let title = "";
-                Object.keys(result.attributes.title).map(function(key){
-                    if(key === "en" || title === ""){
-                        title = result.attributes.title[key];
-                    }
-                });
-
-                let description = "";
-                Object.keys(result.attributes.description).map(function(key){
-                    if(key === "en" || description === ""){
-                        description = result.attributes.description[key];
-                    }
-                });
-
-                mangaList.push({
-                    mangaId: result.id,
-                    mangaName: title,
-                    cover: coverFile,
-                    originalLanguage: result.attributes.originalLanguage,
-                    description: description,
-                    artist:artists,
-                    author:authors
-                });
-            });
-            
-            var list = [];
-            switch(status){
-                case "reading":
-                    list = $this.state.boxReading;
-                    mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
-                    });
-                    $this.setState({boxReading:list});
-                break;
-                case "on_hold":
-                    list = $this.state.boxOnHold;
-                    mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
-                    });
-                    $this.setState({boxOnHold:list});
-                break;
-                case "plan_to_read":
-                    list = $this.state.boxPlan;
-                    mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
-                    });
-                    $this.setState({boxPlan:list});
-                break;
-                case "dropped":
-                    list = $this.state.boxDropped;
-                    mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
-                    });
-                    $this.setState({boxDropped:list});
-                break;
-                case "re_reading":
-                    list = $this.state.boxReReading;
-                    mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
-                    });
-                    $this.setState({boxReReading:list});
-                break;
-                case "completed":
-                    list = $this.state.boxCompleted;
-                    mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
-                    });
-                    $this.setState({boxCompleted:list});
-                break;
-            }
-        })
-        .catch(function(error){
-            console.log(error);
-            toast.error('Error retrieving search data.',{
                 duration: 4000,
                 position: 'top-right',
             });
@@ -495,6 +389,153 @@ class Follow extends React.Component{
         });
     }
 
+    getTitleInfo = (ids,status) => {
+        var $this = this;
+        axios.get('https://api.mangadex.org/manga?includes[]=cover_art&includes[]=author&includes[]=artist',{
+            params: {
+                ids: ids,
+                limit: 100
+            }
+        })
+        .then(function(response){
+            var mangaList = [];
+            response.data.data.map((result) => {
+                let coverFile = "";
+                let authors = [];
+                let artists = [];
+                result.relationships.map((relation) => {
+                    switch(relation.type){
+                        case "artist":
+                            artists.push({id:relation.id,name:relation.attributes.name});
+                        break;
+                        case "author":
+                            authors.push({id:relation.id,name:relation.attributes.name});
+                        break;
+                        case "cover_art":
+                            if(relation.attributes !== undefined){
+                                coverFile = "https://uploads.mangadex.org/covers/" +  result.id + "/" + relation.attributes.fileName + ".512.jpg";
+                            }                            
+                        break;
+                    } 
+                });
+                
+                let title = "";
+                Object.keys(result.attributes.title).map(function(key){
+                    if(key === "en" || title === ""){
+                        title = result.attributes.title[key];
+                    }
+                });
+
+                let description = "";
+                Object.keys(result.attributes.description).map(function(key){
+                    if(key === "en" || description === ""){
+                        description = result.attributes.description[key];
+                    }
+                });
+
+                mangaList.push({
+                    mangaId: result.id,
+                    mangaName: title,
+                    cover: coverFile,
+                    originalLanguage: result.attributes.originalLanguage,
+                    description: description,
+                    artist:artists,
+                    author:authors,
+                    readingStatus: status,
+                    follow: $this.state.follows.indexOf(result.id) > -1 ? true : false
+                });
+            });
+            
+            $this.getTitleRating(ids,mangaList,status);
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error retrieving title data.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    getTitleRating = (ids,mangaList,status) => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/rating',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                manga: ids
+            }
+        })
+        .then(function(response){
+            for(let i = 0; i < mangaList.length; i++){
+                let rating = "";
+                if(response.data.ratings[mangaList[i].mangaId] !== undefined){
+                    rating = response.data.ratings[mangaList[i].mangaId].rating;
+                    if(rating === undefined || rating === null){
+                        rating = "";
+                    }
+                }
+
+                mangaList[i].rating = rating;
+            }
+
+            var list = [];
+            switch(status){
+                case "reading":
+                    list = $this.state.boxReading;
+                    mangaList.map((manga) => {
+                        list.push(<ReadingListRow data={manga} />);
+                    });
+                    $this.setState({boxReading:list});
+                break;
+                case "on_hold":
+                    list = $this.state.boxOnHold;
+                    mangaList.map((manga) => {
+                        list.push(<ReadingListRow data={manga} />);
+                    });
+                    $this.setState({boxOnHold:list});
+                break;
+                case "plan_to_read":
+                    list = $this.state.boxPlan;
+                    mangaList.map((manga) => {
+                        list.push(<ReadingListRow data={manga} />);
+                    });
+                    $this.setState({boxPlan:list});
+                break;
+                case "dropped":
+                    list = $this.state.boxDropped;
+                    mangaList.map((manga) => {
+                        list.push(<ReadingListRow data={manga} />);
+                    });
+                    $this.setState({boxDropped:list});
+                break;
+                case "re_reading":
+                    list = $this.state.boxReReading;
+                    mangaList.map((manga) => {
+                        list.push(<ReadingListRow data={manga} />);
+                    });
+                    $this.setState({boxReReading:list});
+                break;
+                case "completed":
+                    list = $this.state.boxCompleted;
+                    mangaList.map((manga) => {
+                        list.push(<ReadingListRow data={manga} />);
+                    });
+                    $this.setState({boxCompleted:list});
+                break;
+            }
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error retrieving rating data.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
     changeTabs = (tab) => {
         switch(tab){
             case "chapter":
@@ -507,15 +548,24 @@ class Follow extends React.Component{
                 
             break;
             case "manga":
-                if(this.state.boxReading.length === 0){
-                    this.getTitleStatus("reading");
-                }
-                this.setState({tabControl: {
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                    btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
-                    contentManga: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
-                }});
+                if(this.state.blockReadingList){
+                    this.setState({tabControl: {
+                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnManga: "text-center px-3 py-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
+                    }});
+                }else{
+                    if(this.state.totalReading === -1){
+                        this.getTitleStatus("reading");
+                    }
+                    this.setState({tabControl: {
+                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentManga: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
+                    }});
+                }                
             break;
         }
     }
@@ -653,6 +703,69 @@ class Follow extends React.Component{
 
     chapterLoadMore = () => {
         this.getChapterFeed();
+    }
+
+    getFollows = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/user/follows/manga',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                limit: 100,
+                offset: this.state.followOffset
+            }
+        })
+        .then(function(response){
+            let follows = $this.state.follows;
+            for(let i = 0; i < response.data.data.length; i++){
+                follows.push(response.data.data[i].id);
+            }
+
+            let offset = parseInt($this.state.followOffset) + 100;
+            let block = true;
+            if(offset >= response.data.total){
+                block = false;
+            }
+            if(block){
+                $this.setState({
+                    follows: follows,
+                    blockReadingList: true,
+                    followOffset: offset,
+                    tabControl: {
+                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnManga: "text-center px-3 py-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    }
+                },() => $this.getFollows());
+            }else{
+                $this.setState({
+                    follows: follows,
+                    blockReadingList: false,
+                    tabControl: {
+                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    }
+                });
+            }
+            
+        })
+        .catch(function(error){
+            console.log(error);
+            $this.setState({
+                blockReadingList: false,
+                tabControl: {
+                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                }
+            });
+        });
     }
 
     render = () => {

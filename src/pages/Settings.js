@@ -2,8 +2,6 @@ import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import { mangaContentRating,originalLanguage } from '../util/static.js';
-import { confirmAlert } from 'react-confirm-alert'; 
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 class Settings extends React.Component{
     constructor(props){
@@ -104,22 +102,9 @@ class Settings extends React.Component{
     }
 
     clearReadingHistory = () => {
-        confirmAlert({
-            title: 'Clear Reading History',
-            message: 'Are you sure?',
-            buttons: [
-              {
-                label: 'Yes',
-                onClick: () => {
-                    localStorage.removeItem('readingHistory');
-                }
-              },
-              {
-                label: 'No',
-                onClick: () => {}
-              }
-            ]
-        });
+        if(window.confirm("Do you want to clear the reading history?") === true){
+            localStorage.removeItem('readingHistory');
+        }
     }
 
     render = () => {

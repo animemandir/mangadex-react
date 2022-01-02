@@ -74,8 +74,6 @@ class About extends React.Component{
 
                             <h2 className="border-b text-xl my-3">To do list/Waiting for API full support/Note to self:</h2>
                             <ul className="list-disc">
-                                <li>Reading List: edit status, follow, rating</li>
-                                <li>Title: Edit progress</li>
                                 <li>Title: stats</li>
                                 <li>MangaBox: stats</li>
                                 <li>Home: Top chapters</li>

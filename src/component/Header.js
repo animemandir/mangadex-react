@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { isLogged } from "../util/loginUtil.js";
 import { colorTheme } from "../util/colorTheme";
 import axios from 'axios';
-import { confirmAlert } from 'react-confirm-alert'; 
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 class Header extends React.Component{
     constructor(props){
@@ -63,39 +61,26 @@ class Header extends React.Component{
     }
 
     logout = () => {
-        confirmAlert({
-            title: 'Logout',
-            message: 'Are you sure?',
-            buttons: [
-              {
-                label: 'Yes',
-                onClick: () => {
-                    var $this = this;
-                    var bearer = "Bearer " + localStorage.authToken
-                    axios.post('https://api.mangadex.org/auth/logout',{
-                        'headers': {  
-                            Authorization: bearer
-                        }
-                    })
-                    .then(function(response){
-                        localStorage.removeItem("authToken");
-                        localStorage.removeItem("authUser");
-                        localStorage.removeItem("authExpire");
-                        localStorage.removeItem("authRefresh");
-                        localStorage.removeItem("refreshExpire");
-                        $this.setState({isLogged:false});
-                    })
-                    .catch(function(error){
-                        console.log(error);
-                    });
+        if(window.confirm("Do you want to logout?") === true){
+            var $this = this;
+            var bearer = "Bearer " + localStorage.authToken
+            axios.post('https://api.mangadex.org/auth/logout',{
+                'headers': {  
+                    Authorization: bearer
                 }
-              },
-              {
-                label: 'No',
-                onClick: () => {}
-              }
-            ]
-        });
+            })
+            .then(function(response){
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("authUser");
+                localStorage.removeItem("authExpire");
+                localStorage.removeItem("authRefresh");
+                localStorage.removeItem("refreshExpire");
+                $this.setState({isLogged:false});
+            })
+            .catch(function(error){
+                console.log(error);
+            });
+        }
     }
 
     refresh = () => {

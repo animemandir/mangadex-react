@@ -28,6 +28,9 @@ class Title extends React.Component{
             status: '',
             description: '',
             originalLanguage: '',
+            year: null,
+            lastChapter: null,
+            lastVolume: null,
             altTitles: [],
             genre: [],
             theme: [],
@@ -115,7 +118,10 @@ class Title extends React.Component{
                         authors.push({id:relation.id,name:relation.attributes.name});
                     break;
                     case "cover_art":
-                        let coverFile = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + relation.attributes.fileName + ".512.jpg";
+                        let coverFile = "";
+                        if(relation.attributes !== undefined){
+                            coverFile = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + relation.attributes.fileName + ".512.jpg";
+                        }
                         $this.setState({coverFile:coverFile});
                     break;
                     case "manga":
@@ -177,6 +183,9 @@ class Title extends React.Component{
             let originalLanguage = response.data.data.attributes.originalLanguage;
             let contentRating = response.data.data.attributes.contentRating;
             let demo = response.data.data.attributes.publicationDemographic;
+            let year = response.data.data.attributes.year;
+            let lastChapter = response.data.data.attributes.lastChapter;
+            let lastVolume = response.data.data.attributes.lastVolume;
             let status = mangaStatus[response.data.data.attributes.status];
             let description = "";
             Object.keys(response.data.data.attributes.description).map(function(key){
@@ -198,6 +207,9 @@ class Title extends React.Component{
                 official: parsedLinks.official,
                 retail: parsedLinks.retail,
                 information: parsedLinks.information,
+                year: year,
+                lastChapter: lastChapter,
+                lastVolume: lastVolume
             });
             document.title = title + " - Mangadex";
         })
@@ -679,6 +691,10 @@ class Title extends React.Component{
         var trActions = "";
         var trRelations = "";
         var trRating = "";
+        var trYear = "";
+        var tagLastVolume = "";
+        var tagLastChapter = "";
+        var cursorPubStatus = "";
         if(altTitles.length > 0){
             trAltTitles = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -759,6 +775,21 @@ class Title extends React.Component{
                     <ul className="list-disc">{relations}</ul>
                 </td>
             </tr>;
+        }
+        if(this.state.year !== null){
+            trYear = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Year:</td>
+                <td width="80%">{this.state.year}</td>
+            </tr>;
+        }
+        if(this.state.lastVolume !== null && this.state.lastVolume !== ""){
+            tagLastVolume = "Volume " + this.state.lastVolume;
+            cursorPubStatus = "cursor-help";
+        }
+        if(this.state.lastChapter !== null && this.state.lastChapter !== ""){
+            tagLastChapter = "Chapter " + this.state.lastChapter;
+            cursorPubStatus = "cursor-help";
         }
         if(this.state.meanRating > 0){
             trRating =
@@ -870,6 +901,7 @@ class Title extends React.Component{
                                             {trAltTitles}
                                             {trAuthor}
                                             {trArtist}
+                                            {trYear}
                                             {trDemographic}
                                             {trGenre}
                                             {trTheme}
@@ -877,7 +909,9 @@ class Title extends React.Component{
                                             {trRating}
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Pub. status:</td>
-                                                <td width="80%">{this.state.status}</td>
+                                                <td width="80%" className={"flex " + cursorPubStatus} title={"END: " + tagLastVolume + " " + tagLastChapter}>
+                                                    {this.state.status}
+                                                </td>
                                             </tr>
                                             <tr className="text-left hidden border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Stats:</td>
