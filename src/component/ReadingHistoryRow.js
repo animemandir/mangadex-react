@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
 import { DateTime } from "luxon";
 import { colorTheme } from "../util/colorTheme";
-import axios from 'axios';
-import toast from 'react-hot-toast';
+
 class ReadingHistoryRow extends React.Component{
     constructor(props){
         super(props);

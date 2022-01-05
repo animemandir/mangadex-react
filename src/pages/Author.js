@@ -194,13 +194,21 @@ class Author extends React.Component{
         .then(function(response){
             for(let a = 0; a < mangaList.length; a++){
                 let mean = 0;
+                let followCount = 0;
                 if(response.data.statistics[mangaList[a].mangaId] !== undefined){
                     mean = response.data.statistics[mangaList[a].mangaId].rating.average;
                     if(mean === undefined || mean === null){
                         mean = 0;
                     }
+
+                    followCount = response.data.statistics[mangaList[a].mangaId].follows;
+                    if(followCount === undefined || followCount === null){
+                        followCount = 0;
+                    }
                 }
+                
                 mangaList[a].meanRating = mean.toFixed(2);
+                mangaList[a].followCount = followCount;
             }
 
             let list = mangaList.map((manga) => <MangaBox data={manga} />);

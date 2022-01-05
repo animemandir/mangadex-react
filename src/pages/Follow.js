@@ -88,7 +88,7 @@ class Follow extends React.Component{
                 </div>
             }
         });
-        axios.get('https://api.mangadex.org/user/follows/manga/feed?order[publishAt]=desc',{
+        axios.get('https://api.mangadex.org/user/follows/manga/feed?order[createdAt]=desc',{
             params: {
                 translatedLanguage: translatedLanguage,
                 includes: ["scanlation_group","user","manga"],
@@ -153,7 +153,7 @@ class Follow extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
             params: {
                 ids: list,
                 translatedLanguage: translatedLanguage,

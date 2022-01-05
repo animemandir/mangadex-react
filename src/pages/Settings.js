@@ -215,7 +215,7 @@ class Settings extends React.Component{
                                 Reading History
                             </div>
                             <div className="w-full py-3">
-                                <button onClick={this.clearReadingHistory} className="w-auto mx-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
+                                <button onClick={this.clearReadingHistory} className="w-auto mr-1 border-2 py-1 px-3 mb-2 cursor-pointer focus:outline-none hover:opacity-75 border-gray-200 dark:border-gray-900">
                                     Clear Reading History
                                 </button>
                             </div>

@@ -39,7 +39,7 @@ class Home extends React.Component{
             contentRating = JSON.parse(localStorage.content);
         }
        
-        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
             params: {
                 translatedLanguage: translatedLanguage,
                 originalLanguage: originalLanguage,
