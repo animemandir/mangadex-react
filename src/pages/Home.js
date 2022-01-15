@@ -54,8 +54,7 @@ class Home extends React.Component{
             response.data.data.map((chapter,i) => {
                 let mangaId = "";
                 let mangaName = "";
-                let groupId = "";
-                let groupName = "";
+                let groups = [];
                 let originalLanguage = "";
                 let contentRating = "";
                 chapter.relationships.map((relation) => {
@@ -72,8 +71,10 @@ class Home extends React.Component{
                     }
 
                     if(relation.type === "scanlation_group"){
-                        groupId = relation.id;
-                        groupName = relation.attributes.name;
+                        groups.push({
+                            id: relation.id,
+                            name: relation.attributes.name
+                        });
                     }
                 });
                 
@@ -83,8 +84,7 @@ class Home extends React.Component{
                     chapter: chapter.attributes.chapter,
                     mangaId: mangaId,
                     mangaName: mangaName,
-                    groupId: groupId,
-                    groupName: groupName,
+                    groups: groups,
                     translatedLanguage: chapter.attributes.translatedLanguage,
                     originalLanguage:originalLanguage
                 };

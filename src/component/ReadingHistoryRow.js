@@ -52,6 +52,23 @@ class ReadingHistoryRow extends React.Component{
                 </svg>
             </a>
         }
+        var group = 
+        <Link className={colorTheme(400).text} to={"/group/" + this.props.data.groupId}>
+            {this.props.data.group}
+        </Link>
+        if(this.props.data.groups.length > 0){
+            let temp = []
+            for(let a = 0; a < this.props.data.groups.length; a++){
+                temp.push(
+                 <Link className={"hover:opacity-75 " + colorTheme(400).text} to={"/group/" + this.props.data.groups[a].id}>
+                    {this.props.data.groups[a].name}
+                </Link>);
+            }
+            group = 
+            <div className="grid">
+                {temp}
+            </div>
+        }
 
         return (
             <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
@@ -67,9 +84,7 @@ class ReadingHistoryRow extends React.Component{
                     <LanguageFlag language={this.props.data.translatedLanguage} />
                 </td>
                 <td>
-                    <Link className={colorTheme(400).text} to={"/group/" + this.props.data.groupId}>
-                        {this.props.data.group}
-                    </Link>
+                    {group}
                 </td>
                 <td>
                     <Link className={colorTheme(400).text} to={"/user/" + this.props.data.userId}>

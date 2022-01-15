@@ -76,8 +76,8 @@ class About extends React.Component{
                             <ul className="list-disc">
                                 <li>Title: stats</li>
                                 <li>MangaBox: stats</li>
-                                <li>Home: Top chapters</li>
-                                <li>Home: Top manga</li>
+                                <li>Home: Top chapters (6h/24h/7d - views)</li>
+                                <li>Home: Top manga (Follows/Rating)</li>
                             </ul>
                         </div>
                     </div>

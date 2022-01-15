@@ -216,101 +216,52 @@ class Follow extends React.Component{
             var dropped = [];
             var rereading = [];
             var completed = [];
+            var emptyBox = [{
+                mangaId: "",
+                mangaName: "No titles found.",
+                cover: "",
+                originalLanguage: "",
+                description: "",
+                artist: [],
+                author:[],
+                readingStatus: "",
+                follow: false
+            }];
 
             switch(readStatus){
                 case "reading":
                     $this.setState({totalReading: Object.keys(response.data.statuses).length});
                     if(Object.keys(response.data.statuses).length === 0){
-                        let emptyBox = [];
-                        emptyBox.push(
-                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
-                                <td></td>
-                                <td>No titles found.</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        )
                         $this.setState({boxReading: emptyBox});
                     }
                 break;
                 case "on_hold":
                     $this.setState({totalOnHold: Object.keys(response.data.statuses).length});
                     if(Object.keys(response.data.statuses).length === 0){
-                        let emptyBox = [];
-                        emptyBox.push(
-                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
-                                <td></td>
-                                <td>No titles found.</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        )
                         $this.setState({boxOnHold: emptyBox});
                     }
                 break;
                 case "plan_to_read":
                     $this.setState({totalPlanToRead: Object.keys(response.data.statuses).length});
                     if(Object.keys(response.data.statuses).length === 0){
-                        let emptyBox = [];
-                        emptyBox.push(
-                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
-                                <td></td>
-                                <td>No titles found.</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        )
                         $this.setState({boxPlan: emptyBox});
                     }
                 break;
                 case "dropped":
                     $this.setState({totalDropped: Object.keys(response.data.statuses).length});
                     if(Object.keys(response.data.statuses).length === 0){
-                        let emptyBox = [];
-                        emptyBox.push(
-                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
-                                <td></td>
-                                <td>No titles found.</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        )
                         $this.setState({boxDropped: emptyBox});
                     }
                 break;
                 case "re_reading":
                     $this.setState({totalReReading: Object.keys(response.data.statuses).length});
                     if(Object.keys(response.data.statuses).length === 0){
-                        let emptyBox = [];
-                        emptyBox.push(
-                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
-                                <td></td>
-                                <td>No titles found.</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        )
                         $this.setState({boxReReading: emptyBox});
                     }
                 break;
                 case "completed":
                     $this.setState({totalCompleted: Object.keys(response.data.statuses).length});
                     if(Object.keys(response.data.statuses).length === 0){
-                        let emptyBox = [];
-                        emptyBox.push(
-                            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
-                                <td></td>
-                                <td>No titles found.</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        )
                         $this.setState({boxCompleted: emptyBox});
                     }
                 break;
@@ -486,42 +437,42 @@ class Follow extends React.Component{
                 case "reading":
                     list = $this.state.boxReading;
                     mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
+                        list.push(manga);
                     });
                     $this.setState({boxReading:list});
                 break;
                 case "on_hold":
                     list = $this.state.boxOnHold;
                     mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
+                        list.push(manga);
                     });
                     $this.setState({boxOnHold:list});
                 break;
                 case "plan_to_read":
                     list = $this.state.boxPlan;
                     mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
+                        list.push(manga);
                     });
                     $this.setState({boxPlan:list});
                 break;
                 case "dropped":
                     list = $this.state.boxDropped;
                     mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
+                        list.push(manga);
                     });
                     $this.setState({boxDropped:list});
                 break;
                 case "re_reading":
                     list = $this.state.boxReReading;
                     mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
+                        list.push(manga);
                     });
                     $this.setState({boxReReading:list});
                 break;
                 case "completed":
                     list = $this.state.boxCompleted;
                     mangaList.map((manga) => {
-                        list.push(<ReadingListRow data={manga} />);
+                        list.push(manga);
                     });
                     $this.setState({boxCompleted:list});
                 break;
@@ -776,6 +727,56 @@ class Follow extends React.Component{
             className={this.state.loadControl.btnClass} >
             {this.state.loadControl.btnLabel}
         </button> : "";
+
+        var boxReading = [];
+        var boxReReading = [];
+        var boxCompleted = [];
+        var boxOnHold = [];
+        var boxPlan = [];
+        var boxDropped = [];
+
+        if(this.state.boxReading.length > 0){
+            this.state.boxReading.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
+            for(let c = 0; c < this.state.boxReading.length; c++){
+                boxReading.push(<ReadingListRow data={this.state.boxReading[c]} />);
+            }
+        }
+
+        if(this.state.boxReReading.length > 0){
+            this.state.boxReReading.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
+            for(let c = 0; c < this.state.boxReReading.length; c++){
+                boxReReading.push(<ReadingListRow data={this.state.boxReReading[c]} />);
+            }
+        }
+
+        if(this.state.boxCompleted.length > 0){
+            this.state.boxCompleted.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
+            for(let c = 0; c < this.state.boxCompleted.length; c++){
+                boxCompleted.push(<ReadingListRow data={this.state.boxCompleted[c]} />);
+            }
+        }
+
+        if(this.state.boxOnHold.length > 0){
+            this.state.boxOnHold.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
+            for(let c = 0; c < this.state.boxOnHold.length; c++){
+                boxOnHold.push(<ReadingListRow data={this.state.boxOnHold[c]} />);
+            }
+        }
+
+        if(this.state.boxPlan.length > 0){
+            this.state.boxPlan.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
+            for(let c = 0; c < this.state.boxPlan.length; c++){
+                boxPlan.push(<ReadingListRow data={this.state.boxPlan[c]} />);
+            }
+        }
+
+        if(this.state.boxDropped.length > 0){
+            this.state.boxDropped.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
+            for(let c = 0; c < this.state.boxDropped.length; c++){
+                boxDropped.push(<ReadingListRow data={this.state.boxDropped[c]} />);
+            }
+        }
+
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
@@ -861,42 +862,42 @@ class Follow extends React.Component{
                                 <div className={this.state.titleTabControl.contentReading}>
                                     {
                                         this.state.boxReading.length > 0 ? 
-                                        <ReadingListTable data={this.state.boxReading} /> : 
+                                        <ReadingListTable data={boxReading} /> : 
                                         <Loading /> 
                                     }
                                 </div>
                                 <div className={this.state.titleTabControl.contentReReading}>
                                     {
                                         this.state.boxReReading.length > 0 ? 
-                                        <ReadingListTable data={this.state.boxReReading} /> : 
+                                        <ReadingListTable data={boxReReading} /> : 
                                         <Loading /> 
                                     }
                                 </div>
                                 <div className={this.state.titleTabControl.contentCompleted}>
                                     {
                                         this.state.boxCompleted.length > 0 ? 
-                                        <ReadingListTable data={this.state.boxCompleted} /> : 
+                                        <ReadingListTable data={boxCompleted} /> : 
                                         <Loading /> 
                                     }
                                 </div>
                                 <div className={this.state.titleTabControl.contentOnHold}>
                                     {
                                         this.state.boxOnHold.length > 0 ? 
-                                        <ReadingListTable data={this.state.boxOnHold} /> : 
+                                        <ReadingListTable data={boxOnHold} /> : 
                                         <Loading /> 
                                     }
                                 </div>
                                 <div className={this.state.titleTabControl.contentPlan}>
                                     {
                                         this.state.boxPlan.length > 0 ? 
-                                        <ReadingListTable data={this.state.boxPlan} /> : 
+                                        <ReadingListTable data={boxPlan} /> : 
                                         <Loading /> 
                                     }
                                 </div>
                                 <div className={this.state.titleTabControl.contentDropped}>
                                     {
                                         this.state.boxDropped.length > 0 ? 
-                                        <ReadingListTable data={this.state.boxDropped} /> : 
+                                        <ReadingListTable data={boxDropped} /> : 
                                         <Loading /> 
                                     }
                                 </div>

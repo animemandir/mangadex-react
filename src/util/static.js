@@ -68,6 +68,7 @@ const mangaRelation = {
     sequel: "Sequel",
     spin_off: "Spin Off",
     alternate_story: "Alternate Story",
+    alternate_version: "Alternate Version",
     preserialization: "Preserialization",
     colored: "Colored",
     serialization: "Serialization"

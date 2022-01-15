@@ -7,7 +7,8 @@ class History extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            history: []
+            history: [],
+            count: 0
         };
     }
 
@@ -19,8 +20,10 @@ class History extends React.Component{
     getReadingHistory = () => {
         let history = [];
         let readingHistory = [];
+        let count = 0
         if(localStorage.readingHistory){
             readingHistory = JSON.parse(localStorage.readingHistory);
+            count = readingHistory.length;
             for(let a = readingHistory.length-1; a >= 0; a--){
                 history.push(<ReadingHistoryRow data={readingHistory[a]} />)
             }
@@ -38,7 +41,8 @@ class History extends React.Component{
         }
 
         this.setState({
-            history: history
+            history: history,
+            count: count
         });
     }
 
@@ -48,12 +52,12 @@ class History extends React.Component{
                 <Header />
                 <div className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
-                        <div className="box-border w-full py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">
+                        <div className="box-border w-full h-screen py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-left text-lg flex flex-wrap border-b-2 pb-1 px-3 border-gray-200 dark:border-gray-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mx-1 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                                 </svg>
-                                <span className="ml-2">Reading History</span>
+                                <span className="ml-2">Reading History ({this.state.count})</span>
                             </div>
                             <div className="w-full flex p-3">
                                 <table class="table-fixed w-full p-2">

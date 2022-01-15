@@ -230,6 +230,23 @@ class ReadingListRow extends React.Component{
             <option value="1">1</option>
         </select>
 
+        if(this.props.data.mangaId.length === 0){
+            return (
+                <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
+                    <td></td>
+                    <td className="text-left">
+                        {this.props.data.mangaName}
+                    </td>
+                    <td className="text-left"></td>
+                    <td className="text-left">{authors}</td>
+                    <td className="text-left">{artists}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            )
+        }
+
         return (
             <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
                 <td>

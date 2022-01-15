@@ -18,8 +18,7 @@ class Chapter extends React.Component{
             id: "",
             mangaId: "",
             manga: "",
-            groupId: "",
-            group: "",
+            groups: "",
             userId: "",
             user: "",
             translatedLanguage: "",
@@ -90,8 +89,7 @@ class Chapter extends React.Component{
             let title = "";
             let mangaId = "";
             let manga = "";
-            let groupId = "";
-            let group = "";
+            let groups = [];
             let userId = "";
             let user = "";
             let translatedLanguage = "";
@@ -108,8 +106,10 @@ class Chapter extends React.Component{
                         });
                     break;
                     case "scanlation_group":
-                        groupId = relation.id;
-                        group = relation.attributes.name;
+                        groups.push({
+                            id: relation.id,
+                            name: relation.attributes.name
+                        });
                     break;
                     case "user":
                         userId = relation.id;
@@ -127,8 +127,7 @@ class Chapter extends React.Component{
             $this.setState({
                 mangaId: mangaId,
                 manga: manga,
-                groupId: groupId,
-                group: group,
+                groups: groups,
                 userId: userId,
                 user: user,
                 translatedLanguage: translatedLanguage,
@@ -157,8 +156,7 @@ class Chapter extends React.Component{
                     title: title,
                     mangaId: mangaId,
                     manga: manga,
-                    groupId: groupId,
-                    group: group,
+                    groups: groups,
                     userId: userId,
                     user: user,
                     translatedLanguage: translatedLanguage,
@@ -722,6 +720,22 @@ class Chapter extends React.Component{
                 </svg>
             </a> 
         </div>: "";
+
+        var group = "";
+        if(this.state.groups.length > 0){
+            let temp = []
+            for(let a = 0; a < this.state.groups.length; a++){
+                temp.push(
+                <Link className={"hover:opacity-75 mx-1 " + colorTheme(500).text} to={"/group/" + this.state.groups[a].id}>
+                    {this.state.groups[a].name}
+                </Link>);
+            }
+            group = 
+            <div className="grid">
+                {temp}
+            </div>
+        }
+
         return (
             <div class="flex flex-col justify-between" ref={this.KbListener} tabIndex={0}>
                 <Toaster />
@@ -775,7 +789,7 @@ class Chapter extends React.Component{
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                                     </svg>
-                                    <Link className={"hover:opacity-75 " + colorTheme(500).text} to={"/group/" + this.state.groupId}>{this.state.group}</Link>
+                                    {group}
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                     </svg>
