@@ -1,10 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import LanguageFlag  from './LanguageFlag.js';
 import { DateTime } from "luxon";
 import { colorTheme } from "../util/colorTheme";
 
-class ReadingHistoryRow extends React.Component{
+class HomeReadingHistory extends React.Component{
     constructor(props){
         super(props);
         this.state = {
@@ -25,9 +24,6 @@ class ReadingHistoryRow extends React.Component{
         }
         if(label === ""){
             label += "Oneshot ";
-        }
-        if(this.props.data.title){
-            label += "- " + this.props.data.title;
         }
 
         this.setState({
@@ -52,48 +48,22 @@ class ReadingHistoryRow extends React.Component{
                 </svg>
             </a>
         }
-        var group = "";
-        if(this.props.data.groups.length > 0){
-            let temp = []
-            for(let a = 0; a < this.props.data.groups.length; a++){
-                temp.push(
-                 <Link className={colorTheme(500).text} to={"/group/" + this.props.data.groups[a].id}>
-                    {this.props.data.groups[a].name}
-                </Link>);
-            }
-            group = 
-            <div className="grid">
-                {temp}
-            </div>
-        }
-
         return (
-            <tr className="h-10 border-b border-gray-200 dark:border-gray-900">
-                <td>
-                    {link}
-                </td>
-                <td>
+            <div className="border-b-2 my-2 mx-1 border-gray-200 dark:border-gray-900">
+                <div className="p-1 border-b border-gray-200 dark:border-gray-900">
                     <Link className={colorTheme(500).text} to={"/title/" + this.props.data.mangaId} title={this.props.data.manga}>
                         {this.props.data.manga}
                     </Link>
-                </td>
-                <td>
-                    <LanguageFlag language={this.props.data.translatedLanguage} />
-                </td>
-                <td>
-                    {group}
-                </td>
-                <td>
-                    <Link className={colorTheme(500).text} to={"/user/" + this.props.data.userId}>
-                        {this.props.data.user}
-                    </Link>
-                </td>
-                <td title={this.props.data.readAt}>
-                    {DateTime.fromISO(this.props.data.readAt).toRelative()}
-                </td>
-            </tr>
+                </div>
+                <div className="p-1">
+                    {link}
+                    <div className="float-right" title={this.props.data.readAt}>
+                        {DateTime.fromISO(this.props.data.readAt).toRelative()}
+                    </div>
+                </div>
+            </div>
         );
     }
 }
 
-export default ReadingHistoryRow;
+export default HomeReadingHistory;

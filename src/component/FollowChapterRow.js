@@ -156,7 +156,7 @@ class FollowChapterRow extends React.Component{
 
         var group = this.state.groups.map((g) => 
         <div className="w-full">
-            <Link className={colorTheme(400).text} to={"/group/" + g.id}>
+            <Link className={colorTheme(500).text} to={"/group/" + g.id}>
                 {g.name}
             </Link>
         </div>);
@@ -193,7 +193,7 @@ class FollowChapterRow extends React.Component{
                     {group}
                 </td>
                 <td>
-                    <Link className={colorTheme(400).text} to={"/user/" + this.state.userId}>
+                    <Link className={colorTheme(500).text} to={"/user/" + this.state.userId}>
                         {this.state.userName}
                     </Link>
                 </td>

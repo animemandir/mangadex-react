@@ -15,11 +15,11 @@ class HomeUpdates extends React.Component{
         if(this.props.data.groups.length > 0){
             let temp = [];
             for(let a = 0; a < this.props.data.groups.length; a++){
-                let coma = ((a+1) >= this.props.data.groups.length) ? "" : ",";
+                let coma = ((a+1) >= this.props.data.groups.length) ? "" : "|";
                 let margin = (a === 0) ? "mr-1" : "mx-1";
                 temp.push(
                 <Link className={margin} to={"/group/" + this.props.data.groups[a].id}>
-                    {this.props.data.groups[a].name}{coma}
+                    {this.props.data.groups[a].name} {coma}
                 </Link>);
             }
             group = 

@@ -3,8 +3,11 @@ import axios from 'axios';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import HomeUpdates from '../component/HomeUpdates.js';
+import HomeReadingHistory from '../component/HomeReadingHistory.js';
+import HomeTopManga from '../component/HomeTopManga.js';
 import Loading from '../component/Loading.js';
 import toast, { Toaster } from 'react-hot-toast';
+import { isLogged } from "../util/loginUtil.js";
 
 class Home extends React.Component{
     constructor(props){
@@ -12,13 +15,33 @@ class Home extends React.Component{
         this.state = {
             lastChapters: [],
             lastChaptersData: [],
-            updatesComponent: <Loading />
+            history: [],
+            isLogged: false,
+            mangaTabControl: {
+                active: "follow",
+                btnFollow: "text-center w-1/2 px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                btnRating: "text-center w-1/2 px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900"
+            },
+            chapterTabControl: {
+                active: "6h",
+                btn6h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                btn24h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btn7d: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-t-2 border-b-2 border-r-2 border-gray-200 dark:border-gray-900"
+            },
+            updatesComponent: <Loading />,
+            mangaComponent: "",
+            chapterComponent: <p className="ml-2">Someday</p>
         };
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         document.title = "Home - MangaDex";
         this.getLastChapters();
+        this.getReadingHistory();
+        let logged = await isLogged();
+        this.setState({
+            isLogged: logged
+        },() => this.getTopManga());
     }
 
     getLastChapters = () => {
@@ -172,6 +195,197 @@ class Home extends React.Component{
         this.setState({updatesComponent: comp});
     }
 
+    getReadingHistory = () => {
+        let history = [];
+        let readingHistory = [];
+        let count = 0
+        if(localStorage.readingHistory){
+            readingHistory = JSON.parse(localStorage.readingHistory);
+            count = readingHistory.length;
+            for(let a = readingHistory.length-1; a >= readingHistory.length-10; a--){
+                if(readingHistory[a] !== undefined){
+                    history.push(<HomeReadingHistory data={readingHistory[a]} />);
+                }
+            }
+        }else{
+            history.push(
+                <div className="my-2 mx-1">
+                    <div className="p-1">
+                       No chapters found.
+                    </div>
+                </div>
+            )
+        }
+
+        this.setState({
+            history: history        
+        });
+    }
+
+    getTopManga = () => {
+        var $this = this;
+        this.setState({mangaComponent: 
+        <div className="inline-flex ml-2">
+            <img className="w-16 h-16" alt="Loading" src={process.env.PUBLIC_URL + '/spin.svg'} />
+        </div>});
+
+        var contentRating = [];
+        if(localStorage.content){
+            contentRating = JSON.parse(localStorage.content);
+        }
+
+        var orderBy = "order[followedCount]=desc";
+        if(this.state.mangaTabControl.active === "rating"){
+            this.setState({mangaComponent: <p className="ml-2">Someday</p>});
+            return false;
+        }
+
+        axios.get('https://api.mangadex.org/manga?includes[]=cover_art&' + orderBy,{
+            params: {
+                contentRating: contentRating,
+                limit: 10
+            }
+        })
+        .then(function(response){
+            let mangaList = [];
+            response.data.data.map((manga,i) => {
+                let id = manga.id;
+                let coverFile = "";
+                let title = "";
+                Object.keys(manga.attributes.title).map(function(key){
+                    if(key === "en" || title === ""){
+                        title = manga.attributes.title[key];
+                    }
+                });
+                manga.relationships.map((relation) => {
+                    if(relation.type === "cover_art"){
+                        if(relation.attributes !== undefined){
+                            coverFile = "https://uploads.mangadex.org/covers/" +  id + "/" + relation.attributes.fileName + ".512.jpg";
+                        }                        
+                    }                    
+                });
+
+                mangaList.push({
+                    id: id,
+                    name: title,
+                    coverFile: coverFile,
+                });
+            });
+
+            if($this.state.isLogged){
+                $this.getTopMangaStats(mangaList);
+            }else{
+                let list = mangaList.map((manga) => <HomeTopManga data={manga} />);
+                $this.setState({mangaComponent:list});
+            }
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error retrieving manga list.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    getTopMangaStats = (mangaList) => {
+        let idList = [];
+        for(let a = 0; a < mangaList.length; a++){
+            idList.push(mangaList[a].id);
+        }
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/statistics/manga',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                manga: idList
+            }
+        })
+        .then(function(response){
+            for(let a = 0; a < mangaList.length; a++){
+                let mean = 0;
+                let followCount = 0;
+                if(response.data.statistics[mangaList[a].id] !== undefined){
+                    mean = response.data.statistics[mangaList[a].id].rating.average;
+                    if(mean === undefined || mean === null){
+                        mean = 0;
+                    }
+
+                    followCount = response.data.statistics[mangaList[a].id].follows;
+                    if(followCount === undefined || followCount === null){
+                        followCount = 0;
+                    }
+                }
+                
+                mangaList[a].meanRating = mean.toFixed(2);
+                mangaList[a].followCount = followCount;
+            }
+
+            let list = mangaList.map((manga) => <HomeTopManga data={manga} />);
+            $this.setState({
+                mangaComponent:list
+            });
+            
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error retrieving statistics.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    changeMangaTab = (tab) => {
+        switch(tab){
+            case "follow":
+                this.setState({mangaTabControl: {
+                    active: "follow",
+                    btnFollow: "text-center w-1/2 px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnRating: "text-center w-1/2 px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                }},() => this.getTopManga());
+            break;
+            case "rating":
+                this.setState({mangaTabControl: {
+                    active: "rating",
+                    btnFollow: "text-center w-1/2 px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnRating: "text-center w-1/2 px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                }},() => this.getTopManga());
+            break;
+        }
+    }
+
+    changeChapterTab = (tab) => {
+        switch(tab){
+            case "6h":
+                this.setState({chapterTabControl: {
+                    active: "6h",
+                    btn6h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btn24h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btn7d: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-t-2 border-b-2 border-r-2 border-gray-200 dark:border-gray-900"
+                }});
+            break;
+            case "24h":
+                this.setState({chapterTabControl: {
+                    active: "24h",
+                    btn6h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btn24h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btn7d: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900"
+                }});
+            break;
+            case "7d":
+                this.setState({chapterTabControl: {
+                    active: "7d",
+                    btn6h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-t-2 border-b-2 border-l-2 border-gray-200 dark:border-gray-900",
+                    btn24h: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btn7d: "text-center px-3 w-1/3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200"
+                }});
+            break;
+        }
+    }
+
     render = () => {
         var comp = [];
         for(let a = 0; a < this.state.lastChapters.length; a++){
@@ -200,24 +414,47 @@ class Home extends React.Component{
                             </div>
                             
                         </div>
-                        <div className="box-border w-full md:w-2/6 py-2 mt-6 mb-6 border-2 border-gray-200 dark:border-gray-900">
-                            <div className="text-center border-b-2 pb-1 border-gray-200 dark:border-gray-900">
-                                Top Chapters
+                        <div className="w-full md:w-2/6 py-2 mt-4">
+                            <div className="box-border mb-2 border-2 border-gray-200 dark:border-gray-900">
+                                <div className="text-center border-b-2 py-1 border-gray-200 dark:border-gray-900">
+                                    Top Chapters
+                                </div>
+                                <div className="w-full flex p-2 border-b-2 border-gray-200 dark:border-gray-900">
+                                    <button onClick={() => this.changeChapterTab("6h")} className={this.state.chapterTabControl.btn6h} >
+                                        6h
+                                    </button>
+                                    <button onClick={() => this.changeChapterTab("24h")} className={this.state.chapterTabControl.btn24h}>
+                                        24h
+                                    </button>
+                                    <button onClick={() => this.changeChapterTab("7d")} className={this.state.chapterTabControl.btn7d}>
+                                        7d
+                                    </button>
+                                </div>
+                                <div className="p-1">
+                                    {this.state.chapterComponent}
+                                </div>
                             </div>
-                            {/* <div>
-                                <button className="w-1/3 text-center p-2 border-b-2 border-r-2 border-gray-200 dark:border-gray-900">
-                                    6h
-                                </button>
-                                <button className="w-1/3 text-center p-2 border-b-2 border-r-2 border-gray-200 dark:border-gray-900">
-                                    24h
-                                </button>
-                                <button className="w-1/3 text-center p-2 border-b-2 border-gray-200 dark:border-gray-900">
-                                    7d
-                                </button>
-                            </div> */}
-                            <div className="h-auto p-4">
-                                {/* <p>Coming when api supports it</p> */}
-                                {/* <Loading /> */}
+                            <div className="box-border mb-2 border-2 border-gray-200 dark:border-gray-900">
+                                <div className="text-center border-b-2 py-1 border-gray-200 dark:border-gray-900">
+                                    Top Manga
+                                </div>
+                                <div className="w-full flex p-2 border-b-2 border-gray-200 dark:border-gray-900">
+                                    <button onClick={() => this.changeMangaTab("follow")} className={this.state.mangaTabControl.btnFollow} >
+                                        Follows
+                                    </button>
+                                    <button onClick={() => this.changeMangaTab("rating")} className={this.state.mangaTabControl.btnRating}>
+                                        Rating
+                                    </button>
+                                </div>
+                                <div className="p-1">
+                                    {this.state.mangaComponent}
+                                </div>
+                            </div>
+                            <div className="box-border mb-2 border-2 border-gray-200 dark:border-gray-900">
+                                <div className="text-center border-b-2 py-1 border-gray-200 dark:border-gray-900">
+                                    Reading History
+                                </div>
+                                {this.state.history}
                             </div>
                         </div>
                     </div>
