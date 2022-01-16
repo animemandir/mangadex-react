@@ -1,6 +1,6 @@
 {
   "name": "mangadex-react",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "private": true,
   "author": {
     "name": "Saymon600",
@@ -65,6 +65,14 @@
     "electron": "^13.1.4",
     "electron-builder": "^22.11.7",
     "wait-on": "^5.3.0",
-    "immer": ">=9.0.6"
+    "immer": ">=9.0.6",
+    "merge": ">=2.1.1",
+    "serialize-javascript": ">=3.1.0",
+    "follow-redirects": ">=1.14.7",
+    "postcss": ">=8.2.13",
+    "sockjs": ">=0.3.20",
+    "react-dev-utils": ">=11.0.4",
+    "node-notifier": ">=8.0.1",
+    "node-forge": ">=1.0.0"
   }
 }

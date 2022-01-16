@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { DateTime } from "luxon";
 import { colorTheme } from "../util/colorTheme";
 
 class HomeTopManga extends React.Component{

@@ -48,11 +48,11 @@ class History extends React.Component{
 
     render = () => {
         return (
-            <div class="flex flex-col h-screen justify-between align-top bg-gray-100 dark:bg-gray-800">
+            <div class="flex flex-col h-full justify-between align-top bg-gray-100 dark:bg-gray-800">
                 <Header />
                 <div className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
-                        <div className="box-border w-full h-screen py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">
+                        <div className="box-border w-full min-h-screen py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-left text-lg flex flex-wrap border-b-2 pb-1 px-3 border-gray-200 dark:border-gray-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mx-1 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
