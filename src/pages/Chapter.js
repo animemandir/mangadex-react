@@ -49,7 +49,7 @@ class Chapter extends React.Component{
                 prevId: "",
                 nextId: ""
             },
-            imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar focus:outline-none",
+            imgContainerClass: "flex-1 overflow-y-scroll cursor-pointer no-scrollbar focus:outline-none ",
             progressBarClass: "w-2 flex flex-col",
         };
     }
@@ -435,7 +435,7 @@ class Chapter extends React.Component{
                 nextPrevController.rightTitle = "Next";
                 this.setState({
                     nextPrevController: nextPrevController,
-                    imgContainerClass: "flex-1 overflow-y-scroll focus:outline-none" + scrollbar,
+                    imgContainerClass: "flex-1 overflow-y-scroll focus:outline-none " + scrollbar,
                     progressBarClass: "hidden",
                 },() => this.updateReader("single"));            
             break;

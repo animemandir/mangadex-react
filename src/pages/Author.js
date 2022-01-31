@@ -16,7 +16,7 @@ class Author extends React.Component{
             isLogged: false,
             id: "",
             name: "",
-            image: process.env.PUBLIC_URL + "notfound.png",
+            image: process.env.PUBLIC_URL + "/notfound.png",
             version: "",
             twitter: null,
             pixiv: null,
@@ -57,7 +57,7 @@ class Author extends React.Component{
         .then(function(response){
             let name = response.data.data.attributes.name;
             let version = response.data.data.attributes.version;
-            let image = (response.data.data.attributes.imageUrl !== null) ? response.data.data.attributes.imageUrl : process.env.PUBLIC_URL + "notfound.png";
+            let image = (response.data.data.attributes.imageUrl !== null) ? response.data.data.attributes.imageUrl : process.env.PUBLIC_URL + "/notfound.png";
             let biography = "";
             Object.keys(response.data.data.attributes.biography).map(function(key){
                 if(key === "en" || biography === ""){

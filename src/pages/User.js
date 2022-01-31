@@ -15,7 +15,7 @@ class User extends React.Component{
         this.state = {
             id: "",
             name: "",
-            image: process.env.PUBLIC_URL + "notfound.png",
+            image: process.env.PUBLIC_URL + "/notfound.png",
             version: "",
             roles: [],
             groupsId: [],

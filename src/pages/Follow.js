@@ -8,6 +8,7 @@ import Loading from '../component/Loading.js';
 import { isLogged } from "../util/loginUtil.js";
 import ReadingListRow from '../component/ReadingListRow.js';
 import ReadingListTable from '../component/ReadingListTable.js';
+import FollowGroupRow from '../component/FollowGroupRow.js';
 
 class Follow extends React.Component{
     constructor(props){
@@ -17,10 +18,12 @@ class Follow extends React.Component{
             chapterOffset: 0,
             showChapterLoad: false,
             tabControl: {
-                btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                btnManga: "text-center px-3 py-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                btnManga: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnGroup: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                 contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                 contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
             },
             titleTabControl:{
                 btnReading: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
@@ -56,7 +59,10 @@ class Follow extends React.Component{
             totalCompleted: -1,
             follows: [],
             blockReadingList: true,
-            followOffset: 0
+            followOffset: 0,
+            groupFollows: [],
+            totalGroups: -1,
+            groupFollowOffset: 0,
         };
     }
 
@@ -396,7 +402,30 @@ class Follow extends React.Component{
                     follow: $this.state.follows.indexOf(result.id) > -1 ? true : false
                 });
             });
-            
+
+            //wtf
+            if(ids.length > mangaList.length){                
+                switch(status){
+                    case "reading":
+                        $this.setState({totalReading: ($this.state.totalReading - (ids.length - mangaList.length))});
+                    break;
+                    case "on_hold":
+                        $this.setState({totalOnHold: ($this.state.totalOnHold - (ids.length - mangaList.length))});
+                    break;
+                    case "plan_to_read":
+                        $this.setState({totalPlanToRead: ($this.state.totalPlanToRead - (ids.length - mangaList.length))});
+                    break;
+                    case "dropped":
+                        $this.setState({totalDropped: ($this.state.totalDropped - (ids.length - mangaList.length))});
+                    break;
+                    case "re_reading":
+                        $this.setState({totalReReading: ($this.state.totalReReading - (ids.length - mangaList.length))});
+                    break;
+                    case "completed":
+                        $this.setState({totalCompleted: ($this.state.totalCompleted - (ids.length - mangaList.length))});
+                    break;
+                }
+            }
             $this.getTitleRating(ids,mangaList,status);
         })
         .catch(function(error){
@@ -491,32 +520,50 @@ class Follow extends React.Component{
         switch(tab){
             case "chapter":
                 this.setState({tabControl: {
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnManga: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnGroup: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
-                    contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
+                    contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
                 }});
-                
             break;
             case "manga":
                 if(this.state.blockReadingList){
                     this.setState({tabControl: {
-                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnManga: "text-center px-3 py-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnManga: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnGroup: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
-                        contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
+                        contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
                     }});
                 }else{
                     if(this.state.totalReading === -1){
                         this.getTitleStatus("reading");
                     }
                     this.setState({tabControl: {
-                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnManga: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnGroup: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
-                        contentManga: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
+                        contentManga: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
                     }});
                 }                
+            break;
+            case "group":
+                if(this.state.totalGroups === -1){
+                    this.getGroupFollows();
+                }
+                this.setState({tabControl: {
+                    btnChapter: "text-center px-3 py-1 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnManga: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnGroup: "text-center px-3 py-1 mx-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentGroup: "w-full p-3 border-2 border-gray-200 dark:border-gray-900"
+                }});
             break;
         }
     }
@@ -685,10 +732,12 @@ class Follow extends React.Component{
                     blockReadingList: true,
                     followOffset: offset,
                     tabControl: {
-                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnManga: "text-center px-3 py-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnManga: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnGroup: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                         contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
                     }
                 },() => $this.getFollows());
             }else{
@@ -696,10 +745,12 @@ class Follow extends React.Component{
                     follows: follows,
                     blockReadingList: false,
                     tabControl: {
-                        btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                        btnManga: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                        btnGroup: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                         contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                         contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                        contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
                     }
                 });
             }
@@ -710,11 +761,61 @@ class Follow extends React.Component{
             $this.setState({
                 blockReadingList: false,
                 tabControl: {
-                    btnChapter: "text-center px-3 py-1 mr-3 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                    btnManga: "text-center px-3 py-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnManga: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnGroup: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
                     contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
                     contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
                 }
+            });
+        });
+    }
+
+    getGroupFollows = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/user/follows/group',{
+            headers: {  
+                Authorization: bearer
+            },
+            params: {
+                limit: 100,
+                offset: this.state.groupFollowOffset
+            }
+        })
+        .then(function(response){
+            let groups = $this.state.groupFollows;
+            for(let i = 0; i < response.data.data.length; i++){
+                let group = {
+                    id: response.data.data[i].id,
+                    name: response.data.data[i].attributes.name,
+                    languages: response.data.data[i].attributes.focusedLanguages,
+                    follow: true
+                }
+                groups.push(group);
+            }
+
+            var emptyBox = [{
+                id: "",
+                name: "No groups found.",
+                languages: [],
+                follow: false
+            }];
+            if(response.data.total === 0){
+                groups = emptyBox;
+            }
+
+            $this.setState({
+                groupFollows: groups,
+                totalGroups: response.data.total
+            });
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error retrieving group follows.',{
+                duration: 4000,
+                position: 'top-right',
             });
         });
     }
@@ -734,46 +835,54 @@ class Follow extends React.Component{
         var boxOnHold = [];
         var boxPlan = [];
         var boxDropped = [];
+        var boxFollows = [];
 
-        if(this.state.boxReading.length > 0){
+        if(this.state.boxReading.length >= this.state.totalReading){
             this.state.boxReading.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
             for(let c = 0; c < this.state.boxReading.length; c++){
                 boxReading.push(<ReadingListRow data={this.state.boxReading[c]} />);
             }
         }
 
-        if(this.state.boxReReading.length > 0){
+        if(this.state.boxReReading.length >= this.state.totalReReading){
             this.state.boxReReading.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
             for(let c = 0; c < this.state.boxReReading.length; c++){
                 boxReReading.push(<ReadingListRow data={this.state.boxReReading[c]} />);
             }
         }
 
-        if(this.state.boxCompleted.length > 0){
+        if(this.state.boxCompleted.length >= this.state.totalCompleted){
             this.state.boxCompleted.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
             for(let c = 0; c < this.state.boxCompleted.length; c++){
                 boxCompleted.push(<ReadingListRow data={this.state.boxCompleted[c]} />);
             }
         }
 
-        if(this.state.boxOnHold.length > 0){
+        if(this.state.boxOnHold.length >= this.state.totalOnHold){
             this.state.boxOnHold.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
             for(let c = 0; c < this.state.boxOnHold.length; c++){
                 boxOnHold.push(<ReadingListRow data={this.state.boxOnHold[c]} />);
             }
         }
 
-        if(this.state.boxPlan.length > 0){
+        if(this.state.boxPlan.length >= this.state.totalPlanToRead){
             this.state.boxPlan.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
             for(let c = 0; c < this.state.boxPlan.length; c++){
                 boxPlan.push(<ReadingListRow data={this.state.boxPlan[c]} />);
             }
         }
 
-        if(this.state.boxDropped.length > 0){
+        if(this.state.boxDropped.length >= this.state.totalDropped){
             this.state.boxDropped.sort((a,b) => (a.mangaName > b.mangaName) ? 1 : ((b.mangaName > a.mangaName) ? -1 : 0));
             for(let c = 0; c < this.state.boxDropped.length; c++){
                 boxDropped.push(<ReadingListRow data={this.state.boxDropped[c]} />);
+            }
+        }
+
+        if(this.state.groupFollows.length >= this.state.totalGroups){
+            this.state.groupFollows.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+            for(let c = 0; c < this.state.groupFollows.length; c++){
+                boxFollows.push(<FollowGroupRow data={this.state.groupFollows[c]} />);
             }
         }
 
@@ -790,6 +899,10 @@ class Follow extends React.Component{
                             <button onClick={() => this.changeTabs("manga")} className={this.state.tabControl.btnManga}>
                                 Reading List
                             </button>
+                            <button onClick={() => this.changeTabs("group")} className={this.state.tabControl.btnGroup}>
+                                Following Groups
+                            </button>
+                            
 
                             <div className={this.state.tabControl.contentChapter}>
                                 {chapterLoading}
@@ -901,6 +1014,19 @@ class Follow extends React.Component{
                                         <Loading /> 
                                     }
                                 </div>
+                            </div>
+
+                            <div className={this.state.tabControl.contentGroup}>
+                                <table class="table-fixed w-full p-2">
+                                    <thead className="border-b-2 border-gray-200 dark:border-gray-900">
+                                        <th className="text-left">Name</th>
+                                        <th className="text-left">Languages</th>
+                                        <th className="text-left">Action</th>
+                                    </thead>
+                                    <tbody>
+                                        {boxFollows}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

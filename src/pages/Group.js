@@ -10,6 +10,8 @@ import Tags from '../component/Tags.js';
 import FollowChapterRow from '../component/FollowChapterRow.js';
 import Loading from '../component/Loading.js';
 import { isLogged } from "../util/loginUtil.js";
+import LanguageFlag  from '../component/LanguageFlag.js';
+
 class Group extends React.Component{
     constructor(props){
         super(props);
@@ -23,9 +25,12 @@ class Group extends React.Component{
             ircServer: "",
             locked: "",
             site: "",
+            mangaUpdates: "",
             leader: [],
             members: [],
+            languages: [],
             logged: false,
+            following: false,
 
             chapterList: [],
             chapterOffset: 0,
@@ -44,7 +49,10 @@ class Group extends React.Component{
         this.setState({
             id:id,
             logged: logged
-        },() => this.getGroupFeed());
+        },() => {
+            this.getGroupFeed();
+            this.checkFollow();
+        });
 
         this.getGroupInfo(id);
     }
@@ -80,8 +88,10 @@ class Group extends React.Component{
             let ircServer = "";
             let locked = "";
             let site = "";
+            let mangaUpdates = "";
             let leader = [];
             let members = [];
+            let languages = [];
 
             name = response.data.data.attributes.name;
             email = response.data.data.attributes.contactEmail;
@@ -91,6 +101,8 @@ class Group extends React.Component{
             ircServer = response.data.data.attributes.ircServer;
             locked = response.data.data.attributes.locked;
             site = response.data.data.attributes.website;
+            mangaUpdates = response.data.data.attributes.mangaUpdates;
+            languages = response.data.data.attributes.focusedLanguages;
             
             response.data.data.relationships.map((relation) => {
                 if(relation.type === "leader"){
@@ -117,8 +129,10 @@ class Group extends React.Component{
                 ircServer: ircServer,
                 locked: locked,
                 site: site,
+                mangaUpdates: mangaUpdates,
                 leader: leader,
-                members: members
+                members: members,
+                languages: languages
             });
         })
         .catch(function(error){
@@ -277,6 +291,77 @@ class Group extends React.Component{
         this.getGroupFeed();
     }
 
+    checkFollow = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.get('https://api.mangadex.org/user/follows/group/' + this.state.id,{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            $this.setState({
+                following: true
+            });
+        })
+        .catch(function(error){
+            console.log(error);
+            $this.setState({
+                following: false
+            });
+        });
+    }
+
+    followGroup = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.post('https://api.mangadex.org/group/' + this.state.id + '/follow',null,{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            if(response.data.result === "ok"){
+                toast.success('Following',{
+                    duration: 1000,
+                    position: 'top-right',
+                });
+                $this.checkFollow();
+            }
+        })
+        .catch(function(error){
+            toast.error('Error following group.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
+    unfollowGroup = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        axios.delete('https://api.mangadex.org/group/' + this.state.id + '/follow',{
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            if(response.data.result === "ok"){
+                toast.success('Unfollowed',{
+                    duration: 1000,
+                    position: 'top-right',
+                });
+                $this.checkFollow();
+            }
+        })
+        .catch(function(error){
+            toast.error('Error unfollowing group.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
+    }
+
     render = () => {
         var leader = this.state.leader.map((l) => 
             <div className="flex">
@@ -287,15 +372,50 @@ class Group extends React.Component{
             </div>
         );
         var member = this.state.members.map((m) => 
-            <div className="flex flex-wrap">
+            <div className="flex">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 mt-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                 </svg>
                 <Link className={"hover:opacity-75 mr-3 " + colorTheme(500).text} to={"/user/" + m.id}>{m.name}</Link>
             </div>
         );
+        var languages = this.state.languages.map((l) => 
+            <div className="flex">
+                <LanguageFlag language={l} />
+            </div>
+        );
+
+        var actionTR = "";
+        if(this.state.logged){
+            var btnFollow =
+            <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Follow" onClick={this.followGroup}>
+                <div className="flex flex-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 mt-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                    </svg>
+                    Follow 
+                </div> 
+            </button>;
+            if(this.state.following){
+                btnFollow =
+                <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Unfollow" onClick={this.unfollowGroup}>
+                    <div className="flex flex-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 mt-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                        </svg>
+                        Unfollow 
+                    </div>
+                </button>;
+            }
+            actionTR = 
+            <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                <td width="20%" className="font-semibold">Action:</td>
+                <td width="80%">{btnFollow}</td>
+            </tr>
+        }
 
         var site = "";
+        var mangaUpdates = "";
         var email = "";
         var discord = "";
         var irc = "";
@@ -310,14 +430,17 @@ class Group extends React.Component{
             </td>
         </tr>;
         if(this.state.site){
-            site = <Tags name="Website"  url={this.state.site}/>
+            site = <Tags name="Website" url={this.state.site}/>
+        }
+        if(this.state.mangaUpdates){
+            mangaUpdates = <Tags name="MangaUpdates" url={this.state.mangaUpdates}/>
         }
         if(this.state.email){
-            email = <Tags name="Email"  url={"mailto:"+this.state.email}/>
+            email = <Tags name="Email" url={"mailto:"+this.state.email}/>
         }
         if(this.state.discord){
             let invite = this.state.discord.startsWith('http') ? this.state.discord : "https://discord.com/invite/"+this.state.discord
-            discord = <Tags name="Discord"  url={invite}/>
+            discord = <Tags name="Discord" url={invite}/>
         }
         if(this.state.ircChannel && this.state.ircServer){
             irc = <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -339,7 +462,7 @@ class Group extends React.Component{
         if(site || email || discord){
             links = <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                 <td width="20%" className="font-semibold">Links:</td>
-                <td width="80%">{site} {email} {discord}</td>
+                <td width="80%">{site} {email} {discord} {mangaUpdates}</td>
             </tr>
         }
 
@@ -350,6 +473,7 @@ class Group extends React.Component{
             className={this.state.loadControl.btnClass} >
             {this.state.loadControl.btnLabel}
         </button> : "";
+
         return (
             <div class="flex flex-col justify-between h-screen bg-gray-100 dark:bg-gray-800">
                 <Toaster />
@@ -373,6 +497,10 @@ class Group extends React.Component{
                                         <td width="20%" className="font-semibold">Description:</td>
                                         <td width="80%">{this.state.description}</td>
                                     </tr>
+                                    <tr className="text-left border-b border-gray-200 dark:border-gray-900">
+                                        <td width="20%" className="font-semibold">Languages:</td>
+                                        <td width="80%">{languages}</td>
+                                    </tr>
                                     {locked}
                                     {/* <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                         <td width="20%" className="font-semibold">Alt name:</td>
@@ -384,6 +512,7 @@ class Group extends React.Component{
                                     </tr> */}
                                     {links}
                                     {irc}
+                                    {actionTR}
                                 </table>
                                 <table class="table-auto w-1/2 mx-3 my-2">
                                     <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -392,7 +521,11 @@ class Group extends React.Component{
                                     </tr>
                                     <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                         <td width="20%" className="font-semibold">Members:</td>
-                                        <td width="80%">{member}</td>
+                                        <td width="80%">
+                                            <div className="flex flex-wrap w-full">
+                                                {member}
+                                            </div>
+                                        </td>
                                     </tr>
                                 </table>
                             </div>

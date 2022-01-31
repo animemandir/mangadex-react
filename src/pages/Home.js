@@ -198,10 +198,8 @@ class Home extends React.Component{
     getReadingHistory = () => {
         let history = [];
         let readingHistory = [];
-        let count = 0
         if(localStorage.readingHistory){
             readingHistory = JSON.parse(localStorage.readingHistory);
-            count = readingHistory.length;
             for(let a = readingHistory.length-1; a >= readingHistory.length-10; a--){
                 if(readingHistory[a] !== undefined){
                     history.push(<HomeReadingHistory data={readingHistory[a]} />);
@@ -225,7 +223,7 @@ class Home extends React.Component{
     getTopManga = () => {
         var $this = this;
         this.setState({mangaComponent: 
-        <div className="inline-flex ml-2">
+        <div className="flex justify-center ml-2">
             <img className="w-16 h-16" alt="Loading" src={process.env.PUBLIC_URL + '/spin.svg'} />
         </div>});
 
