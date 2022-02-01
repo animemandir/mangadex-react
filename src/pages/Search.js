@@ -10,6 +10,7 @@ import MangaBox from '../component/MangaBox.js';
 import Loading from '../component/Loading.js';
 import Paginator from '../component/Paginator.js';
 import { isLogged } from "../util/loginUtil.js";
+import { colorTheme } from "../util/colorTheme";
 
 class Search extends React.Component{
     constructor(props){
@@ -680,7 +681,7 @@ class Search extends React.Component{
                                                 <input 
                                                     type="radio" 
                                                     value="and" 
-                                                    className="h-6 mr-2" 
+                                                    className={"h-6 mr-2 " + colorTheme(500).accent}
                                                     name="tagsInclusion" 
                                                     onChange={() => this.changeTagIncludeMode("and")}
                                                     checked={this.state.tagsInclusionModeChecked[0]}/> All (AND)
@@ -689,7 +690,7 @@ class Search extends React.Component{
                                                 <input 
                                                     type="radio" 
                                                     value="or" 
-                                                    className="h-6 mr-2" 
+                                                    className={"h-6 mr-2 " + colorTheme(500).accent}
                                                     name="tagsInclusion" 
                                                     onChange={() => this.changeTagIncludeMode("or")}
                                                     checked={this.state.tagsInclusionModeChecked[1]}/> Any (OR)
@@ -703,7 +704,7 @@ class Search extends React.Component{
                                                 <input 
                                                     type="radio" 
                                                     value="and" 
-                                                    className="h-6 mr-2" 
+                                                    className={"h-6 mr-2 " + colorTheme(500).accent}
                                                     name="tagsExclusion" 
                                                     onChange={() => this.changeTagExcludeMode("and")}
                                                     checked={this.state.tagsExclusionModeChecked[0]}/> All (AND)
@@ -712,7 +713,7 @@ class Search extends React.Component{
                                                 <input 
                                                     type="radio" 
                                                     value="or" 
-                                                    className="h-6 mr-2" 
+                                                    className={"h-6 mr-2 " + colorTheme(500).accent}
                                                     name="tagsExclusion" 
                                                     onChange={() => this.changeTagExcludeMode("or")}
                                                     checked={this.state.tagsExclusionModeChecked[1]}/> Any (OR)

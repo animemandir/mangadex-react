@@ -2,6 +2,8 @@ import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import { mangaContentRating,originalLanguage } from '../util/static.js';
+import { colorTheme } from "../util/colorTheme";
+
 
 class Settings extends React.Component{
     constructor(props){
@@ -17,7 +19,7 @@ class Settings extends React.Component{
                 {value:"yellow",label:"Yellow"},
                 {value:"green",label:"Green"},
                 {value:"blue",label:"Blue"},
-                {value:"indigo",label:"Indigo"},
+                {value:"cyan",label:"Cyan"},
                 {value:"purple",label:"Purple"},
                 {value:"pink",label:"Pink"},
             ],
@@ -114,7 +116,7 @@ class Settings extends React.Component{
                 <input
                     type="checkbox"
                     value={lan.value}
-                    className="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5"
+                    className={"form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5 " + colorTheme(500).accent}
                     onChange={this.handleLanguage}
                     checked={this.state.language.indexOf(lan.value) > -1}
                 />
@@ -130,7 +132,7 @@ class Settings extends React.Component{
                 <input
                     type="checkbox"
                     value={lan}
-                    className="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5"
+                    className={"form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5 " + colorTheme(500).accent}
                     onChange={this.handleOriginalLanguage}
                     checked={this.state.original.indexOf(lan) > -1}
                 />
@@ -146,7 +148,7 @@ class Settings extends React.Component{
                 <input
                     type="checkbox"
                     value={content}
-                    className="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5"
+                    className={"form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5 " + colorTheme(500).accent}
                     onChange={this.handleContentRating}
                     checked={this.state.content.indexOf(content) > -1}
                 />
@@ -163,7 +165,7 @@ class Settings extends React.Component{
                     type="radio"
                     name="color"
                     value={c.value}
-                    className="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5"
+                    className={"form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5 " + colorTheme(500).accent}
                     onChange={this.handleColor}
                     checked={this.state.color === c.value}
                 />

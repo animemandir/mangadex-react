@@ -1,14 +1,25 @@
+const colors = require('tailwindcss/colors')
+
 module.exports = {
-  purge: [],
-  darkMode: 'class', // or 'media' or 'class'
+  content: [
+    "./src/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  safelist: [
+    {pattern: /text-(red|blue|yellow|green|cyan|purple|pink)-(100|200|300|400|500|600|700|800|900)/},
+    {pattern: /bg-(red|blue|yellow|green|cyan|purple|pink)-(100|200|300|400|500|600|700|800|900)/},
+    {pattern: /border-(red|blue|yellow|green|cyan|purple|pink)-(100|200|300|400|500|600|700|800|900)/},
+    {pattern: /accent-(red|blue|yellow|green|cyan|purple|pink)-(100|200|300|400|500|600|700|800|900)/},
+  ],
+  darkMode: 'class', 
   theme: {
-    extend: {},
-  },
-  variants: {
     extend: {
-      rotate: ['active', 'group-hover'],
+      colors: {
+        gray: colors.slate,
+        green: colors.emerald,
+        purple: colors.fuchsia,
+      }
     },
-    width: ["responsive", "hover", "focus"]
   },
   plugins: [],
 }

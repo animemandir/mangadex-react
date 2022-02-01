@@ -6,5 +6,6 @@ export let colorTheme = (number) => {
         bg: "bg-" + color + "-" + number,
         scrollbar: "scrollbar-" + color,
         border: "border-" + color + "-" + number,
+        accent: "accent-" + color + "-" + number
     }
 }

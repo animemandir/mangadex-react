@@ -1,6 +1,6 @@
 {
   "name": "mangadex-react",
-  "version": "0.2.14",
+  "version": "0.3.0",
   "private": true,
   "author": {
     "name": "Saymon600",
@@ -9,37 +9,33 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
-    "@craco/craco": "^5.9.0",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@testing-library/jest-dom": "^5.13.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
-    "autoprefixer": "^10.4.2",
     "axios": "^0.21.1",
     "electron-is-dev": "^2.0.0",
     "luxon": "^1.27.0",
-    "postcss": "^7.0.35",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.0",
     "react-select": "^4.3.1",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-pack": "electron-builder -c.extraMetadata.main=build/electron.js",
     "electron-pack-win": "electron-builder -c.extraMetadata.main=build/electron.js --win --x64",
     "electron-pack-deb": "electron-builder -c.extraMetadata.main=build/electron.js --linux deb",
-    "preelectron-pack": "craco build",
-    "preelectron-pack-win": "craco build",
-    "preelectron-pack-deb": "craco build"
+    "preelectron-pack": "react-scripts build",
+    "preelectron-pack-win": "react-scripts build",
+    "preelectron-pack-deb": "react-scripts build"
   },
   "eslintConfig": {
     "extends": [
@@ -60,20 +56,22 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^6.2.0",
+    "autoprefixer": "^10.4.2",
+    "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
-    "electron": "^13.1.4",
-    "electron-builder": "^22.11.7",
+    "electron": "^16.0.8",
+    "electron-builder": "^22.14.5",
     "follow-redirects": ">=1.14.7",
     "immer": ">=9.0.6",
     "merge": ">=2.1.1",
     "nanoid": ">=3.1.31",
     "node-forge": ">=1.0.0",
     "node-notifier": ">=8.0.1",
-    "postcss": ">=8.2.13",
+    "postcss": "^8.4.5",
     "react-dev-utils": ">=11.0.4",
     "serialize-javascript": ">=3.1.0",
     "sockjs": ">=0.3.20",
-    "wait-on": "^5.3.0"
+    "tailwindcss": "^3.0.18",
+    "wait-on": "^6.0.0"
   }
 }

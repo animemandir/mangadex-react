@@ -22,7 +22,7 @@ class About extends React.Component{
                             <h2 className="border-b text-2xl mb-2">About</h2>
                             <p className="w-full text-justify">
                                 I wanted a manga reader to resemble the old MangaDex and I wanted to relearn React so I did one on my own. 
-                                Unfortunately I suck at UI and I don't care for mobiles, I'm sorry.  
+                                Unfortunately I suck at UI and I don't care for mobiles, I'm sorry. (Also light mode sucks, I'm really sorry. I'll fix it one day)  
                             </p>
                             <p className="w-full text-justify">
                                 This app was not made to abuse MangaDex API, please don't try to.

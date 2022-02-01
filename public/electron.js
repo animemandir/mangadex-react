@@ -17,9 +17,9 @@ app.on('activate',function(){
 });
 function createWindow(){
     mainWindow = new BrowserWindow({
-        width: 1600,
-        height: 900,
-        title: "MangaDex",
+        width: 1280,
+        height: 720,
+        title: "MangaDex Desktop 0.3.0",
         icon:  __dirname + '/icon.png'
     });
     mainWindow.setMenuBarVisibility(false);
