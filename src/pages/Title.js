@@ -14,6 +14,7 @@ import { colorTheme } from "../util/colorTheme";
 import { isLogged } from "../util/loginUtil.js";
 import Loading from '../component/Loading.js';
 import Paginator from '../component/Paginator.js';
+import ReactMarkdown from 'react-markdown'
 
 class Title extends React.Component{
     constructor(props){
@@ -128,16 +129,18 @@ class Title extends React.Component{
                     case "manga":
                         if(relation.id !== $this.state.id){
                             let title = "";
-                            Object.keys(relation.attributes.title).map(function(key){
-                                if(key === "en" || title === ""){
-                                    title = relation.attributes.title[key];
-                                }
-                            });
-                            relations.push({
-                                id: relation.id,
-                                related: mangaRelation[relation.related],
-                                title: title
-                            });
+                            if(relation.attributes !== undefined){
+                                Object.keys(relation.attributes.title).map(function(key){
+                                    if(key === "en" || title === ""){
+                                        title = relation.attributes.title[key];
+                                    }
+                                });
+                                relations.push({
+                                    id: relation.id,
+                                    related: mangaRelation[relation.related],
+                                    title: title
+                                });
+                            }                            
                         }                        
                     break;
                 } 
@@ -191,7 +194,7 @@ class Title extends React.Component{
             let description = "";
             Object.keys(response.data.data.attributes.description).map(function(key){
                 if(key === "en" || description === ""){
-                    description = response.data.data.attributes.description[key];
+                    description = response.data.data.attributes.description[key].trim();
                 }
             });
 
@@ -937,7 +940,18 @@ class Title extends React.Component{
                                             {trStats}
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Description:</td>
-                                                <td width="80%" className="text-justify">{this.state.description}</td>
+                                                <td width="80%" className="whitespace-pre-wrap text-justify">
+                                                    <div className=" overflow-y-hidden max-h-96">
+                                                        <ReactMarkdown 
+                                                            children={this.state.description}
+                                                            components={{
+                                                                a({node, inline, className, children,...props}){
+                                                                    return <a className={colorTheme(500).text} {...props}>{children}</a>;
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </td>
                                             </tr>
                                             {trRelations}
                                             {trOfficial}

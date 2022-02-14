@@ -11,6 +11,8 @@ import FollowChapterRow from '../component/FollowChapterRow.js';
 import Loading from '../component/Loading.js';
 import { isLogged } from "../util/loginUtil.js";
 import LanguageFlag  from '../component/LanguageFlag.js';
+import ReactMarkdown from 'react-markdown'
+
 
 class Group extends React.Component{
     constructor(props){
@@ -95,7 +97,7 @@ class Group extends React.Component{
 
             name = response.data.data.attributes.name;
             email = response.data.data.attributes.contactEmail;
-            description = response.data.data.attributes.description;
+            description = response.data.data.attributes.description.trim();
             discord = response.data.data.attributes.discord;
             ircChannel = response.data.data.attributes.ircChannel;
             ircServer = response.data.data.attributes.ircServer;
@@ -495,7 +497,16 @@ class Group extends React.Component{
                                     </tr>
                                     <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                         <td width="20%" className="font-semibold">Description:</td>
-                                        <td width="80%">{this.state.description}</td>
+                                        <td width="80%" className="whitespace-pre-line text-justify">
+                                            <ReactMarkdown 
+                                                children={this.state.description} 
+                                                components={{
+                                                    a({node, inline, className, children,...props}){
+                                                        return <a className={colorTheme(500).text} {...props}>{children}</a>;
+                                                    }
+                                                }}
+                                            />
+                                        </td>
                                     </tr>
                                     <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                         <td width="20%" className="font-semibold">Languages:</td>

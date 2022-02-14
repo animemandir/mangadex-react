@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
 import { colorTheme } from "../util/colorTheme";
+import ReactMarkdown from 'react-markdown'
+
 class MangaBox extends React.Component{
     constructor(props){
         super(props);
@@ -52,8 +54,15 @@ class MangaBox extends React.Component{
                         <Link className="ml-2" to={"/title/" + this.props.data.mangaId}>{this.props.data.mangaName}</Link>
                     </p>
                     {stats}
-                    <div className="text-justify max-h-48 overflow-ellipsis overflow-hidden">
-                        {this.props.data.description}
+                    <div className="whitespace-pre-line text-justify max-h-48 overflow-ellipsis overflow-hidden">
+                        <ReactMarkdown 
+                            children={this.props.data.description.trim()}
+                            components={{
+                                a({node, inline, className, children,...props}){
+                                    return <a className={colorTheme(500).text} {...props}>{children}</a>;
+                                }
+                            }}
+                        />
                     </div>
                 </div>
             </div>

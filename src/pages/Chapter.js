@@ -16,6 +16,7 @@ class Chapter extends React.Component{
         this.ofListener = React.createRef();
         this.state = {
             id: "",
+            chapter: "",
             mangaId: "",
             manga: "",
             groups: "",
@@ -130,6 +131,7 @@ class Chapter extends React.Component{
                 groups: groups,
                 userId: userId,
                 user: user,
+                chapter: chapter,
                 translatedLanguage: translatedLanguage,
                 
                 externalUrl: externalUrl
@@ -785,7 +787,7 @@ class Chapter extends React.Component{
                                         </div>
                                     </div>
                                 </div>    
-                                <div className="flex justify-center items-center text-center py-2 border-b-4  border-gray-200 dark:border-gray-900">
+                                <div className="flex justify-center items-center text-center py-2 border-b-2  border-gray-200 dark:border-gray-900">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                                     </svg>
@@ -795,7 +797,31 @@ class Chapter extends React.Component{
                                     </svg>
                                     <Link className={"hover:opacity-75 mr-3 " + colorTheme(500).text} to={"/user/" + this.state.userId}>{this.state.user}</Link>
                                     <LanguageFlag language={this.state.translatedLanguage} />
-                                </div>             
+                                </div>
+                                <div className="flex flex-wrap justify-center items-center border-b-4 pb-1 border-gray-200 dark:border-gray-900">
+                                    <a 
+                                        className={"text-center px-2 py-2 cursor-pointer focus:outline-none border h-10 mt-2 mb-1 mx-2 w-1/3"} 
+                                        href={"https://mangadex.org/chapter/" + this.state.id + "/1"} 
+                                        target="_blank" 
+                                        title={"Read on MangaDex"} 
+                                        rel="noopener noreferrer">
+                                        MangaDex
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                    </a>
+                                    <a 
+                                        className={"text-center px-2 py-2 cursor-pointer focus:outline-none border h-10 mt-2 mb-1 mx-2 w-1/3"} 
+                                        href={"https://cubari.moe/read/mangadex/" + this.state.mangaId + "/" + ((this.state.chapter !== null && this.state.chapter !== undefined) ? this.state.chapter.replace(".","-") : "0-0") + "/1"} 
+                                        target="_blank" 
+                                        title={"Read on Cubari"} 
+                                        rel="noopener noreferrer">
+                                        Cubari
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                    </a> 
+                                </div>      
                                 <div className="flex-grow mt-4">
                                     {externalUrl}
                                     <div className="flex flex-row px-3">

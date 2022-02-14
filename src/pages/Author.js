@@ -8,6 +8,8 @@ import MangaBox from '../component/MangaBox.js';
 import Loading from '../component/Loading.js';
 import Tags from '../component/Tags.js';
 import { isLogged } from "../util/loginUtil.js";
+import ReactMarkdown from 'react-markdown'
+import { colorTheme } from "../util/colorTheme";
 
 class Author extends React.Component{
     constructor(props){
@@ -61,7 +63,7 @@ class Author extends React.Component{
             let biography = "";
             Object.keys(response.data.data.attributes.biography).map(function(key){
                 if(key === "en" || biography === ""){
-                    biography = response.data.data.attributes.biography[key];
+                    biography = response.data.data.attributes.biography[key].trim();
                 }
             });
             
@@ -270,7 +272,16 @@ class Author extends React.Component{
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Biography:</td>
-                                                <td width="80%" className="text-justify">{this.state.biography}</td>
+                                                <td width="80%" className="whitespace-pre-line text-justify">
+                                                    <ReactMarkdown 
+                                                        children={this.state.biography}
+                                                        components={{
+                                                            a({node, inline, className, children,...props}){
+                                                                return <a className={colorTheme(500).text} {...props}>{children}</a>;
+                                                            }
+                                                        }}
+                                                    />
+                                                </td>
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Links:</td>

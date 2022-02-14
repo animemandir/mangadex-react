@@ -19,7 +19,7 @@ function createWindow(){
     mainWindow = new BrowserWindow({
         width: 1280,
         height: 720,
-        title: "MangaDex Desktop 0.3.0",
+        title: "MangaDex Desktop 0.3.1",
         icon:  __dirname + '/icon.png'
     });
     mainWindow.setMenuBarVisibility(false);

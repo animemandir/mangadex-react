@@ -1,6 +1,6 @@
 {
   "name": "mangadex-react",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "author": {
     "name": "Saymon600",
@@ -19,6 +19,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.0.0",
+    "react-markdown": "^8.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.0",
     "react-select": "^4.3.1",
@@ -71,6 +72,7 @@
     "react-dev-utils": ">=11.0.4",
     "serialize-javascript": ">=3.1.0",
     "sockjs": ">=0.3.20",
+    "svgo": "^2.8.0",
     "tailwindcss": "^3.0.18",
     "wait-on": "^6.0.0"
   }

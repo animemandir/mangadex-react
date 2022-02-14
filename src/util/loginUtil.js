@@ -20,12 +20,23 @@ export async function isLogged(){
                     localStorage.refreshExpire = nowRef.toSeconds();
 
                     return true;
+                }else{
+                    localStorage.removeItem("authToken");
+                    localStorage.removeItem("authUser");
+                    localStorage.removeItem("authExpire");
+                    localStorage.removeItem("authRefresh");
+                    localStorage.removeItem("refreshExpire");
                 }
 
                 return false;
             })
             .catch(function(error){
                 console.log(error);
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("authUser");
+                localStorage.removeItem("authExpire");
+                localStorage.removeItem("authRefresh");
+                localStorage.removeItem("refreshExpire");
                 return false;
             });
         }
