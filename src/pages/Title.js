@@ -14,7 +14,9 @@ import { colorTheme } from "../util/colorTheme";
 import { isLogged } from "../util/loginUtil.js";
 import Loading from '../component/Loading.js';
 import Paginator from '../component/Paginator.js';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown';
+import ReactTooltip from 'react-tooltip';
+
 
 class Title extends React.Component{
     constructor(props){
@@ -51,10 +53,14 @@ class Title extends React.Component{
             personalRating: "",
             meanRating: 0,
             usersRating: 0,
+            ratingDistribution: [],
             followCount: 0,
             activePage: 1,
             pages: 0,
             relations: [],
+            showAllAltTitles: false,
+            showAllRelations: false,
+            showAllDescription: false,
 
             tabControl: {
                 active: "chapter",
@@ -291,6 +297,7 @@ class Title extends React.Component{
             let list = [];
             for(let i = 0; i < response.data.data.length; i++){
                 response.data.data[i].read = false;
+                response.data.data[i].isLogged = $this.state.isLogged;
                 if($this.state.chapterRead.indexOf(response.data.data[i].id) > -1){
                     response.data.data[i].read = true;
                 }
@@ -353,7 +360,7 @@ class Title extends React.Component{
                 let file = "https://uploads.mangadex.org/covers/" +  $this.state.id + "/" + response.data.data[i].attributes.fileName + ".512.jpg";
                 let title = (response.data.data[i].attributes.volume) ? "Volume " + response.data.data[i].attributes.volume : "Cover"; 
                 list.push(
-                    <a href={fileFull} target="_blank" rel="noopener noreferrer" className="w-1/5 content object-contain m-2" style={{cursor: "zoom-in"}}>
+                    <a href={fileFull} target="_blank" rel="noopener noreferrer" className="w-1/4 content object-contain" style={{cursor: "zoom-in"}}>
                         <img 
                             src={file}                            
                             alt={title}
@@ -619,6 +626,7 @@ class Title extends React.Component{
                 mean = 0;
             }
             let users = 0;
+            let distribution = response.data.statistics[$this.state.id].rating.distribution;
             Object.keys(response.data.statistics[$this.state.id].rating.distribution).map(function(key){
                 users += parseInt(response.data.statistics[$this.state.id].rating.distribution[key]);
             });
@@ -631,7 +639,8 @@ class Title extends React.Component{
             $this.setState({
                 meanRating: mean.toFixed(2),
                 usersRating: users,
-                followCount: followCount
+                followCount: followCount,
+                ratingDistribution: distribution
             });
         })
         .catch(function(error){
@@ -641,6 +650,18 @@ class Title extends React.Component{
                 position: 'top-right',
             });
         });
+    }
+
+    clickShowAllAltTitles = () => {
+        this.setState({showAllAltTitles: true});
+    }
+
+    clickShowAllRelations = () => {
+        this.setState({showAllRelations: true});
+    }
+
+    clickShowAllDescription = () => {
+        this.setState({showAllDescription: true});
     }
 
     changeTabs = (tab) => {
@@ -670,13 +691,49 @@ class Title extends React.Component{
     }
 
     render = () => {
-        var altTitles = this.state.altTitles.map((alt) => <li>{alt}</li>);
+        var altTitles = [];
+        var relations = [];
+        if(this.state.altTitles.length > 5 && !this.state.showAllAltTitles){
+            var countAltTitles = 0;
+            for(let a = 0; a < this.state.altTitles.length; a++){
+                countAltTitles++;
+                if(countAltTitles > 5){
+                    break;
+                }
+                altTitles.push(<li>{this.state.altTitles[a]}</li>);
+            };
+            altTitles.push(<li onClick={this.clickShowAllAltTitles} className={colorTheme(500).text + " cursor-pointer"}>Show All</li>);
+        }else{
+            altTitles = this.state.altTitles.map((alt) => <li>{alt}</li>);
+        }
+
+        if(this.state.relations.length > 5 && !this.state.showAllRelations){
+            var countRelations = 0;
+            for(let a = 0; a < this.state.relations.length; a++){
+                countRelations++;
+                if(countRelations > 5){
+                    break;
+                }
+                relations.push(<li><Link className={colorTheme(500).text} to={"/title/"+this.state.relations[a].id}>{this.state.relations[a].title}</Link> ({this.state.relations[a].related})</li>);
+            }
+            relations.push(<li onClick={this.clickShowAllRelations} className={colorTheme(500).text + " cursor-pointer"}>Show All</li>);
+        }else{
+            relations = this.state.relations.map((rel) => <li><Link className={colorTheme(500).text} to={"/title/"+rel.id}>{rel.title}</Link> ({rel.related})</li>);
+        }
+
+        var showDescription = "";
+        if(document.getElementById('description') !== null && document.getElementById('description') !== undefined){
+            let descriptionHeight = document.getElementById('description').clientHeight;
+            if(descriptionHeight >= 384 && !this.state.showAllDescription){
+                showDescription = <div onClick={this.clickShowAllDescription} className={colorTheme(500).text + " cursor-pointer mt-2"}>Show More</div>;
+            }
+        }        
+
         var genre = this.state.genre.map((g) => <Tags name={g.name} url={"/search?tag=" + g.id + "&tagName=" + g.name} />);
         var theme = this.state.theme.map((t) => <Tags name={t.name} url={"/search?tag=" + t.id + "&tagName=" + t.name}/>);
         var official = this.state.official.map((o) => <Tags name={o.name} url={o.url}/>);
         var retail = this.state.retail.map((r) => <Tags name={r.name}  url={r.url}/>);
         var information = this.state.information.map((i) => <Tags name={i.name}  url={i.url}/>);
-        var relations = this.state.relations.map((rel) => <li><Link className={"" + colorTheme(500).text} to={"/title/"+rel.id}>{rel.title}</Link> ({rel.related})</li>);
 
         var authors = this.state.author.map((au) => 
             <Link className={"mr-4 " + colorTheme(500).text} to={"/author/"+au.id}>{au.name}</Link>
@@ -703,6 +760,7 @@ class Title extends React.Component{
         var tagLastVolume = "";
         var tagLastChapter = "";
         var cursorPubStatus = "";
+        var pubStatusTooltip = "";
         if(altTitles.length > 0){
             trAltTitles = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -799,7 +857,77 @@ class Title extends React.Component{
             tagLastChapter = "Chapter " + this.state.lastChapter;
             cursorPubStatus = "cursor-help";
         }
+        if(cursorPubStatus === "cursor-help"){
+            pubStatusTooltip = 
+            <ReactTooltip id='PubStatus' type='dark' effect='solid' place="right" className="opacity-tooltip">
+                <span>END: {tagLastVolume} {tagLastChapter}</span>
+            </ReactTooltip>
+        }
         if(this.state.meanRating > 0){
+            var rd = "";
+            var rd = 
+            <ReactTooltip id='ratingDistribution' type='dark' effect='solid' globalEventOff='click' place="right" className="opacity-tooltip"> 
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 1: {this.state.ratingDistribution[1]} 
+                    &nbsp;({((this.state.ratingDistribution[1]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 2: {this.state.ratingDistribution[2]}
+                    &nbsp;({((this.state.ratingDistribution[2]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 3: {this.state.ratingDistribution[3]}
+                    &nbsp;({((this.state.ratingDistribution[3]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 4: {this.state.ratingDistribution[4]}
+                    &nbsp;({((this.state.ratingDistribution[4]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 5: {this.state.ratingDistribution[5]}
+                    &nbsp;({((this.state.ratingDistribution[5]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 6: {this.state.ratingDistribution[6]}
+                    &nbsp;({((this.state.ratingDistribution[6]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 7: {this.state.ratingDistribution[7]}
+                    &nbsp;({((this.state.ratingDistribution[7]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 8: {this.state.ratingDistribution[8]}
+                    &nbsp;({((this.state.ratingDistribution[8]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 9: {this.state.ratingDistribution[9]}
+                    &nbsp;({((this.state.ratingDistribution[9]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg> 10: {this.state.ratingDistribution[10]}
+                    &nbsp;({((this.state.ratingDistribution[10]*100)/this.state.usersRating).toFixed(2)}%)
+                </div>
+            </ReactTooltip>
             trRating =
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                 <td width="20%" className="font-semibold">Rating:</td>
@@ -816,9 +944,16 @@ class Title extends React.Component{
                         </svg>
                         {this.state.usersRating}
                     </div>
+                    <div className="flex cursor-pointer" title="Distribution" data-event='click focus' data-tip data-for='ratingDistribution'>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-1 mr-1 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    {rd}
                 </td>
             </tr>
         }
+
         if(this.state.followCount > 0){
             trStats =
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
@@ -833,6 +968,8 @@ class Title extends React.Component{
                 </td>
             </tr>
         }
+
+        var thRead = "";
         if(this.state.isLogged){
             var btnFollow =
             <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Follow" onClick={this.followManga}>
@@ -889,6 +1026,14 @@ class Title extends React.Component{
                     </select>
                 </td>
             </tr>
+
+            thRead = 
+            <th title="Read">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+            </th>
         }
 
         var chapterLoading = (this.state.chapterList.length <= 0) ? <Loading /> : "";
@@ -933,24 +1078,26 @@ class Title extends React.Component{
                                             {trRating}
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Pub. status:</td>
-                                                <td width="80%" className={"flex " + cursorPubStatus} title={"END: " + tagLastVolume + " " + tagLastChapter}>
-                                                    {this.state.status}
+                                                <td width="80%" className={"flex " + cursorPubStatus}>
+                                                    <div data-tip data-for='PubStatus'>{this.state.status}</div>
                                                 </td>
+                                                {pubStatusTooltip}
                                             </tr>
                                             {trStats}
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Description:</td>
-                                                <td width="80%" className="whitespace-pre-wrap text-justify">
-                                                    <div className=" overflow-y-hidden max-h-96">
+                                                <td width="80%" className="whitespace-normal text-justify">
+                                                    <div className={!this.state.showAllDescription ? "overflow-y-hidden max-h-96" : ""} id="description">
                                                         <ReactMarkdown 
                                                             children={this.state.description}
                                                             components={{
                                                                 a({node, inline, className, children,...props}){
-                                                                    return <a className={colorTheme(500).text} {...props}>{children}</a>;
+                                                                    return <a className={colorTheme(500).text} target="_blank" {...props}>{children}</a>;
                                                                 }
                                                             }}
                                                         />
                                                     </div>
+                                                    {showDescription}
                                                 </td>
                                             </tr>
                                             {trRelations}
@@ -979,12 +1126,7 @@ class Title extends React.Component{
                                 {chapterLoading}
                                 <table class="table-auto w-full p-2">
                                     <thead className="h-8 border-b-2 border-gray-200 dark:border-gray-900">
-                                        <th title="Read">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </th>
+                                        {thRead}
                                         <th title="Chapter">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -1026,7 +1168,7 @@ class Title extends React.Component{
                         
                             <div className={this.state.tabControl.contentCover}>
                                 {coverLoading}
-                                <div className="flex flex-wrap mx-auto content-center">
+                                <div className="flex flex-wrap justify-center content-center">
                                     {this.state.coverList}
                                 </div>
                                 {coverLoadMore}                               

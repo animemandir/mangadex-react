@@ -171,6 +171,7 @@ class Follow extends React.Component{
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.data.length; i++){
                 response.data.data[i].read = false;
+                response.data.data[i].isLogged = true;
                 response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
                         if(readList[relation.id].indexOf(response.data.data[i].id) > -1){

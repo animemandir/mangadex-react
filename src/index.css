@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .title-img-height{
     height: fit-content;
     height:-moz-max-content;
 }
+
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -14,6 +14,11 @@
 .no-scrollbar {
     -ms-overflow-style: none; 
     scrollbar-width: none;  
+}
+
+.opacity-tooltip {
+    opacity: 1 !important;
+    font-size: 0.85rem !important;
 }
 
 /* Blue */

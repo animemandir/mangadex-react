@@ -254,6 +254,7 @@ class Group extends React.Component{
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.data.length; i++){
                 response.data.data[i].read = false;
+                response.data.data[i].isLogged = $this.state.logged;
                 response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
                         if(readList[relation.id].indexOf(response.data.data[i].id) > -1){
@@ -388,6 +389,7 @@ class Group extends React.Component{
         );
 
         var actionTR = "";
+        var thRead = "";
         if(this.state.logged){
             var btnFollow =
             <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Follow" onClick={this.followGroup}>
@@ -414,6 +416,14 @@ class Group extends React.Component{
                 <td width="20%" className="font-semibold">Action:</td>
                 <td width="80%">{btnFollow}</td>
             </tr>
+
+            thRead = 
+            <th className="w-8" title="Read">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+            </th>
         }
 
         var site = "";
@@ -497,7 +507,7 @@ class Group extends React.Component{
                                     </tr>
                                     <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                         <td width="20%" className="font-semibold">Description:</td>
-                                        <td width="80%" className="whitespace-pre-line text-justify">
+                                        <td width="80%" className="whitespace-normal text-justify">
                                             <ReactMarkdown 
                                                 children={this.state.description} 
                                                 components={{
@@ -546,12 +556,7 @@ class Group extends React.Component{
                                 {chapterLoading}
                                 <table class="table-fixed w-full p-2">
                                     <thead className="border-b-2 border-gray-200 dark:border-gray-900">
-                                        <th className="w-8" title="Read">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </th>
+                                        {thRead}
                                         <th title="Chapter">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />

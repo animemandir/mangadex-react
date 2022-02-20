@@ -17,6 +17,7 @@ Due to CORS, I'm using electron to make it an desktop application.
 * [React Router](https://github.com/ReactTraining/react-router)
 * [React Hot Toast](https://github.com/timolins/react-hot-toast)
 * [React Select](https://github.com/jedwatson/react-select)
+* [react-tooltip](https://github.com/wwayne/react-tooltip)
 * [Lipis Flag Icons](https://github.com/lipis/flag-icon-css)
 
 ## Testing

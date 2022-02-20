@@ -54,7 +54,7 @@ class MangaBox extends React.Component{
                         <Link className="ml-2" to={"/title/" + this.props.data.mangaId}>{this.props.data.mangaName}</Link>
                     </p>
                     {stats}
-                    <div className="whitespace-pre-line text-justify max-h-48 overflow-ellipsis overflow-hidden">
+                    <div className="whitespace-normal text-justify max-h-48 overflow-ellipsis overflow-hidden">
                         <ReactMarkdown 
                             children={this.props.data.description.trim()}
                             components={{

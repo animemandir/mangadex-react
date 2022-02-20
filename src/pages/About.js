@@ -78,11 +78,6 @@ class About extends React.Component{
                                 <li>MangaBox: stats</li>
                                 <li>Home: Top chapters (6h/24h/7d - views)</li>
                                 <li>Home: Top manga (Follows/Rating)</li>
-                                <li>Limit/Show more on title relations and alt titles</li>
-                                <li>Add mean rating distribution on title page</li>
-                                <li>Add a show more button on description in case of overflow (title)</li>
-                                <li>Fix tooltip for last volume/chapter on title</li>
-                                <li>Hide read option on lists if not logged in</li>
                             </ul>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 {
   "name": "mangadex-react",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "author": {
     "name": "Saymon600",
@@ -9,20 +9,7 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
-    "@tailwindcss/line-clamp": "^0.2.1",
-    "@testing-library/jest-dom": "^5.13.0",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "axios": "^0.21.1",
     "electron-is-dev": "^2.0.0",
-    "luxon": "^1.27.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-hot-toast": "^2.0.0",
-    "react-markdown": "^8.0.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "^5.0.0",
-    "react-select": "^4.3.1",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -70,10 +57,23 @@
     "node-notifier": ">=8.0.1",
     "postcss": "^8.4.5",
     "react-dev-utils": ">=11.0.4",
+    "react-tooltip": "^4.2.21",
     "serialize-javascript": ">=3.1.0",
     "sockjs": ">=0.3.20",
-    "svgo": "^2.8.0",
     "tailwindcss": "^3.0.18",
-    "wait-on": "^6.0.0"
+    "wait-on": "^6.0.0",
+    "@tailwindcss/line-clamp": "^0.2.1",
+    "@testing-library/jest-dom": "^5.13.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "axios": "^0.21.1",
+    "luxon": "^1.27.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-hot-toast": "^2.0.0",
+    "react-markdown": "^8.0.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^5.0.0",
+    "react-select": "^4.3.1"
   }
 }

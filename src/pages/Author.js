@@ -272,7 +272,7 @@ class Author extends React.Component{
                                             </tr>
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Biography:</td>
-                                                <td width="80%" className="whitespace-pre-line text-justify">
+                                                <td width="80%" className="whitespace-normal text-justify">
                                                     <ReactMarkdown 
                                                         children={this.state.biography}
                                                         components={{
