@@ -612,6 +612,7 @@ class Chapter extends React.Component{
                 let imageOriginal = `${this.state.baseUrl}/data/${this.state.hash}/${this.state.data[a]}`;
                 let imageSaver = `${this.state.baseUrl}/data-saver/${this.state.hash}/${this.state.dataSaver[a]}`;
                 let image = (this.state.imageSource === "original") ? imageOriginal : imageSaver; 
+                let pageLoad = (localStorage.pageLoad) ? parseInt(localStorage.pageLoad) : 5;
                 if((a+1) < progress){
                     progressBar.push(
                         <div 
@@ -651,7 +652,7 @@ class Chapter extends React.Component{
                             title={a+1} 
                             onClick={() => this.goToPage(a+1)}></div>
                     );
-                    if((progress + 5) >= (a+1)){
+                    if((progress + pageLoad) >= (a+1)){
                         imageLoad.push(
                             <div className="flex flex-row justify-center items-center">
                                 <img 

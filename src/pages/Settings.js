@@ -23,11 +23,19 @@ class Settings extends React.Component{
                 {value:"purple",label:"Purple"},
                 {value:"pink",label:"Pink"},
             ],
+            pageLoadList:[
+                {value:"0",label:"0"},
+                {value:"1",label:"1"},
+                {value:"3",label:"3"},
+                {value:"5",label:"5"},
+                {value:"10",label:"10"},
+            ],
             originalLanguageList: [],
             language: ["en"],
             original: [],
             content: [],
-            color: "blue"
+            color: "blue",
+            pageLoad: "5"
         };
     }
 
@@ -48,6 +56,10 @@ class Settings extends React.Component{
         if(localStorage.color){
             let color = localStorage.color;
             this.setState({color:color});
+        }
+        if(localStorage.pageLoad){
+            let pageLoad = localStorage.pageLoad;
+            this.setState({pageLoad:pageLoad});
         }
     }
 
@@ -101,6 +113,13 @@ class Settings extends React.Component{
 
         localStorage.color = color;
         this.setState({color:color});
+    }
+
+    handlePageLoad = (e) => {
+        let pageLoad = e.target.value;
+
+        localStorage.pageLoad = pageLoad;
+        this.setState({pageLoad:pageLoad});
     }
 
     clearReadingHistory = () => {
@@ -175,6 +194,23 @@ class Settings extends React.Component{
             </label>
         </div>);
 
+        var pageLoad = this.state.pageLoadList.map(p => 
+            <div className="inline-flex mr-2">
+                <label className="inline-flex items-center cursor-pointer">
+                    <input
+                        type="radio"
+                        name="pageLoad"
+                        value={p.value}
+                        className={"form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5 " + colorTheme(500).accent}
+                        onChange={this.handlePageLoad}
+                        checked={this.state.pageLoad === p.value}
+                    />
+                    <span className="ml-2 text-sm font-semibold">
+                        {p.label}
+                    </span>
+                </label>
+            </div>);
+
         return (
             <div class="flex flex-col h-screen justify-between">
                 <Header />
@@ -202,6 +238,14 @@ class Settings extends React.Component{
                             </div>
                             <div className="w-full py-3">
                                 {contentRating}
+                            </div>
+                        </div>
+                        <div className="box-border w-full py-1 my-1 mx-2">
+                            <div className="w-full border-b border-gray-200 dark:border-gray-900">
+                                Parallel Image Loading
+                            </div>
+                            <div className="w-full py-3">
+                                {pageLoad}
                             </div>
                         </div>
                         <div className="box-border w-full py-1 my-1 mx-2">

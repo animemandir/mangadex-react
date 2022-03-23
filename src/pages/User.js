@@ -130,7 +130,7 @@ class User extends React.Component{
                 </div>
             }
         });
-        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
             params: {
                 uploader: this.state.id, 
                 translatedLanguage: translatedLanguage,
@@ -214,7 +214,7 @@ class User extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
             params: {
                 ids: list,
                 translatedLanguage: translatedLanguage,
@@ -280,7 +280,7 @@ class User extends React.Component{
 
         var thRead = "";
         if(this.state.logged){
-            var thRead = 
+            thRead = 
             <th className="w-8" title="Read">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

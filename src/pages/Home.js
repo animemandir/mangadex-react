@@ -103,7 +103,7 @@ class Home extends React.Component{
                 
                 let temp = {
                     chapterId: chapter.id,
-                    publishAt: chapter.attributes.publishAt,
+                    publishAt: chapter.attributes.createdAt,
                     chapter: chapter.attributes.chapter,
                     mangaId: mangaId,
                     mangaName: mangaName,
@@ -165,7 +165,7 @@ class Home extends React.Component{
                 manga.relationships.map((relation) => {
                     if(relation.type === "cover_art"){
                         if(relation.attributes !== undefined){
-                            let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + relation.attributes.fileName + ".512.jpg";
+                            let coverFile = "https://uploads.mangadex.org/covers/" +  mangaId + "/" + relation.attributes.fileName + ".256.jpg";
                             if(chapters[mangaId]){
                                 chapters[mangaId].cover = coverFile;
                             }

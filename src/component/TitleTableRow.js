@@ -183,8 +183,8 @@ class TitleTableRow extends React.Component{
                     </Link>
                 </td>
                 <td className="hidden">1000</td>
-                <td title={this.props.data.attributes.publishAt}>
-                    {DateTime.fromISO(this.props.data.attributes.publishAt).toRelative()}
+                <td title={this.props.data.attributes.createdAt}>
+                    {DateTime.fromISO(this.props.data.attributes.createdAt).toRelative()}
                 </td>
             </tr>
         );

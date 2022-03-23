@@ -40,7 +40,7 @@ class HomeUpdates extends React.Component{
                     alt={this.props.data.mangaName}
                     src={this.props.data.cover} />
                 <div className="item-body w-4/5 pl-2">
-                    <div className={"text-left flex flex-wrap pb-1 border-b dark:border-gray-900 " + colorTheme(600).text}>
+                    <div className={"text-left flex flex-wrap pb-1 border-b dark:border-gray-900 " + colorTheme(500).text}>
                         <Link className="flex" to={"/title/" + this.props.data.mangaId}>
                             <span className="mr-2">
                                 {this.props.data.mangaName}  

@@ -97,7 +97,7 @@ class Group extends React.Component{
 
             name = response.data.data.attributes.name;
             email = response.data.data.attributes.contactEmail;
-            description = response.data.data.attributes.description.trim();
+            description = response.data.data.attributes.description === null ? "" : response.data.data.attributes.description.trim();
             discord = response.data.data.attributes.discord;
             ircChannel = response.data.data.attributes.ircChannel;
             ircServer = response.data.data.attributes.ircServer;
@@ -162,7 +162,7 @@ class Group extends React.Component{
                 </div>
             }
         });
-        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
             params: {
                 groups: [this.state.id], 
                 translatedLanguage: translatedLanguage,
@@ -242,7 +242,7 @@ class Group extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?order[publishAt]=desc',{
+        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
             params: {
                 ids: list,
                 translatedLanguage: translatedLanguage,
