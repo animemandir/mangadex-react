@@ -2,9 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-.title-img-height{
-    height: fit-content;
-    height:-moz-max-content;
+@font-face{
+    font-family: "Roboto";
+    src: url("../public/Lato-Regular.ttf") format("truetype");
+}
+@layer base {
+    html {
+        font-family: 'Lato', sans-serif;
+    }
 }
 
 .no-scrollbar::-webkit-scrollbar {

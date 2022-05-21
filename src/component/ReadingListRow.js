@@ -5,22 +5,55 @@ import { colorTheme } from "../util/colorTheme";
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { mangaReadingStatus } from '../util/static.js';
+import Select from 'react-select';
 
 class ReadingListRow extends React.Component{
     constructor(props){
         super(props);
         this.state = {
             follow: false,
-            readingStatus: "",
-            rating: ""
+            readingStatus: {value:"",label:"Reading Status (none)"},
+            rating: {value:"",label:"Rating (none)"},
+            optionStatus: [],
+            optionRating: []
         };
     }
 
     componentDidMount = () => {
+        var listStatus = [{value:"",label:"Reading Status (none)"}];
+        var listRating = [{value:"",label:"Rating (none)"}];
+        Object.keys(mangaReadingStatus).map((key) => {
+            listStatus.push({
+                value: key,
+                label: mangaReadingStatus[key]
+            });
+        });
+        for(let rt = 10; rt >= 1; rt--){
+            listRating.push({
+                value: rt,
+                label: rt
+            });
+        }
+        
+        let saveStatus = {value:"",label:"Reading Status (none)"};
+        let saveRating = {value:"",label:"Rating (none)"};
+        Object.keys(mangaReadingStatus).map((key) => {
+            if(key === this.props.data.readingStatus){
+                saveStatus = {
+                    value: key,
+                    label: mangaReadingStatus[key]
+                }
+            }
+        });
+        if(parseInt(this.props.data.rating) > 0){
+            saveRating = {value:this.props.data.rating,label:this.props.data.rating};
+        }
         this.setState({
             follow: this.props.data.follow,
-            readingStatus: this.props.data.readingStatus,
-            rating: this.props.data.rating
+            readingStatus: saveStatus,
+            rating: saveRating,
+            optionStatus: listStatus,
+            optionRating: listRating
         });
     }
 
@@ -80,7 +113,7 @@ class ReadingListRow extends React.Component{
     }
 
     changeReadingStatus = (e) => {
-        let newStatus = e.target.value;
+        let newStatus = e.value;
         if(newStatus === ""){
             newStatus = null;
         }
@@ -96,8 +129,17 @@ class ReadingListRow extends React.Component{
         )
         .then(function(response){
             if(response.data.result === "ok"){
+                let saveStatus = {value:"",label:"Reading Status (none)"};
+                Object.keys(mangaReadingStatus).map((key) => {
+                    if(key === newStatus){
+                        saveStatus = {
+                            value: key,
+                            label: mangaReadingStatus[key]
+                        }
+                    }
+                });
                 $this.setState({
-                    readingStatus: newStatus
+                    readingStatus: saveStatus
                 });
                 toast.success('Updated Status: ' + $this.props.data.mangaName + '. Please reload the page to update the list.',{
                     duration: 2000,
@@ -114,7 +156,7 @@ class ReadingListRow extends React.Component{
     }
 
     changeRating = (e) => {
-        let newRating = e.target.value;
+        let newRating = e.value;
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
         if(newRating === ""){
@@ -128,7 +170,7 @@ class ReadingListRow extends React.Component{
             .then(function(response){
                 if(response.data.result === "ok"){
                     $this.setState({
-                        rating: ""
+                        rating: {value:"",label:"Rating (none)"}
                     });
                     toast.success('Deleted Rating: ' + $this.props.data.mangaName,{
                         duration: 1000,
@@ -155,7 +197,7 @@ class ReadingListRow extends React.Component{
             .then(function(response){
                 if(response.data.result === "ok"){
                     $this.setState({
-                        rating: newRating
+                        rating: {value:newRating,label:newRating}
                     });
                     toast.success('Updated Rating: ' + $this.props.data.mangaName,{
                         duration: 1000,
@@ -173,6 +215,47 @@ class ReadingListRow extends React.Component{
     }
 
     render = () => {
+        var selectStyle = (localStorage.theme === 'dark') ? {
+            control: (base) => ({
+            ...base,
+            background: "#1E293B",
+            border: "2px solid #0F172A",
+            height: "36px",
+            minHeight: "36px"
+            }),
+            container: (base) => ({
+            ...base,
+            height: "36px"
+            }),
+            menu: (base) => ({
+            ...base,
+            background: "#1E293B",
+            borderRadius: 0,
+            marginTop: 0
+            }),
+            menuList: (base) => ({
+            ...base,
+            background: "#1E293B",
+            padding: 0
+            }),
+            placeholder: (base) => ({
+                ...base,
+                color: "#D1D5DB",
+            }),
+            option: (base,{ isFocused }) => ({
+                ...base,
+                background: (isFocused) ? "#4B5563" : "#1E293B",
+            }),
+            multiValueRemove: base => ({
+                ...base,
+                color: "#111827",
+            }),
+            singleValue: (base,{ isFocused }) => ({
+                ...base,
+                color: "#D1D5DB",
+            }),
+        } : {};
+
         var authors = this.props.data.author.map((au) => 
             <Link className={"mr-4 " + colorTheme(500).text} to={"/author/"+au.id}>{au.name}</Link>
         );
@@ -199,36 +282,6 @@ class ReadingListRow extends React.Component{
                 </div>
             </button>;
         }
-        var tdReadingStatus = 
-        <select 
-            className="w-auto px-3 py-1 my-1 h-9 hover:opacity-75 cursor-pointer focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
-            value={this.state.readingStatus} 
-            onChange={this.changeReadingStatus} >
-            <option value="">Status (None)</option>
-            {
-                Object.keys(mangaReadingStatus).map((status) => 
-                    <option value={status}>{mangaReadingStatus[status]}</option>
-                )
-            }
-        </select>;
-
-        var tdRating =
-        <select 
-            className="w-auto px-3 py-1 my-1 ml-1 h-9 hover:opacity-75 cursor-pointer focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
-            value={this.state.rating} 
-            onChange={this.changeRating} >
-            <option value="">Rating (None)</option>
-            <option value="10">10</option>
-            <option value="9">9</option>
-            <option value="8">8</option>
-            <option value="7">7</option>
-            <option value="6">6</option>
-            <option value="5">5</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-        </select>
 
         if(this.props.data.mangaId.length === 0){
             return (
@@ -264,8 +317,24 @@ class ReadingListRow extends React.Component{
                 <td className="text-left">{authors}</td>
                 <td className="text-left">{artists}</td>
                 <td>{btnFollow}</td>
-                <td>{tdReadingStatus}</td>
-                <td>{tdRating}</td>
+                <td>
+                    <Select
+                        options={this.state.optionStatus}
+                        onChange={this.changeReadingStatus}
+                        value={this.state.readingStatus}
+                        styles={selectStyle}
+                        className="text-gray-900 dark:text-gray-200 w-full"
+                    />
+                </td>
+                <td>
+                    <Select
+                        options={this.state.optionRating}
+                        onChange={this.changeRating}
+                        value={this.state.rating}
+                        styles={selectStyle}
+                        className="text-gray-900 dark:text-gray-200 my-1 w-full"
+                    />
+                </td>
             </tr>
         );
     }

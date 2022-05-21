@@ -518,6 +518,17 @@ class Follow extends React.Component{
     }
 
     changeTabs = (tab) => {
+        if(this.state.blockReadingList){
+            this.setState({tabControl: {
+                btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                btnManga: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                btnGroup: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
+                contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
+            }});
+            return true;
+        }
         switch(tab){
             case "chapter":
                 this.setState({tabControl: {
@@ -530,28 +541,17 @@ class Follow extends React.Component{
                 }});
             break;
             case "manga":
-                if(this.state.blockReadingList){
-                    this.setState({tabControl: {
-                        btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnManga: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnGroup: "text-center px-3 py-1 mx-1 cursor-wait hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        contentChapter: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
-                        contentManga: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
-                        contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
-                    }});
-                }else{
-                    if(this.state.totalReading === -1){
-                        this.getTitleStatus("reading");
-                    }
-                    this.setState({tabControl: {
-                        btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        btnManga: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
-                        btnGroup: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
-                        contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
-                        contentManga: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
-                        contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
-                    }});
-                }                
+                if(this.state.totalReading === -1){
+                    this.getTitleStatus("reading");
+                }
+                this.setState({tabControl: {
+                    btnChapter: "text-center px-3 py-1 mr-1 mb-3 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    btnManga: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-900 dark:border-gray-200",
+                    btnGroup: "text-center px-3 py-1 mx-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900",
+                    contentChapter: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentManga: "w-full p-3 border-2 border-gray-200 dark:border-gray-900",
+                    contentGroup: "w-full hidden p-3 border-2 border-gray-200 dark:border-gray-900"
+                }});                
             break;
             case "group":
                 if(this.state.totalGroups === -1){

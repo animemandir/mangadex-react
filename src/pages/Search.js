@@ -525,17 +525,18 @@ class Search extends React.Component{
         var selectStyle = (localStorage.theme === 'dark') ? {
             control: (base) => ({
               ...base,
-              background: "#6B7280",
+              background: "#1E293B",
+              border: "1px solid #0F172A"
             }),
             menu: (base) => ({
               ...base,
-              background: "#6B7280",
+              background: "#1E293B",
               borderRadius: 0,
               marginTop: 0
             }),
             menuList: (base) => ({
               ...base,
-              background: "#6B7280",
+              background: "#1E293B",
               padding: 0
             }),
             placeholder: (base) => ({
@@ -544,7 +545,7 @@ class Search extends React.Component{
             }),
             option: (base,{ isFocused }) => ({
                 ...base,
-                background: (isFocused) ? "#4B5563" : "#6B7280",
+                background: (isFocused) ? "#4B5563" : "#1E293B",
             }),
             multiValueRemove: base => ({
                 ...base,
@@ -555,6 +556,7 @@ class Search extends React.Component{
                 color: "#D1D5DB",
             }),
         } : {};
+        
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />

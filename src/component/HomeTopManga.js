@@ -46,7 +46,7 @@ class HomeTopManga extends React.Component{
             <div className="content w-full flex border-b-2 my-2 mx-1 border-gray-200 dark:border-gray-900">
                 <img 
                     className="w-1/5 pl-1 pb-1 object-contain"
-                    style={{height:"fit-content"}}
+                    // style={{height:"fit-content"}}
                     alt={this.props.data.name}
                     src={this.props.data.coverFile} />
                 <div className="item-body w-4/5 pl-1">

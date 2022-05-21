@@ -16,7 +16,7 @@ import Loading from '../component/Loading.js';
 import Paginator from '../component/Paginator.js';
 import ReactMarkdown from 'react-markdown';
 import ReactTooltip from 'react-tooltip';
-
+import Select from 'react-select';
 
 class Title extends React.Component{
     constructor(props){
@@ -49,8 +49,8 @@ class Title extends React.Component{
             coverShowMore: false,
             following: false,
             isLogged: false,
-            readingStatus: "",
-            personalRating: "",
+            readingStatus: {value:"",label:"Reading Status (none)"},
+            personalRating: {value:"",label:"Rating (none)"},
             meanRating: 0,
             usersRating: 0,
             ratingDistribution: [],
@@ -477,20 +477,29 @@ class Title extends React.Component{
             if(status === null){
                 status = "";
             }
+            let saveStatus = {value:"",label:"Reading Status (none)"};
+            Object.keys(mangaReadingStatus).map((key) => {
+                if(key === status){
+                    saveStatus = {
+                        value: key,
+                        label: mangaReadingStatus[key]
+                    }
+                }
+            });
             $this.setState({
-                readingStatus: response.data.status
+                readingStatus: saveStatus
             });
         })
         .catch(function(error){
             console.log(error);
             $this.setState({
-                readingStatus: ""
+                readingStatus: {value:"",label:"Reading Status (none)"}
             });
         });
     }
 
     changeReadingStatus = (e) => {
-        let newStatus = e.target.value;
+        let newStatus = e.value;
         if(newStatus === ""){
             newStatus = null;
         }
@@ -506,8 +515,17 @@ class Title extends React.Component{
         )
         .then(function(response){
             if(response.data.result === "ok"){
+                let saveStatus = {value:"",label:"Reading Status (none)"};
+                Object.keys(mangaReadingStatus).map((key) => {
+                    if(key === newStatus){
+                        saveStatus = {
+                            value: key,
+                            label: mangaReadingStatus[key]
+                        }
+                    }
+                });
                 $this.setState({
-                    readingStatus: newStatus
+                    readingStatus: saveStatus
                 });
                 toast.success('Updated Status',{
                     duration: 1000,
@@ -537,23 +555,25 @@ class Title extends React.Component{
         })
         .then(function(response){
             let rating = response.data.ratings[$this.state.id].rating;
+            let saveRating = {value:rating,label:rating}
             if(rating === undefined || rating === null){
                 rating = "";
+                saveRating = {value:"",label:"Rating (none)"}
             }
             $this.setState({
-                personalRating: rating
+                personalRating: saveRating
             });
         })
         .catch(function(error){
             console.log(error);
             $this.setState({
-                personalRating: ""
+                personalRating: {value:"",label:"Rating (none)"}
             });
         });
     }
 
     changeRating = (e) => {
-        let newRating = e.target.value;
+        let newRating = e.value;
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
         if(newRating === ""){
@@ -567,7 +587,7 @@ class Title extends React.Component{
             .then(function(response){
                 if(response.data.result === "ok"){
                     $this.setState({
-                        personalRating: ""
+                        personalRating: {value:"",label:"Rating (none)"}
                     });
                     toast.success('Deleted Rating',{
                         duration: 1000,
@@ -594,7 +614,7 @@ class Title extends React.Component{
             .then(function(response){
                 if(response.data.result === "ok"){
                     $this.setState({
-                        personalRating: newRating
+                        personalRating: {value:newRating,label:newRating}
                     });
                     toast.success('Updated Rating',{
                         duration: 1000,
@@ -691,6 +711,47 @@ class Title extends React.Component{
     }
 
     render = () => {
+        var selectStyle = (localStorage.theme === 'dark') ? {
+            control: (base) => ({
+            ...base,
+            background: "#1E293B",
+            border: "2px solid #0F172A",
+            height: "36px",
+            minHeight: "36px"
+            }),
+            container: (base) => ({
+            ...base,
+            height: "36px"
+            }),
+            menu: (base) => ({
+            ...base,
+            background: "#1E293B",
+            borderRadius: 0,
+            marginTop: 0
+            }),
+            menuList: (base) => ({
+            ...base,
+            background: "#1E293B",
+            padding: 0
+            }),
+            placeholder: (base) => ({
+                ...base,
+                color: "#D1D5DB",
+            }),
+            option: (base,{ isFocused }) => ({
+                ...base,
+                background: (isFocused) ? "#4B5563" : "#1E293B",
+            }),
+            multiValueRemove: base => ({
+                ...base,
+                color: "#111827",
+            }),
+            singleValue: (base,{ isFocused }) => ({
+                ...base,
+                color: "#D1D5DB",
+            }),
+        } : {};
+
         var altTitles = [];
         var relations = [];
         if(this.state.altTitles.length > 5 && !this.state.showAllAltTitles){
@@ -1032,38 +1093,40 @@ class Title extends React.Component{
                 </button>;
             }
 
+            var listStatus = [{value:"",label:"Reading Status (none)"}];
+            var listRating = [{value:"",label:"Rating (none)"}];
+            Object.keys(mangaReadingStatus).map((key) => {
+                listStatus.push({
+                    value: key,
+                    label: mangaReadingStatus[key]
+                });
+            });
+            for(let rt = 10; rt >= 1; rt--){
+                listRating.push({
+                    value: rt,
+                    label: rt
+                });
+            }
+
             trActions = 
             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                 <td width="20%" className="font-semibold">Actions:</td>
                 <td width="80%" className="flex">
                     {btnFollow}
-                    <select 
-                        className="w-auto px-3 py-1 my-1 h-9 hover:opacity-75 cursor-pointer focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
-                        value={this.state.readingStatus} 
-                        onChange={this.changeReadingStatus} >
-                        <option value="">Status (None)</option>
-                        {
-                            Object.keys(mangaReadingStatus).map((status) => 
-                                <option value={status}>{mangaReadingStatus[status]}</option>
-                            )
-                        }
-                    </select>
-                    <select 
-                        className="w-auto px-3 py-1 my-1 ml-1 h-9 hover:opacity-75 cursor-pointer focus:outline-none border-2 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-900" 
-                        value={this.state.personalRating} 
-                        onChange={this.changeRating} >
-                        <option value="">Rating (None)</option>
-                        <option value="10">10</option>
-                        <option value="9">9</option>
-                        <option value="8">8</option>
-                        <option value="7">7</option>
-                        <option value="6">6</option>
-                        <option value="5">5</option>
-                        <option value="4">4</option>
-                        <option value="3">3</option>
-                        <option value="2">2</option>
-                        <option value="1">1</option>
-                    </select>
+                    <Select
+                        options={listStatus}
+                        onChange={this.changeReadingStatus}
+                        value={this.state.readingStatus}
+                        styles={selectStyle}
+                        className="text-gray-900 dark:text-gray-200 my-1 w-56 mr-1"
+                    />
+                    <Select
+                        options={listRating}
+                        onChange={this.changeRating}
+                        value={this.state.personalRating}
+                        styles={selectStyle}
+                        className="text-gray-900 dark:text-gray-200 my-1 w-44"
+                    />
                 </td>
             </tr>
 
@@ -1098,7 +1161,7 @@ class Title extends React.Component{
                             <div className="flex flex-wrap">
                                 <div className="content flex w-full mt-2">
                                     <img 
-                                        className="object-contain title-img-height flex items-start w-full sm:w-1/4 p-3"
+                                        className="object-contain flex items-start w-full sm:w-1/4 p-3"
                                         alt={this.state.title}
                                         src={this.state.coverFile} />
                                     <div className="item-body w-full sm:w-3/4 p-3">

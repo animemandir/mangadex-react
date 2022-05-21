@@ -1,15 +1,16 @@
 {
   "name": "mangadex-react",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": true,
   "author": {
     "name": "Saymon600",
     "email": "samuel.y.yamaguchi@gmail.com"
   },
-  "main": "public/electron.js",
+  "main": "src/App.js",
   "homepage": "./",
   "dependencies": {
-    "electron-is-dev": "^2.0.0",
+    "@tauri-apps/api": "^1.0.0-rc.5",
+    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#5726952177b88d1d10063cdf8e7506bac84772cf",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -17,13 +18,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron-pack": "electron-builder -c.extraMetadata.main=build/electron.js",
-    "electron-pack-win": "electron-builder -c.extraMetadata.main=build/electron.js --win --x64",
-    "electron-pack-deb": "electron-builder -c.extraMetadata.main=build/electron.js --linux deb",
-    "preelectron-pack": "react-scripts build",
-    "preelectron-pack-win": "react-scripts build",
-    "preelectron-pack-deb": "react-scripts build"
+    "tauri": "tauri"
   },
   "eslintConfig": {
     "extends": [
@@ -44,38 +39,37 @@
     ]
   },
   "devDependencies": {
+    "@svgr/core": "^6.2.1",
+    "@svgr/plugin-svgo": "6.2.0",
+    "@tailwindcss/line-clamp": "^0.2.1",
+    "@tauri-apps/cli": "^1.0.0-rc.11",
+    "@testing-library/jest-dom": "^5.13.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
     "autoprefixer": "^10.4.2",
+    "axios": "^0.21.1",
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
-    "electron": "^16.0.8",
-    "electron-builder": "^22.14.5",
     "follow-redirects": ">=1.14.8",
     "immer": ">=9.0.6",
+    "luxon": "^1.27.0",
     "merge": ">=2.1.1",
     "nanoid": ">=3.1.31",
     "node-forge": ">=1.0.0",
     "node-notifier": ">=8.0.1",
     "postcss": "^8.4.5",
-    "react-dev-utils": ">=11.0.4",
-    "react-tooltip": "^4.2.21",
-    "serialize-javascript": ">=3.1.0",
-    "sockjs": ">=0.3.20",
-    "tailwindcss": "^3.0.18",
-    "wait-on": "^6.0.0",
-    "@tailwindcss/line-clamp": "^0.2.1",
-    "@testing-library/jest-dom": "^5.13.0",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "axios": "^0.21.1",
-    "luxon": "^1.27.0",
     "react": "^17.0.2",
+    "react-dev-utils": ">=11.0.4",
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.0.0",
     "react-markdown": "^8.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.0",
     "react-select": "^4.3.1",
-    "@svgr/core": "^6.2.1",
-    "@svgr/plugin-svgo": "6.2.0"
+    "react-tooltip": "^4.2.21",
+    "serialize-javascript": ">=3.1.0",
+    "sockjs": ">=0.3.20",
+    "tailwindcss": "^3.0.18",
+    "wait-on": "^6.0.0"
   }
 }

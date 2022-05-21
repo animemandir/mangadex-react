@@ -8,7 +8,10 @@ class History extends React.Component{
         super(props);
         this.state = {
             history: [],
-            count: 0
+            count: 0,
+            next: 1,
+            offset: 500,
+            loadMore: false
         };
     }
 
@@ -18,14 +21,24 @@ class History extends React.Component{
     }
 
     getReadingHistory = () => {
-        let history = [];
+        let history = this.state.history;
         let readingHistory = [];
-        let count = 0
+        let count = 0;
+        let loadMore = false;
+
         if(localStorage.readingHistory){
             readingHistory = JSON.parse(localStorage.readingHistory);
             count = readingHistory.length;
-            for(let a = readingHistory.length-1; a >= 0; a--){
-                history.push(<ReadingHistoryRow data={readingHistory[a]} />)
+            let init = ((this.state.offset * (this.state.next - 1)) + 1);
+            let till = (init + this.state.offset - 1) * -1;
+            init *= -1;
+            for(let a = readingHistory.length+init; a >= readingHistory.length+till; a--){
+                if(a >= 0){
+                    history.push(<ReadingHistoryRow data={readingHistory[a]} />);
+                }
+            }
+            if((till * -1) < readingHistory.length){
+                loadMore = true;
             }
         }else{
             history.push(
@@ -42,11 +55,19 @@ class History extends React.Component{
 
         this.setState({
             history: history,
-            count: count
+            count: count,
+            next: this.state.next+1,
+            loadMore: loadMore
         });
     }
 
     render = () => {
+        var loadMore = (this.state.loadMore) ? 
+        <button 
+            onClick={this.getReadingHistory} 
+            className="text-center px-3 py-1 focus:outline-none border-2 border-gray-200 dark:border-gray-900 mt-4" >
+            Load More
+        </button> : "";
         return (
             <div class="flex flex-col h-full justify-between align-top bg-gray-100 dark:bg-gray-800">
                 <Header />
@@ -59,7 +80,7 @@ class History extends React.Component{
                                 </svg>
                                 <span className="ml-2">Reading History ({this.state.count})</span>
                             </div>
-                            <div className="w-full flex p-3">
+                            <div className="w-full p-3">
                                 <table class="table-fixed w-full p-2">
                                     <thead className="border-b-2 border-gray-200 dark:border-gray-900">
                                         <th title="Chapter">
@@ -97,6 +118,7 @@ class History extends React.Component{
                                         {this.state.history}
                                     </tbody>
                                 </table>
+                                {loadMore}
                             </div>
                         </div>
                     </div>

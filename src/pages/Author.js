@@ -257,7 +257,7 @@ class Author extends React.Component{
                             <div className="flex flex-wrap">
                                 <div className="content flex w-full mt-2">
                                     <img 
-                                        className="object-contain title-img-height flex items-start w-full sm:w-1/4 p-3"
+                                        className="object-contain flex items-start w-full sm:w-1/4 p-3"
                                         alt={this.state.name}
                                         src={this.state.image} />
                                     <div className="item-body w-full sm:w-3/4 p-3">

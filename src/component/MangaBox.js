@@ -45,7 +45,7 @@ class MangaBox extends React.Component{
             <div className="content flex w-1/2 mt-2 px-2 border-b border-gray-200 dark:border-gray-900">
                 <img 
                     className="w-1/5 pl-1 pb-1 object-contain"
-                    style={{height:"fit-content"}}
+                    // style={{height:"fit-content"}}
                     alt={this.props.data.mangaName}
                     src={this.props.data.cover} />
                 <div className="item-body w-4/5 pl-2">
