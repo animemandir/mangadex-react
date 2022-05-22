@@ -8,6 +8,9 @@ import HomeTopManga from '../component/HomeTopManga.js';
 import Loading from '../component/Loading.js';
 import toast, { Toaster } from 'react-hot-toast';
 import { isLogged } from "../util/loginUtil.js";
+import { loadStorage } from "../util/persistentStore.js";
+
+
 
 class Home extends React.Component{
     constructor(props){
@@ -38,6 +41,7 @@ class Home extends React.Component{
         document.title = "Home - MangaDex";
         this.getLastChapters();
         this.getReadingHistory();
+        await loadStorage();
         let logged = await isLogged();
         this.setState({
             isLogged: logged

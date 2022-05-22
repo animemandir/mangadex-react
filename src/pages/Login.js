@@ -6,6 +6,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import { DateTime } from "luxon";
 import { isLogged } from "../util/loginUtil.js";
 import { colorTheme } from "../util/colorTheme";
+import { saveStorage } from "../util/persistentStore.js";
+
 class Login extends React.Component{
     constructor(props){
         super(props);
@@ -59,7 +61,7 @@ class Login extends React.Component{
             username: this.state.user,
             password: this.state.password
         })
-        .then(function(response){
+        .then(async function(response){
             if(response.data.result === "ok"){
                 localStorage.authToken = response.data.token.session;
                 localStorage.authUser = $this.state.user;
@@ -68,6 +70,7 @@ class Login extends React.Component{
                 localStorage.authRefresh = response.data.token.refresh;
                 let nowRef = DateTime.now().plus({days: 30});
                 localStorage.refreshExpire = nowRef.toSeconds();
+                saveStorage();
                 window.location = "#/";
             }else{
                 toast.error('Something went wrong. Please try again',{

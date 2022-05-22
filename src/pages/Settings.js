@@ -3,7 +3,7 @@ import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import { mangaContentRating,originalLanguage } from '../util/static.js';
 import { colorTheme } from "../util/colorTheme";
-
+import { saveStorage } from "../util/persistentStore.js";
 
 class Settings extends React.Component{
     constructor(props){
@@ -75,10 +75,11 @@ class Settings extends React.Component{
         }
 
         localStorage.language = JSON.stringify(language);
+        saveStorage();
         this.setState({language:language});
     }
 
-    handleOriginalLanguage = (e) => {
+    handleOriginalLanguage = (e) =>{
         let original = this.state.original;
         let index = original.indexOf(e.target.value);
         if(e.target.checked){
@@ -90,6 +91,7 @@ class Settings extends React.Component{
         }
 
         localStorage.original = JSON.stringify(original);
+        saveStorage();
         this.setState({original:original});
     }
 
@@ -105,6 +107,7 @@ class Settings extends React.Component{
         }
 
         localStorage.content = JSON.stringify(content);
+        saveStorage();
         this.setState({content:content});
     }
 
@@ -112,6 +115,7 @@ class Settings extends React.Component{
         let color = e.target.value;
 
         localStorage.color = color;
+        saveStorage();
         this.setState({color:color});
     }
 
@@ -119,12 +123,15 @@ class Settings extends React.Component{
         let pageLoad = e.target.value;
 
         localStorage.pageLoad = pageLoad;
+        saveStorage();
         this.setState({pageLoad:pageLoad});
     }
 
-    clearReadingHistory = () => {
-        if(window.confirm("Do you want to clear the reading history?") === true){
+    async clearReadingHistory(){
+        let confirm = await window.confirm("Do you want to clear the reading history?");
+        if(confirm === true){
             localStorage.removeItem('readingHistory');
+            saveStorage();
         }
     }
 

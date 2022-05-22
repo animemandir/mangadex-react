@@ -8,6 +8,7 @@ import { colorTheme } from "../util/colorTheme";
 import { isLogged } from "../util/loginUtil.js";
 import { DateTime } from "luxon";
 import Select from 'react-select';
+import { saveStorage } from "../util/persistentStore.js";
 
 
 class Chapter extends React.Component{
@@ -120,7 +121,7 @@ class Chapter extends React.Component{
                 includes: ["scanlation_group","manga","user"]
             }
         })
-        .then(function(response){
+        .then(async function(response){
             let chapterId = "";
             let chapter = "";
             let title = "";
@@ -202,6 +203,7 @@ class Chapter extends React.Component{
                     readAt: DateTime.now().toISO()
                 });
                 localStorage.readingHistory = JSON.stringify(readingHistory);
+                saveStorage();
             }
 
             $this.getChapterList(mangaId,0);
@@ -381,6 +383,7 @@ class Chapter extends React.Component{
         if(!localStorage.imageSource){
             localStorage.imageSource = "original";
         }
+        saveStorage();
 
         this.setMode();
         this.setMenu();
@@ -408,11 +411,13 @@ class Chapter extends React.Component{
 
     lightDarkMode = (e) => {
         localStorage.theme = e.value;
+        saveStorage();
         this.setMode();
     }
 
     toggleMenu = () => {
         localStorage.showReaderMenu = (parseInt(localStorage.showReaderMenu) === 1) ? 0 : 1;
+        saveStorage();
         this.setMenu();
     }
 
@@ -432,6 +437,7 @@ class Chapter extends React.Component{
 
     changeImageFit = (e) => {
         localStorage.imageFit = e.value;
+        saveStorage();
         this.setFit();
     }
 
@@ -468,6 +474,7 @@ class Chapter extends React.Component{
 
     changeReaderLayout = (e) => {
         localStorage.readerlayout = e.value;
+        saveStorage();
         this.setLayout();
     }
 
@@ -517,11 +524,13 @@ class Chapter extends React.Component{
 
     changeProgressBar = (e) => {
         localStorage.showProgressBar = e.value;
+        saveStorage();
         this.setLayout();
     }
 
     changeImageSource = (e) => {
         localStorage.imageSource = e.value;
+        saveStorage();
         let imageSourceSelect = (localStorage.imageSource === "original") ? {value:"original", label:"Image Source: Original"} : {value:"saver", label:"Image Source: Data Saver"};
         this.setState({
             imageSource: e.value,
@@ -757,7 +766,6 @@ class Chapter extends React.Component{
 
     KbController = (e) => {
         this.ofListener.current.focus();
-        console.log(e.keyCode);
         switch(e.keyCode){
             case 38: //arrow up
             break;

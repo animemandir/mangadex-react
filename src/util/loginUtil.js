@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 import axios from 'axios';
+import { saveStorage } from "../util/persistentStore.js";
 
 export async function isLogged(){
     if(localStorage.authExpire){
@@ -18,7 +19,7 @@ export async function isLogged(){
                     localStorage.authRefresh = response.data.token.refresh;
                     let nowRef = DateTime.now().plus({days: 30});
                     localStorage.refreshExpire = nowRef.toSeconds();
-
+                    saveStorage();
                     return true;
                 }else{
                     localStorage.removeItem("authToken");
@@ -26,6 +27,7 @@ export async function isLogged(){
                     localStorage.removeItem("authExpire");
                     localStorage.removeItem("authRefresh");
                     localStorage.removeItem("refreshExpire");
+                    saveStorage();
                 }
 
                 return false;
@@ -37,6 +39,7 @@ export async function isLogged(){
                 localStorage.removeItem("authExpire");
                 localStorage.removeItem("authRefresh");
                 localStorage.removeItem("refreshExpire");
+                saveStorage();
                 return false;
             });
         }
