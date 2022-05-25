@@ -3,11 +3,12 @@ import { withRouter } from "react-router";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
 import Tags from '../component/Tags.js';
 import FollowChapterRow from '../component/FollowChapterRow.js';
 import Loading from '../component/Loading.js';
 import { isLogged } from "../util/loginUtil.js";
+import { fetch } from '@tauri-apps/api/http';
+
 
 class User extends React.Component{
     constructor(props){
@@ -47,7 +48,7 @@ class User extends React.Component{
 
     getUserInfo = (id) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/user/' + id)
+        fetch('https://api.mangadex.org/user/' + id)
         .then(function(response){
             let name = "";
             let version = "";
@@ -89,11 +90,12 @@ class User extends React.Component{
 
     getGroups = () => {
         var $this = this;
-        axios.get('https://api.mangadex.org/group',{
-            params: {
-                ids: this.state.groupsId
-            }
-        })
+        let params = {
+            ids: this.state.groupsId
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/group?'+query)
         .then(function(response){
             let groups = [];
             response.data.data.map((result) => {
@@ -130,14 +132,15 @@ class User extends React.Component{
                 </div>
             }
         });
-        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
-            params: {
-                uploader: this.state.id, 
-                translatedLanguage: translatedLanguage,
-                offset: this.state.chapterOffset,
-                limit: 50
-            }
-        })
+        let params = {
+            uploader: this.state.id, 
+            translatedLanguage: translatedLanguage,
+            offset: this.state.chapterOffset,
+            limit: 50
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/chapter?order[createdAt]=desc&'+query)
         .then(function(response){
             let list = [];
             let mangaList = [];
@@ -186,11 +189,13 @@ class User extends React.Component{
     getChapterRead = (chapterList,mangaList,totalOffset) => {
         var $this = this;
         var bearer = "Bearer " + localStorage.getItem("authToken");
-        axios.get('https://api.mangadex.org/manga/read',{
-            params: {
-                ids: mangaList,
-                grouped: true
-            },
+        let params = {
+            ids: mangaList,
+            grouped: true
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/manga/read?'+query,{
             headers: {  
                 Authorization: bearer
             }
@@ -214,14 +219,15 @@ class User extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
-            params: {
-                ids: list,
-                translatedLanguage: translatedLanguage,
-                includes: ["scanlation_group","user","manga"],
-                limit: 50
-            }
-        })
+        let params = {
+            ids: list,
+            translatedLanguage: translatedLanguage,
+            includes: ["scanlation_group","user","manga"],
+            limit: 50
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/chapter?order[createdAt]=desc&'+query)
         .then(function(response){
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.data.length; i++){

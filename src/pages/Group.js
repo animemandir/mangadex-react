@@ -3,7 +3,6 @@ import { withRouter } from "react-router";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
 import { Link } from "react-router-dom";
 import { colorTheme } from "../util/colorTheme";
 import Tags from '../component/Tags.js';
@@ -12,6 +11,7 @@ import Loading from '../component/Loading.js';
 import { isLogged } from "../util/loginUtil.js";
 import LanguageFlag  from '../component/LanguageFlag.js';
 import ReactMarkdown from 'react-markdown'
+import { fetch } from '@tauri-apps/api/http';
 
 
 class Group extends React.Component{
@@ -91,7 +91,7 @@ class Group extends React.Component{
 
     getGroupInfo = (id) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/group/' + id + '?includes[]=leader&includes[]=member')
+        fetch('https://api.mangadex.org/group/' + id + '?includes[]=leader&includes[]=member')
         .then(function(response){
             let name = "";
             let email =  "";
@@ -173,14 +173,16 @@ class Group extends React.Component{
                 </div>
             }
         });
-        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
-            params: {
-                groups: [this.state.id], 
-                translatedLanguage: translatedLanguage,
-                offset: this.state.chapterOffset,
-                limit: 50
-            }
-        })
+
+        let params = {
+            groups: [this.state.id], 
+            translatedLanguage: translatedLanguage,
+            offset: this.state.chapterOffset,
+            limit: 50
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/chapter?order[createdAt]=desc&'+query)
         .then(function(response){
             let list = [];
             let mangaList = [];
@@ -225,11 +227,13 @@ class Group extends React.Component{
     getChapterRead = (chapterList,mangaList,totalOffset) => {
         var $this = this;
         var bearer = "Bearer " + localStorage.getItem("authToken");
-        axios.get('https://api.mangadex.org/manga/read',{
-            params: {
-                ids: mangaList,
-                grouped: true
-            },
+        let params = {
+            ids: mangaList,
+            grouped: true
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/manga/read?'+query,{
             headers: {  
                 Authorization: bearer
             }
@@ -253,14 +257,15 @@ class Group extends React.Component{
             translatedLanguage = JSON.parse(localStorage.language);
         }
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
-            params: {
-                ids: list,
-                translatedLanguage: translatedLanguage,
-                includes: ["scanlation_group","user","manga"],
-                limit: 50
-            }
-        })
+        let params = {
+            ids: list,
+            translatedLanguage: translatedLanguage,
+            includes: ["scanlation_group","user","manga"],
+            limit: 50
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/chapter?order[createdAt]=desc&'+query)
         .then(function(response){
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.data.length; i++){
@@ -308,7 +313,7 @@ class Group extends React.Component{
     checkFollow = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.get('https://api.mangadex.org/user/follows/group/' + this.state.id,{
+        fetch('https://api.mangadex.org/user/follows/group/' + this.state.id,{
             headers: {  
                 Authorization: bearer
             }
@@ -329,7 +334,8 @@ class Group extends React.Component{
     followGroup = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.post('https://api.mangadex.org/group/' + this.state.id + '/follow',null,{
+        fetch('https://api.mangadex.org/group/' + this.state.id + '/follow',{
+            method: "POST",
             headers: {  
                 Authorization: bearer
             }
@@ -354,7 +360,8 @@ class Group extends React.Component{
     unfollowGroup = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.delete('https://api.mangadex.org/group/' + this.state.id + '/follow',{
+        fetch('https://api.mangadex.org/group/' + this.state.id + '/follow',{
+            method: "DELETE",
             headers: {  
                 Authorization: bearer
             }

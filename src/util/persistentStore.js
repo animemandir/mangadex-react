@@ -2,23 +2,7 @@ import { Store } from 'tauri-plugin-store-api';
 
 export async function saveStorage(){
     const store = new Store('.dex.dat');
-    store.clear();
-    // await store.delete('authToken');      
-    // await store.delete('theme');
-    // await store.delete('authUser');
-    // await store.delete('authExpire');
-    // await store.delete('authRefresh');
-    // await store.delete('refreshExpire');
-    // await store.delete('content');
-    // await store.delete('readingHistory');
-    // await store.delete('language');
-    // await store.delete('showReaderMenu');
-    // await store.delete('imageFit');
-    // await store.delete('readerlayout');
-    // await store.delete('showProgressBar');
-    // await store.delete('imageSource');
-    // await store.delete('original');
-    // await store.delete('pageLoad');
+    await store.clear();
     if(localStorage.theme){
         await store.set('theme',localStorage.theme);
     }
@@ -67,7 +51,7 @@ export async function saveStorage(){
     if(localStorage.pageLoad){
         await store.set('pageLoad',localStorage.pageLoad);
     }
-    store.load();
+    // await store.load();
     return true;
 }
 

@@ -2,10 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
 import { colorTheme } from "../util/colorTheme";
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { mangaReadingStatus } from '../util/static.js';
 import Select from 'react-select';
+import { fetch } from '@tauri-apps/api/http';
+import { Body } from "@tauri-apps/api/http"
+
 
 class ReadingListRow extends React.Component{
     constructor(props){
@@ -60,7 +62,8 @@ class ReadingListRow extends React.Component{
     followManga = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.post('https://api.mangadex.org/manga/' + this.props.data.mangaId + '/follow',null,{
+        fetch('https://api.mangadex.org/manga/' + this.props.data.mangaId + '/follow',{
+            method: "POST",
             headers: {  
                 Authorization: bearer
             }
@@ -88,7 +91,8 @@ class ReadingListRow extends React.Component{
     unfollowManga = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.delete('https://api.mangadex.org/manga/' + this.props.data.mangaId + '/follow',{
+        fetch('https://api.mangadex.org/manga/' + this.props.data.mangaId + '/follow',{
+            method: "DELETE",
             headers: {  
                 Authorization: bearer
             }
@@ -119,14 +123,14 @@ class ReadingListRow extends React.Component{
         }
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.post('https://api.mangadex.org/manga/' + this.props.data.mangaId + '/status',
-            {status: newStatus},
-            {
-                headers: {  
-                    Authorization: bearer
-                }
+        let body = Body.json({status: newStatus})
+        fetch('https://api.mangadex.org/manga/' + this.props.data.mangaId + '/status',{
+            method: "POST",
+            body: body, 
+            headers: {  
+                Authorization: bearer
             }
-        )
+        })
         .then(function(response){
             if(response.data.result === "ok"){
                 let saveStatus = {value:"",label:"Reading Status (none)"};
@@ -160,13 +164,12 @@ class ReadingListRow extends React.Component{
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
         if(newRating === ""){
-            axios.delete('https://api.mangadex.org/rating/' + this.props.data.mangaId,
-                {
-                    headers: {  
-                        Authorization: bearer
-                    }
+            fetch('https://api.mangadex.org/rating/' + this.props.data.mangaId,{
+                method: "DELETE",
+                headers: {  
+                    Authorization: bearer
                 }
-            )
+            })
             .then(function(response){
                 if(response.data.result === "ok"){
                     $this.setState({
@@ -186,14 +189,15 @@ class ReadingListRow extends React.Component{
                 });
             });
         }else{
-            axios.post('https://api.mangadex.org/rating/' + $this.props.data.mangaId,
-                {rating: parseInt(newRating)},
-                {
-                    headers: {  
-                        Authorization: bearer
-                    }
+            
+            let body = Body.json({rating: parseInt(newRating)});
+            fetch('https://api.mangadex.org/rating/' + $this.props.data.mangaId,{
+                method: "POST",
+                body: body,
+                headers: {  
+                    Authorization: bearer
                 }
-            )
+            })
             .then(function(response){
                 if(response.data.result === "ok"){
                     $this.setState({

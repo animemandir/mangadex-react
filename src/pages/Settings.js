@@ -83,7 +83,7 @@ class Settings extends React.Component{
         }
 
         localStorage.language = JSON.stringify(language);
-        // saveStorage();
+        saveStorage();
         this.setState({language:language});
     }
 
@@ -99,7 +99,7 @@ class Settings extends React.Component{
         }
 
         localStorage.original = JSON.stringify(original);
-        // saveStorage();
+        saveStorage();
         this.setState({original:original});
     }
 
@@ -115,7 +115,7 @@ class Settings extends React.Component{
         }
 
         localStorage.content = JSON.stringify(content);
-        // saveStorage();
+        saveStorage();
         this.setState({content:content});
     }
 
@@ -123,7 +123,7 @@ class Settings extends React.Component{
         let color = e.target.value;
 
         localStorage.color = color;
-        // saveStorage();
+        saveStorage();
         this.setState({color:color});
     }
 
@@ -131,7 +131,7 @@ class Settings extends React.Component{
         let pageLoad = e.target.value;
 
         localStorage.pageLoad = pageLoad;
-        // saveStorage();
+        saveStorage();
         this.setState({pageLoad:pageLoad});
     }
 
@@ -139,7 +139,7 @@ class Settings extends React.Component{
         let confirm = await window.confirm("Do you want to clear the reading history?");
         if(confirm === true){
             localStorage.removeItem('readingHistory');
-            // saveStorage();
+            saveStorage();
         }
     }
 

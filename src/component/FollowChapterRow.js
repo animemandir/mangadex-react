@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
 import { DateTime } from "luxon";
 import { colorTheme } from "../util/colorTheme";
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import { fetch } from '@tauri-apps/api/http';
+
 class FollowChapterRow extends React.Component{
     constructor(props){
         super(props);
@@ -25,7 +26,8 @@ class FollowChapterRow extends React.Component{
     markChapterRead = (id) => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.post('https://api.mangadex.org/chapter/' + id + '/read',null,{
+        fetch('https://api.mangadex.org/chapter/' + id + '/read',{
+            method: "POST",
             headers: {  
                 Authorization: bearer
             }
@@ -51,7 +53,8 @@ class FollowChapterRow extends React.Component{
     markChapterUnread = (id) => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.delete('https://api.mangadex.org/chapter/' + id + '/read',{
+        fetch('https://api.mangadex.org/chapter/' + id + '/read',{
+            method: "DELETE",
             headers: {  
                 Authorization: bearer
             }

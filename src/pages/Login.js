@@ -1,12 +1,14 @@
 import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
-import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { DateTime } from "luxon";
 import { isLogged } from "../util/loginUtil.js";
 import { colorTheme } from "../util/colorTheme";
 import { saveStorage } from "../util/persistentStore.js";
+import { fetch } from '@tauri-apps/api/http';
+import { Body } from "@tauri-apps/api/http"
+
 
 class Login extends React.Component{
     constructor(props){
@@ -58,11 +60,16 @@ class Login extends React.Component{
     authLogin = (e) => {
         var $this = this;
         e.preventDefault();
-        axios.post('https://api.mangadex.org/auth/login',{
+        let body = Body.json({
             username: this.state.user,
             password: this.state.password
         })
-        .then(async function(response){
+        fetch('https://api.mangadex.org/auth/login',{
+            method: "POST",
+            body: body
+        })
+        .then(function(response){
+            console.log(response)
             if(response.data.result === "ok"){
                 localStorage.authToken = response.data.token.session;
                 localStorage.authUser = $this.state.user;
@@ -71,7 +78,7 @@ class Login extends React.Component{
                 localStorage.authRefresh = response.data.token.refresh;
                 let nowRef = DateTime.now().plus({days: 30});
                 localStorage.refreshExpire = nowRef.toSeconds();
-                // saveStorage();
+                saveStorage();
                 window.location = "#/";
             }else{
                 toast.error('Something went wrong. Please try again',{
@@ -81,6 +88,7 @@ class Login extends React.Component{
             }
         })
         .catch(function(error){
+            console.log(error)
             toast.error('Something went wrong. Please try again',{
                 duration: 4000,
                 position: 'top-right',

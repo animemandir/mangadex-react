@@ -2,8 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import LanguageFlag  from './LanguageFlag.js';
 import { colorTheme } from "../util/colorTheme";
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import { fetch } from '@tauri-apps/api/http';
+
 
 class FollowGroupRow extends React.Component{
     constructor(props){
@@ -22,7 +23,8 @@ class FollowGroupRow extends React.Component{
     followGroup = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.post('https://api.mangadex.org/group/' + this.props.data.id + '/follow',null,{
+        fetch('https://api.mangadex.org/group/' + this.props.data.id + '/follow',{
+            method: "POST",
             headers: {  
                 Authorization: bearer
             }
@@ -50,7 +52,8 @@ class FollowGroupRow extends React.Component{
     unfollowGroup = () => {
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.delete('https://api.mangadex.org/group/' + this.props.data.id + '/follow',{
+        fetch('https://api.mangadex.org/group/' + this.props.data.id + '/follow',{
+            method: "DELETE",
             headers: {  
                 Authorization: bearer
             }

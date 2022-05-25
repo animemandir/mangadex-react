@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
-import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import LanguageFlag  from '../component/LanguageFlag.js';
 import { colorTheme } from "../util/colorTheme";
@@ -9,6 +8,8 @@ import { isLogged } from "../util/loginUtil.js";
 import { DateTime } from "luxon";
 import Select from 'react-select';
 import { saveStorage } from "../util/persistentStore.js";
+import { fetch } from '@tauri-apps/api/http';
+
 
 
 class Chapter extends React.Component{
@@ -118,11 +119,12 @@ class Chapter extends React.Component{
 
     getChapter = (id) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/chapter/' + id,{
-            params: {
-                includes: ["scanlation_group","manga","user"]
-            }
-        })
+        let params = {
+            includes: ["scanlation_group","manga","user"]
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/chapter/' + id + "?" + query)
         .then(async function(response){
             let chapterId = "";
             let chapter = "";
@@ -205,7 +207,7 @@ class Chapter extends React.Component{
                     readAt: DateTime.now().toISO()
                 });
                 localStorage.readingHistory = JSON.stringify(readingHistory);
-                // saveStorage();
+                saveStorage();
             }
 
             $this.getChapterList(mangaId,0);
@@ -222,7 +224,7 @@ class Chapter extends React.Component{
 
     getBaseUrl = (id) => {
         var $this = this;
-        axios.get('https://api.mangadex.org/at-home/server/' + id)
+        fetch('https://api.mangadex.org/at-home/server/' + id)
         .then(function(response){
             let baseUrl = "";
             let hash = "";
@@ -263,17 +265,17 @@ class Chapter extends React.Component{
         if(localStorage.content){
             contentRating = JSON.parse(localStorage.content);
         }
-        
-        axios.get('https://api.mangadex.org/chapter?order[chapter]=desc',{
-            params: {
-                manga: id,
-                translatedLanguage: translatedLanguage,
-                contentRating: contentRating,
-                includes: ["scanlation_group","user"],
-                offset: offset,
-                limit: 100
-            }
-        })
+        let params = {
+            manga: id,
+            translatedLanguage: translatedLanguage,
+            contentRating: contentRating,
+            includes: ["scanlation_group","user"],
+            offset: offset,
+            limit: 100
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/chapter?order[chapter]=desc&'+query)
         .then(function(response){
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.data.length; i++){
@@ -347,7 +349,8 @@ class Chapter extends React.Component{
 
     markChapterRead = (id) => {
         var bearer = "Bearer " + localStorage.authToken;
-        axios.post('https://api.mangadex.org/chapter/' + id + '/read',null,{
+        fetch('https://api.mangadex.org/chapter/' + id + '/read',{
+            method: "POST",
             headers: {  
                 Authorization: bearer
             }
@@ -385,7 +388,7 @@ class Chapter extends React.Component{
         if(!localStorage.imageSource){
             localStorage.imageSource = "original";
         }
-        // saveStorage();
+        saveStorage();
 
         this.setMode();
         this.setMenu();
@@ -413,13 +416,13 @@ class Chapter extends React.Component{
 
     lightDarkMode = (e) => {
         localStorage.theme = e.value;
-        // saveStorage();
+        saveStorage();
         this.setMode();
     }
 
     toggleMenu = () => {
         localStorage.showReaderMenu = (parseInt(localStorage.showReaderMenu) === 1) ? 0 : 1;
-        // saveStorage();
+        saveStorage();
         this.setMenu();
     }
 
@@ -439,7 +442,7 @@ class Chapter extends React.Component{
 
     changeImageFit = (e) => {
         localStorage.imageFit = e.value;
-        // saveStorage();
+        saveStorage();
         this.setFit();
     }
 
@@ -476,7 +479,7 @@ class Chapter extends React.Component{
 
     changeReaderLayout = (e) => {
         localStorage.readerlayout = e.value;
-        // saveStorage();
+        saveStorage();
         this.setLayout();
     }
 
@@ -526,13 +529,13 @@ class Chapter extends React.Component{
 
     changeProgressBar = (e) => {
         localStorage.showProgressBar = e.value;
-        // saveStorage();
+        saveStorage();
         this.setLayout();
     }
 
     changeImageSource = (e) => {
         localStorage.imageSource = e.value;
-        // saveStorage();
+        saveStorage();
         let imageSourceSelect = (localStorage.imageSource === "original") ? {value:"original", label:"Image Source: Original"} : {value:"saver", label:"Image Source: Data Saver"};
         this.setState({
             imageSource: e.value,

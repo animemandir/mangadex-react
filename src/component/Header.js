@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { colorTheme } from "../util/colorTheme";
-import axios from 'axios';
 import { saveStorage } from "../util/persistentStore";
+import { fetch } from '@tauri-apps/api/http';
+
 
 class Header extends React.Component{
     constructor(props){
@@ -33,7 +34,7 @@ class Header extends React.Component{
         }else{
             localStorage.theme = 'dark';
         }
-        // saveStorage();
+        saveStorage();
         this.setMode();
     }
 
@@ -57,13 +58,12 @@ class Header extends React.Component{
     }
 
     async logout(){
-        var $this = this;
         let confirm = await window.confirm("Do you want to logout?");
         if(confirm === true){
-            var $this = this;
             var bearer = "Bearer " + localStorage.authToken
-            axios.post('https://api.mangadex.org/auth/logout',{
-                'headers': {  
+            fetch('https://api.mangadex.org/auth/logout',{
+                method: "POST",
+                headers: {  
                     Authorization: bearer
                 }
             })
@@ -73,7 +73,7 @@ class Header extends React.Component{
                 localStorage.removeItem("authExpire");
                 localStorage.removeItem("authRefresh");
                 localStorage.removeItem("refreshExpire");
-                // saveStorage();
+                saveStorage();
                 window.location.reload();
             })
             .catch(function(error){

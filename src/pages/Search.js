@@ -5,12 +5,13 @@ import Footer from '../component/Footer.js';
 import Select from 'react-select';
 import { demographic,mangaStatus,mangaContentRating,originalLanguage } from '../util/static.js';
 import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
 import MangaBox from '../component/MangaBox.js';
 import Loading from '../component/Loading.js';
 import Paginator from '../component/Paginator.js';
 import { isLogged } from "../util/loginUtil.js";
 import { colorTheme } from "../util/colorTheme";
+import { fetch } from '@tauri-apps/api/http';
+
 
 class Search extends React.Component{
     constructor(props){
@@ -178,7 +179,7 @@ class Search extends React.Component{
 
     getTags = () => {
         var $this = this;
-        axios.get('https://api.mangadex.org/manga/tag')
+        fetch('https://api.mangadex.org/manga/tag')
         .then(function(response){
             var tagList = [];
             response.data.data.map((tag) => {
@@ -323,9 +324,9 @@ class Search extends React.Component{
         }
 
         var $this = this;
-        axios.get('https://api.mangadex.org/manga?includes[]=cover_art&order[' + orderIndex + ']=' + orderValue,{
-            params: searchParams
-        })
+        const queryString = require('query-string');
+        let query = queryString.stringify(searchParams,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/manga?includes[]=cover_art&order[' + orderIndex + ']=' + orderValue + "&" + query)
         .then(function(response){
             var mangaList = [];
             response.data.data.map((result) => {
@@ -406,12 +407,14 @@ class Search extends React.Component{
         }
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.get('https://api.mangadex.org/statistics/manga',{
+        let params = {
+            manga: idList
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/statistics/manga?'+query,{
             headers: {  
                 Authorization: bearer
-            },
-            params: {
-                manga: idList
             }
         })
         .then(function(response){

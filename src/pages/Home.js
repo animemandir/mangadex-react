@@ -248,7 +248,7 @@ class Home extends React.Component{
 
         var params = {
             contentRating: contentRating,
-            limit: 20
+            limit: 10
         }
         const queryString = require('query-string');
         let query = queryString.stringify(params,{arrayFormat: 'bracket'});
