@@ -4,11 +4,14 @@ import Footer from '../component/Footer.js';
 import { mangaContentRating,originalLanguage } from '../util/static.js';
 import { colorTheme } from "../util/colorTheme";
 import { saveStorage } from "../util/persistentStore.js";
+import { isLogged } from "../util/loginUtil.js";
+
 
 class Settings extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            isLogged: false,
             languageList:[
                 {value:"en",label:"English"},
                 {value:"pt-br",label:"Portuguese (BR)"},
@@ -61,6 +64,11 @@ class Settings extends React.Component{
             let pageLoad = localStorage.pageLoad;
             this.setState({pageLoad:pageLoad});
         }
+
+        var $this = this;
+        isLogged().then(function(isLogged){
+            $this.setState({isLogged:isLogged});
+        });
     }
 
     handleLanguage = (e) => {
@@ -75,7 +83,7 @@ class Settings extends React.Component{
         }
 
         localStorage.language = JSON.stringify(language);
-        saveStorage();
+        // saveStorage();
         this.setState({language:language});
     }
 
@@ -91,7 +99,7 @@ class Settings extends React.Component{
         }
 
         localStorage.original = JSON.stringify(original);
-        saveStorage();
+        // saveStorage();
         this.setState({original:original});
     }
 
@@ -107,7 +115,7 @@ class Settings extends React.Component{
         }
 
         localStorage.content = JSON.stringify(content);
-        saveStorage();
+        // saveStorage();
         this.setState({content:content});
     }
 
@@ -115,7 +123,7 @@ class Settings extends React.Component{
         let color = e.target.value;
 
         localStorage.color = color;
-        saveStorage();
+        // saveStorage();
         this.setState({color:color});
     }
 
@@ -123,7 +131,7 @@ class Settings extends React.Component{
         let pageLoad = e.target.value;
 
         localStorage.pageLoad = pageLoad;
-        saveStorage();
+        // saveStorage();
         this.setState({pageLoad:pageLoad});
     }
 
@@ -131,7 +139,7 @@ class Settings extends React.Component{
         let confirm = await window.confirm("Do you want to clear the reading history?");
         if(confirm === true){
             localStorage.removeItem('readingHistory');
-            saveStorage();
+            // saveStorage();
         }
     }
 
@@ -220,7 +228,7 @@ class Settings extends React.Component{
 
         return (
             <div class="flex flex-col h-screen justify-between">
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full py-1 my-1 mx-2">

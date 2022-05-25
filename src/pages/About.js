@@ -2,20 +2,29 @@ import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import { colorTheme } from "../util/colorTheme";
+import { isLogged } from "../util/loginUtil.js";
+
 class About extends React.Component{
     constructor(props){
         super(props);
-        this.state = {};
+        this.state = {
+            isLogged: false
+        };
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         document.title = "About - MangaDex";
+        var $this = this;
+        isLogged().then(function(isLogged){
+            $this.setState({isLogged:isLogged});
+        });
+        
     }
 
     render = () => {
         return (
             <div class="flex flex-col h-screen justify-between">
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto flex flex-wrap justify-between mt-2">
                         <div className="w-full my-2 mx-6">

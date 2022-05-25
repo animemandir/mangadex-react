@@ -14,7 +14,8 @@ class Login extends React.Component{
         this.state = {
             user: '',
             password: '',
-            remember: 0
+            remember: 0,
+            isLogged: false,
         };
 
         this.handleUser = this.handleUser.bind(this);
@@ -70,7 +71,7 @@ class Login extends React.Component{
                 localStorage.authRefresh = response.data.token.refresh;
                 let nowRef = DateTime.now().plus({days: 30});
                 localStorage.refreshExpire = nowRef.toSeconds();
-                saveStorage();
+                // saveStorage();
                 window.location = "#/";
             }else{
                 toast.error('Something went wrong. Please try again',{
@@ -91,7 +92,7 @@ class Login extends React.Component{
         return (
             <div class="flex flex-col h-screen justify-between">
                 <Toaster />
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 h-full">
                         <div className="flex content-center items-center justify-center h-full">

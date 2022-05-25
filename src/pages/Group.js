@@ -31,7 +31,7 @@ class Group extends React.Component{
             leader: [],
             members: [],
             languages: [],
-            logged: false,
+            isLogged: false,
             following: false,
 
             chapterList: [],
@@ -47,13 +47,24 @@ class Group extends React.Component{
     async componentDidMount(){
         document.title = "Group - MangaDex";
         const id = this.props.match.params.id;
-        let logged = await isLogged();
-        this.setState({
-            id:id,
-            logged: logged
-        },() => {
-            this.getGroupFeed();
-            this.checkFollow();
+        // let isLogged = await isLogged();
+        // this.setState({
+        //     id:id,
+        //     isLogged: isLogged
+        // },() => {
+        //     this.getGroupFeed();
+        //     this.checkFollow();
+        // });
+        var $this = this;
+        isLogged().then(function(isLogged){
+            $this.setState({
+                id: id,
+                isLogged:isLogged
+            });
+            if(isLogged){
+                $this.getGroupFeed();
+                $this.checkFollow();
+            }
         });
 
         this.getGroupInfo(id);
@@ -183,7 +194,7 @@ class Group extends React.Component{
             }
 
             if(response.data.total > 0){
-                if($this.state.logged){
+                if($this.state.isLogged){
                     $this.getChapterRead(list,mangaList,response.data.total);
                 }else{
                     $this.getChapterInfo(list,[],response.data.total);
@@ -254,7 +265,7 @@ class Group extends React.Component{
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.data.length; i++){
                 response.data.data[i].read = false;
-                response.data.data[i].isLogged = $this.state.logged;
+                response.data.data[i].isLogged = $this.state.isLogged;
                 response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
                         if(readList[relation.id].indexOf(response.data.data[i].id) > -1){
@@ -390,7 +401,7 @@ class Group extends React.Component{
 
         var actionTR = "";
         var thRead = "";
-        if(this.state.logged){
+        if(this.state.isLogged){
             var btnFollow =
             <button className="text-center px-3 py-1 my-1 h-9 mr-1 hover:opacity-75 focus:outline-none border-2 border-gray-200 dark:border-gray-900" title="Follow" onClick={this.followGroup}>
                 <div className="flex flex-wrap">
@@ -489,7 +500,7 @@ class Group extends React.Component{
         return (
             <div class="flex flex-col justify-between h-screen bg-gray-100 dark:bg-gray-800">
                 <Toaster />
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">

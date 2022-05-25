@@ -2,6 +2,8 @@ import React from "react";
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import ReadingHistoryRow from '../component/ReadingHistoryRow.js';
+import { isLogged } from "../util/loginUtil.js";
+
 
 class History extends React.Component{
     constructor(props){
@@ -11,12 +13,17 @@ class History extends React.Component{
             count: 0,
             next: 1,
             offset: 500,
-            loadMore: false
+            loadMore: false,
+            isLogged: false
         };
     }
 
     componentDidMount = () => {
         document.title = "Reading History - MangaDex";
+        var $this = this;
+        isLogged().then(function(isLogged){
+            $this.setState({isLogged:isLogged});
+        });
         this.getReadingHistory();
     }
 
@@ -70,7 +77,7 @@ class History extends React.Component{
         </button> : "";
         return (
             <div class="flex flex-col h-full justify-between align-top bg-gray-100 dark:bg-gray-800">
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full min-h-screen py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">

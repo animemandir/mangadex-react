@@ -8,14 +8,18 @@
   },
   "package": {
     "productName": "mangadex-react",
-    "version": "0.3.4"
+    "version": "0.3.5"
   },
   "tauri": {
     "allowlist": {
       "all": true,
       "http": {
         "all": true, 
-        "request": true 
+        "request": true,
+        "scope": ["https://api.mangadex.org/*"]
+      },
+      "shell": {
+        "open": true
       }
     },
     "bundle": {
@@ -58,7 +62,13 @@
       "active": false
     },
     "windows": [
-      
+      {
+        "fullscreen": false,
+        "height": 720,
+        "resizable": true,
+        "title": "MangaDex",
+        "width": 1280      
+      }
     ]
   }
 }

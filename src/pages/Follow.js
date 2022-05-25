@@ -14,6 +14,7 @@ class Follow extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            isLogged: false,
             chapterList: [],
             chapterOffset: 0,
             showChapterLoad: false,
@@ -68,13 +69,16 @@ class Follow extends React.Component{
 
     async componentDidMount(){    
         document.title = "Follows - MangaDex";
-        let logged = await isLogged();
-        if(logged){
-            this.getChapterFeed();
-            this.getFollows();
-        }else{
-            window.location = "#/";
-        }
+        var $this = this;
+        isLogged().then(function(isLogged){
+            if(isLogged){
+                $this.setState({isLogged:isLogged});
+                $this.getChapterFeed();
+                $this.getFollows();
+            }else{
+                window.location = "#/";
+            }
+        });
     }
 
     getChapterFeed = () => {
@@ -890,7 +894,7 @@ class Follow extends React.Component{
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between min-h-screen">
                         <div className="box-border w-full py-2 my-4 mx-2">

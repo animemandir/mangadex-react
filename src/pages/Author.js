@@ -1,5 +1,4 @@
 import React from "react";
-import axios from 'axios';
 import { withRouter } from "react-router";
 import toast, { Toaster } from 'react-hot-toast';
 import Header from '../component/Header.js';
@@ -10,6 +9,8 @@ import Tags from '../component/Tags.js';
 import { isLogged } from "../util/loginUtil.js";
 import ReactMarkdown from 'react-markdown'
 import { colorTheme } from "../util/colorTheme";
+import { fetch } from '@tauri-apps/api/http';
+
 
 class Author extends React.Component{
     constructor(props){
@@ -41,7 +42,7 @@ class Author extends React.Component{
 
     async componentDidMount(){
         document.title = "Author - Mangadex";
-        const id = this.props.match.params.id;
+        var id = this.props.match.params.id;
         let logged = await isLogged();
         this.setState({
             id:id,
@@ -55,7 +56,7 @@ class Author extends React.Component{
 
     getAuthor = () => {
         var $this = this;
-        axios.get('https://api.mangadex.org/author/' + this.state.id)
+        fetch('https://api.mangadex.org/author/' + this.state.id)
         .then(function(response){
             let name = response.data.data.attributes.name;
             let version = response.data.data.attributes.version;
@@ -120,13 +121,14 @@ class Author extends React.Component{
         }
 
         var $this = this;
-        axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{
-            params: {
-                limit: 100,            
-                authors: [this.state.id],
-                contentRating: contentRating
-            }
-        })
+        let params = {
+            limit: 100,            
+            authors: [this.state.id],
+            contentRating: contentRating
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/manga?includes[]=cover_art&'+query)
         .then(function(response){
             var mangaList = [];
             response.data.data.map((result) => {
@@ -185,12 +187,14 @@ class Author extends React.Component{
         }
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.get('https://api.mangadex.org/statistics/manga',{
+        let params = {
+            manga: idList
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/statistics/manga?'+query,{
             headers: {  
                 Authorization: bearer
-            },
-            params: {
-                manga: idList
             }
         })
         .then(function(response){
@@ -247,7 +251,7 @@ class Author extends React.Component{
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between min-h-screen">
                         <div className="box-border w-full py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">

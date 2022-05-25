@@ -21,7 +21,7 @@ class User extends React.Component{
             groupsId: [],
             groups: [],
             uploadCount: 0,
-            logged: false,
+            isLogged: false,
 
             chapterList: [],
             chapterOffset: 0,
@@ -39,7 +39,7 @@ class User extends React.Component{
         let logged = await isLogged();
         this.setState({
             id:id,
-            logged: logged
+            isLogged: logged
         },() => this.getUserFeed());
 
         this.getUserInfo(id);
@@ -155,7 +155,7 @@ class User extends React.Component{
             });
 
             if(response.data.total > 0){
-                if($this.state.logged){
+                if($this.state.isLogged){
                     $this.getChapterRead(list,mangaList,response.data.total);
                 }else{
                     $this.getChapterInfo(list,[],response.data.total);
@@ -226,7 +226,7 @@ class User extends React.Component{
             let list = $this.state.chapterList;
             for(let i = 0; i < response.data.data.length; i++){
                 response.data.data[i].read = false;
-                response.data.data[i].isLogged = $this.state.logged;
+                response.data.data[i].isLogged = $this.state.isLogged;
                 response.data.data[i].relationships.map((relation) => {
                     if(relation.type === "manga" && Object.keys(readList).indexOf(relation.id) > -1){
                         if(readList[relation.id].indexOf(response.data.data[i].id) > -1){
@@ -279,7 +279,7 @@ class User extends React.Component{
         </button> : "";
 
         var thRead = "";
-        if(this.state.logged){
+        if(this.state.isLogged){
             thRead = 
             <th className="w-8" title="Read">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -292,7 +292,7 @@ class User extends React.Component{
         return (
             <div class="flex flex-col justify-between h-screen bg-gray-100 dark:bg-gray-800">
                 <Toaster />
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">

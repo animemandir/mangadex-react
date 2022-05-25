@@ -11,7 +11,7 @@ Due to CORS, I'm using electron to make it an desktop application.
 * [MangaDex API](https://api.mangadex.org/swagger.html)
 * [React](https://github.com/facebook/react)
 * [Tailwind](https://github.com/tailwindlabs/tailwindcss)
-* [Electron](https://github.com/electron/electron)
+* [Tauri](https://github.com/tauri-apps/tauri)
 * [Axios](https://github.com/axios/axios)
 * [Luxon](https://github.com/moment/luxon)
 * [React Router](https://github.com/ReactTraining/react-router)
@@ -19,6 +19,8 @@ Due to CORS, I'm using electron to make it an desktop application.
 * [React Select](https://github.com/jedwatson/react-select)
 * [react-tooltip](https://github.com/wwayne/react-tooltip)
 * [Lipis Flag Icons](https://github.com/lipis/flag-icon-css)
+* [Tauri Plugin Store](https://github.com/tauri-apps/tauri-plugin-store)
+* [Tauri Plugin Localhost](https://github.com/tauri-apps/tauri-plugin-localhost)
 
 ## Testing
 

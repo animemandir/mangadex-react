@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { isLogged } from "../util/loginUtil.js";
 import { colorTheme } from "../util/colorTheme";
 import axios from 'axios';
 import { saveStorage } from "../util/persistentStore";
@@ -9,17 +8,13 @@ class Header extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            isLogged: false,
             search: "",
             mode: "light"
         };
     }
 
-    async componentDidMount(){
+    componentDidMount = () => {
         this.setMode();
-
-        let logged = await isLogged();
-        this.setState({isLogged:logged});
     }
 
     setMode = () => {
@@ -38,7 +33,7 @@ class Header extends React.Component{
         }else{
             localStorage.theme = 'dark';
         }
-        saveStorage();
+        // saveStorage();
         this.setMode();
     }
 
@@ -78,8 +73,7 @@ class Header extends React.Component{
                 localStorage.removeItem("authExpire");
                 localStorage.removeItem("authRefresh");
                 localStorage.removeItem("refreshExpire");
-                // $this.setState({isLogged:false});
-                saveStorage();
+                // saveStorage();
                 window.location.reload();
             })
             .catch(function(error){
@@ -93,14 +87,14 @@ class Header extends React.Component{
     }
 
     render = () => {
-        var follow = (this.state.isLogged) ? 
+        var follow = (this.props.isLogged) ? 
         <li className="nav-item">
             <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/follow">
                 Follows
             </Link>
         </li> : "";
 
-        var login = (!this.state.isLogged) ? 
+        var login = (!this.props.isLogged) ? 
         <li className="nav-item">
             <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 focus:outline-none" to="/login">
                 Login

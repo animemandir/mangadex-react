@@ -161,10 +161,12 @@ class Search extends React.Component{
             this.toggleForm();
         }
 
-        let logged = await isLogged();
+        var $this = this;
+        isLogged().then(function(isLogged){
+            $this.setState({isLogged:isLogged});
+        });
 
         this.setState({
-            isLogged: logged,
             manga:manga,
             author:author,
             artist:artist,
@@ -560,7 +562,7 @@ class Search extends React.Component{
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full pt-2 mt-6 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">

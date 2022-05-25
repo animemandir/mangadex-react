@@ -22,6 +22,7 @@ class Chapter extends React.Component{
         this.state = {
             id: "",
             idSelect: {value: "", label: ""},
+            isLogged: false,
             chapter: "",
             mangaId: "",
             manga: "",
@@ -104,6 +105,7 @@ class Chapter extends React.Component{
         this.getChapter(id);
         let logged = await isLogged();
         if(logged){
+            this.setState({isLogged:logged})
             this.markChapterRead(id);
         }
         this.KBSettings();
@@ -203,7 +205,7 @@ class Chapter extends React.Component{
                     readAt: DateTime.now().toISO()
                 });
                 localStorage.readingHistory = JSON.stringify(readingHistory);
-                saveStorage();
+                // saveStorage();
             }
 
             $this.getChapterList(mangaId,0);
@@ -383,7 +385,7 @@ class Chapter extends React.Component{
         if(!localStorage.imageSource){
             localStorage.imageSource = "original";
         }
-        saveStorage();
+        // saveStorage();
 
         this.setMode();
         this.setMenu();
@@ -411,13 +413,13 @@ class Chapter extends React.Component{
 
     lightDarkMode = (e) => {
         localStorage.theme = e.value;
-        saveStorage();
+        // saveStorage();
         this.setMode();
     }
 
     toggleMenu = () => {
         localStorage.showReaderMenu = (parseInt(localStorage.showReaderMenu) === 1) ? 0 : 1;
-        saveStorage();
+        // saveStorage();
         this.setMenu();
     }
 
@@ -437,7 +439,7 @@ class Chapter extends React.Component{
 
     changeImageFit = (e) => {
         localStorage.imageFit = e.value;
-        saveStorage();
+        // saveStorage();
         this.setFit();
     }
 
@@ -474,7 +476,7 @@ class Chapter extends React.Component{
 
     changeReaderLayout = (e) => {
         localStorage.readerlayout = e.value;
-        saveStorage();
+        // saveStorage();
         this.setLayout();
     }
 
@@ -524,13 +526,13 @@ class Chapter extends React.Component{
 
     changeProgressBar = (e) => {
         localStorage.showProgressBar = e.value;
-        saveStorage();
+        // saveStorage();
         this.setLayout();
     }
 
     changeImageSource = (e) => {
         localStorage.imageSource = e.value;
-        saveStorage();
+        // saveStorage();
         let imageSourceSelect = (localStorage.imageSource === "original") ? {value:"original", label:"Image Source: Original"} : {value:"saver", label:"Image Source: Data Saver"};
         this.setState({
             imageSource: e.value,

@@ -1,5 +1,4 @@
 import React from "react";
-import axios from 'axios';
 import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import HomeUpdates from '../component/HomeUpdates.js';
@@ -9,6 +8,7 @@ import Loading from '../component/Loading.js';
 import toast, { Toaster } from 'react-hot-toast';
 import { isLogged } from "../util/loginUtil.js";
 import { loadStorage } from "../util/persistentStore.js";
+import { fetch } from '@tauri-apps/api/http';
 
 
 
@@ -39,9 +39,9 @@ class Home extends React.Component{
 
     async componentDidMount(){
         document.title = "Home - MangaDex";
+        loadStorage();
         this.getLastChapters();
         this.getReadingHistory();
-        await loadStorage();
         let logged = await isLogged();
         this.setState({
             isLogged: logged
@@ -65,15 +65,17 @@ class Home extends React.Component{
         if(localStorage.content){
             contentRating = JSON.parse(localStorage.content);
         }
-       
-        axios.get('https://api.mangadex.org/chapter?order[createdAt]=desc',{
-            params: {
-                translatedLanguage: translatedLanguage,
-                originalLanguage: originalLanguage,
-                contentRating: contentRating,
-                includes: ["scanlation_group","manga"],
-                limit: 100,
-            }
+        var params = {
+            translatedLanguage: translatedLanguage,
+            originalLanguage: originalLanguage,
+            contentRating: contentRating,
+            includes: ["scanlation_group","manga"],
+            limit: 100,
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/chapter?order[createdAt]=desc&'+query,{
+            method: "GET"
         })
         .then(function(response){
             let chapters = [];
@@ -155,13 +157,15 @@ class Home extends React.Component{
         if(localStorage.content){
             contentRating = JSON.parse(localStorage.content);
         }
-
-        axios.get('https://api.mangadex.org/manga?includes[]=cover_art',{
-            params: {
-                ids: mangaIds,
-                contentRating: contentRating,
-                limit: 100
-            }
+        var params = {
+            ids: mangaIds,
+            contentRating: contentRating,
+            limit: 100
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/manga?includes[]=cover_art&'+query,{
+            method: "GET"
         })
         .then(function(response){
             response.data.data.map((manga,i) => {
@@ -242,11 +246,14 @@ class Home extends React.Component{
             return false;
         }
 
-        axios.get('https://api.mangadex.org/manga?includes[]=cover_art&' + orderBy,{
-            params: {
-                contentRating: contentRating,
-                limit: 10
-            }
+        var params = {
+            contentRating: contentRating,
+            limit: 20
+        }
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/manga?includes[]=cover_art&' + orderBy + "&" + query,{
+            method: "GET"
         })
         .then(function(response){
             let mangaList = [];
@@ -297,12 +304,16 @@ class Home extends React.Component{
         }
         var $this = this;
         var bearer = "Bearer " + localStorage.authToken;
-        axios.get('https://api.mangadex.org/statistics/manga',{
+        
+        let params = {
+            manga: idList
+        };
+        const queryString = require('query-string');
+        let query = queryString.stringify(params,{arrayFormat: 'bracket'});
+        fetch('https://api.mangadex.org/statistics/manga?'+query,{
+            method: "GET",
             headers: {  
                 Authorization: bearer
-            },
-            params: {
-                manga: idList
             }
         })
         .then(function(response){
@@ -396,7 +407,7 @@ class Home extends React.Component{
         return (
             <div class="flex flex-col justify-between">
                 <Toaster />
-                <Header />
+                <Header isLogged={this.state.isLogged} />
                 <div className="h-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-100">
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full md:flex-1 md:mr-4 py-2 mt-6 mb-6 mr-1 border-2 border-gray-200 dark:border-gray-900">

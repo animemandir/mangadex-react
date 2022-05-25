@@ -3,7 +3,6 @@
   windows_subsystem = "windows"
 )]
 
-use tauri::{window::WindowBuilder, WindowUrl};
 use tauri_plugin_store::PluginBuilder;
 
 fn main() {
@@ -11,25 +10,8 @@ fn main() {
     let port = 19555;
     tauri::Builder::default()
         .plugin(PluginBuilder::default().build())
-        .plugin(tauri_plugin_localhost::Builder::new(port).build())
-        .setup(move |app| {
-            WindowBuilder::new(
-              app,
-              "main".to_string(),
-              WindowUrl::External(format!("http://localhost:{}", port).parse().unwrap()),
-            )
-            .title("MangaDex")
-            .build()?;
-            Ok(())
-        })
+        // .plugin(tauri_plugin_localhost::Builder::new(port).build())
+        // .invoke_handler(tauri::generate_handler![request_get])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
-// {
-//   "fullscreen": false,
-//   "height": 720,
-//   "resizable": true,
-//   "title": "MangaDex",
-//   "width": 1280
-// }
