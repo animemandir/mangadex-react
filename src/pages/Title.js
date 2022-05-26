@@ -408,8 +408,9 @@ class Title extends React.Component{
             }
         })
         .then(function(response){
+            let isFollowing = (response.data.result === "ok") ? true : false;
             $this.setState({
-                following: true
+                following: isFollowing
             });
         })
         .catch(function(error){
@@ -1168,12 +1169,12 @@ class Title extends React.Component{
                                 <span className="mr-2">{this.state.title}</span> <LanguageFlag language={this.state.originalLanguage} />
                             </div>
                             <div className="flex flex-wrap">
-                                <div className="content flex w-full mt-2">
+                                <div className="grid grid-cols-4 w-full mt-1">
                                     <img 
-                                        className="object-contain flex items-start w-full sm:w-1/4 p-3"
+                                        className="object-contain items-start w-full p-3"
                                         alt={this.state.title}
                                         src={this.state.coverFile} />
-                                    <div className="item-body w-full sm:w-3/4 p-3">
+                                    <div className="item-body col-span-3 w-full p-3">
                                         <table class="table-auto w-full p-2">
                                             <tr className="text-left border-b border-gray-200 dark:border-gray-900">
                                                 <td width="20%" className="font-semibold">Title ID:</td>

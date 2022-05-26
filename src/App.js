@@ -1,4 +1,5 @@
 import React from "react";
+import { useCallback, useEffect } from 'react';
 import {
     HashRouter as Router,
     Switch,
@@ -21,6 +22,24 @@ import Error404 from './pages/Error404.js';
 
 
 export default function App() {
+    const handleKeyPress = useCallback((e) => {
+        if(e.key === "F5"){
+            window.location.reload();
+        }
+        if(e.ctrlKey === true){
+            if(e.key === "r"){
+                window.location.reload();
+            }
+        }
+    },[]);
+
+    useEffect(() => {
+        document.addEventListener('keydown',handleKeyPress);
+        return () => {
+            document.removeEventListener('keydown',handleKeyPress);
+        };
+    },[handleKeyPress]);
+
     return (
         <Router>
             <Switch>

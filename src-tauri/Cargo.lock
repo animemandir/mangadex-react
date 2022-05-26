@@ -57,20 +57,12 @@ checksum = "08f9b8508dccb7687a1d6c4ce66b2b0ecef467c94667de27d8d7fe1f8d2a9cdc"
 name = "app"
 version = "0.1.0"
 dependencies = [
- "portpicker",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
- "tauri-plugin-localhost",
  "tauri-plugin-store",
 ]
-
-[[package]]
-name = "ascii"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbf56136a5198c7b01a49e3afcbef6cf84597273d298f54432926024107b0109"
 
 [[package]]
 name = "atk"
@@ -284,24 +276,6 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
-
-[[package]]
-name = "chrono"
-version = "0.4.19"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670ad68c9088c2a963aaa298cb369688cf3f9465ce5e2d4ca10e6e0098a1ce73"
-dependencies = [
- "libc",
- "num-integer",
- "num-traits",
- "winapi",
-]
-
-[[package]]
-name = "chunked_transfer"
-version = "1.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fff857943da45f546682664a79488be82e69e43c1a7a2307679ab9afb3a66d2e"
 
 [[package]]
 name = "cocoa"
@@ -2003,15 +1977,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "portpicker"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be97d76faf1bfab666e1375477b23fde79eccf0276e9b63b92a39d676a889ba9"
-dependencies = [
- "rand 0.8.5",
-]
-
-[[package]]
 name = "ppv-lite86"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2852,16 +2817,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-localhost"
-version = "0.0.0"
-source = "git+https://github.com/tauri-apps/tauri-plugin-localhost?branch=dev#cfe7c4d8dee86f0540336c92c4dcbe977f8281f9"
-dependencies = [
- "serde_json",
- "tauri",
- "tiny_http",
-]
-
-[[package]]
 name = "tauri-plugin-store"
 version = "0.0.0"
 source = "git+https://github.com/tauri-apps/tauri-plugin-store?branch=dev#5726952177b88d1d10063cdf8e7506bac84772cf"
@@ -3004,19 +2959,6 @@ checksum = "c2702e08a7a860f005826c6815dcac101b19b5eb330c27fe4a5928fec1d20ddd"
 dependencies = [
  "libc",
  "num_threads",
-]
-
-[[package]]
-name = "tiny_http"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96155b5f7149ba7a99ea5d516c538250b26eab60b4485c0f5344432573e7a450"
-dependencies = [
- "ascii",
- "chrono",
- "chunked_transfer",
- "log",
- "url",
 ]
 
 [[package]]

@@ -862,6 +862,14 @@ class Chapter extends React.Component{
             </div>
         }
 
+        var pages = 
+        <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
+            <span>Page {this.state.progress} / {this.state.data.length}</span> 
+        </div>
+        if(localStorage.readerlayout === "single"){
+            pages = "";
+        }
+
         return (
             <div class="flex flex-col justify-between" ref={this.KbListener} tabIndex={0}>
                 <Toaster />
@@ -999,9 +1007,7 @@ class Chapter extends React.Component{
                                     </div>
                                 </div>
                                 <footer class="footer relative pt-2">
-                                    <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
-                                        <span>Page {this.state.progress} / {this.state.data.length}</span> 
-                                    </div>
+                                    {pages}
                                     <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
                                         <Link className={"hover:opacity-75 " + colorTheme(600).text} to={"/"}>Home</Link>
                                         <span className="mx-2">|</span>

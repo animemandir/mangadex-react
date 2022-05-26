@@ -51,7 +51,10 @@ export async function saveStorage(){
     if(localStorage.pageLoad){
         await store.set('pageLoad',localStorage.pageLoad);
     }
-    // await store.load();
+    if(localStorage.color){
+        await store.set('color',localStorage.color);
+    }
+
     return true;
 }
 
@@ -75,6 +78,7 @@ export async function loadStorage(){
     let imageSource = await store.get('imageSource');
     let original = await store.get('original');
     let pageLoad = await store.get('pageLoad');
+    let color = await store.get('color');
 
     localStorage.clear();
     if(authToken){
@@ -82,6 +86,8 @@ export async function loadStorage(){
     }
     if(theme){
         localStorage.theme = theme;
+    }else{
+        localStorage.theme = "dark";
     }
     if(authUser){
         localStorage.authUser = authUser;
@@ -124,6 +130,10 @@ export async function loadStorage(){
     }
     if(pageLoad){
         localStorage.pageLoad = pageLoad;
-    } 
+    }
+    if(color){
+        localStorage.color = color;
+    }
+
     return true;
 }

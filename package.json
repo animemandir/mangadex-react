@@ -47,7 +47,6 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "autoprefixer": "^10.4.2",
-    "axios": "^0.21.1",
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
     "follow-redirects": ">=1.14.8",

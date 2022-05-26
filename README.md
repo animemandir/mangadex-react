@@ -1,18 +1,14 @@
 # mangadex-react
 
 This project started because I wanted a manga reader to resemble the old version of MangaDex using V5 API. 
-Due to CORS, I'm using electron to make it an desktop application. 
+Due to CORS, I'm using tauri to make it an desktop application. 
 
-> Probably doesn't work if the window width < 1280px
-
-> This project is for personal use and I suck at UI (I'm sorry) 
 ## Dependencies
 
 * [MangaDex API](https://api.mangadex.org/swagger.html)
 * [React](https://github.com/facebook/react)
 * [Tailwind](https://github.com/tailwindlabs/tailwindcss)
 * [Tauri](https://github.com/tauri-apps/tauri)
-* [Axios](https://github.com/axios/axios)
 * [Luxon](https://github.com/moment/luxon)
 * [React Router](https://github.com/ReactTraining/react-router)
 * [React Hot Toast](https://github.com/timolins/react-hot-toast)
@@ -20,13 +16,13 @@ Due to CORS, I'm using electron to make it an desktop application.
 * [react-tooltip](https://github.com/wwayne/react-tooltip)
 * [Lipis Flag Icons](https://github.com/lipis/flag-icon-css)
 * [Tauri Plugin Store](https://github.com/tauri-apps/tauri-plugin-store)
-* [Tauri Plugin Localhost](https://github.com/tauri-apps/tauri-plugin-localhost)
 
 ## Testing
 
-```npm start```
+Run ```npm start``` and ```npm run tauri dev``` 
 ## Building
 
-* AppImage: ```npm run electron-pack```
-* deb: ```npm run electron-pack-deb```
-* Windows: ```npm run electron-win``` 
+Build React app first using ```npm run build``` then use one of the commands below:
+
+* AppImage and .deb: ```npm run tauri build```
+* Windows: 
