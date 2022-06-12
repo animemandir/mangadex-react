@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "mangadex-react",
-    "version": "0.3.5"
+    "version": "0.3.6"
   },
   "tauri": {
     "allowlist": {
@@ -66,8 +66,10 @@
         "fullscreen": false,
         "height": 720,
         "resizable": true,
-        "title": "MangaDex",
-        "width": 1280      
+        "title": "MangaDex 0.3.6",
+        "width": 1280,
+        "decorations": false,
+        "maximized": true      
       }
     ]
   }

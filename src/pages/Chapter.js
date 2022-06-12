@@ -9,6 +9,9 @@ import { DateTime } from "luxon";
 import Select from 'react-select';
 import { saveStorage } from "../util/persistentStore.js";
 import { fetch } from '@tauri-apps/api/http';
+import { appWindow } from '@tauri-apps/api/window'
+import { Store } from 'tauri-plugin-store-api';
+
 
 
 
@@ -178,10 +181,12 @@ class Chapter extends React.Component{
                 externalUrl: externalUrl
             });
 
+            const store = new Store('.dex.dat');
             let readingHistory = [];
             let inReadingHistory = false;
-            if(localStorage.readingHistory){
-                readingHistory = JSON.parse(localStorage.readingHistory);
+            let storeHistory = await store.get('readingHistory');
+            if(storeHistory){
+                readingHistory = JSON.parse(storeHistory);
             }
 
             if(readingHistory.length > 0){
@@ -206,8 +211,7 @@ class Chapter extends React.Component{
                     externalUrl: externalUrl,
                     readAt: DateTime.now().toISO()
                 });
-                localStorage.readingHistory = JSON.stringify(readingHistory);
-                saveStorage();
+                await store.set('readingHistory',JSON.stringify(readingHistory));
             }
 
             $this.getChapterList(mangaId,0);
@@ -788,6 +792,18 @@ class Chapter extends React.Component{
         }
     }
 
+    minimize = () => {
+        appWindow.minimize();
+    }
+
+    maximize = () => {
+        appWindow.toggleMaximize();
+    }
+
+    closeApp = () => {
+        appWindow.close();
+    }
+
     render = () => {
         var selectStyle = (localStorage.theme === 'dark') ? {
             control: (base) => ({
@@ -869,6 +885,18 @@ class Chapter extends React.Component{
         if(localStorage.readerlayout === "single"){
             pages = "";
         }
+
+        var windowBar = (this.state.theme === "dark") ?
+        <div className="float-right">
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.minimize} src={process.env.PUBLIC_URL + '/minimize-dark.svg'} alt="Minimize" />
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.maximize} src={process.env.PUBLIC_URL + '/maximize-dark.svg'} alt="Maximize" />
+            <img className="pl-1 pr-2 inline cursor-pointer w-7" onClick={this.closeApp} src={process.env.PUBLIC_URL + '/close-dark.svg'} alt="Close" />
+        </div> :
+        <div className="float-right">
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.minimize} src={process.env.PUBLIC_URL + '/minimize.svg'} alt="Minimize" />
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.maximize} src={process.env.PUBLIC_URL + '/maximize.svg'} alt="Maximize" />
+            <img className="pl-1 pr-2 inline cursor-pointer w-7" onClick={this.closeApp} src={process.env.PUBLIC_URL + '/close.svg'} alt="Close" />
+        </div>
 
         return (
             <div class="flex flex-col justify-between" ref={this.KbListener} tabIndex={0}>
@@ -957,6 +985,11 @@ class Chapter extends React.Component{
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                         </svg>
                                     </a> 
+                                    <button onClick={this.refresh} className="px-2 py-2 hover:opacity-75 cursor-pointer focus:outline-none" title="Refresh">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className={"h-5 w-5"}  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                    </button>
                                 </div>      
                                 <div className="flex-grow mt-2">
                                     {externalUrl}
@@ -1008,16 +1041,17 @@ class Chapter extends React.Component{
                                 </div>
                                 <footer class="footer relative pt-2">
                                     {pages}
-                                    <div className="text-center text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
-                                        <Link className={"hover:opacity-75 " + colorTheme(600).text} to={"/"}>Home</Link>
-                                        <span className="mx-2">|</span>
-                                        <Link className={"hover:opacity-75 " + colorTheme(600).text} to={"/follow"}>Follows</Link>
-                                        <span className="mx-2">|</span>
-                                        <button onClick={this.refresh} className="hover:opacity-75 cursor-pointer focus:outline-none" title="Refresh">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className={"h-4 w-4 " + colorTheme(600).text}  fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                            </svg>
-                                        </button>
+                                    <div className="flex text-lg py-2 border-t-2  border-gray-200 dark:border-gray-900">
+                                        <div className="w-1/3">
+                                            <Link className={"hover:opacity-75 ml-4 " + colorTheme(600).text} to={"/"}>Home</Link>
+                                            <span className="mx-2">|</span>
+                                            <Link className={"hover:opacity-75 " + colorTheme(600).text} to={"/follow"}>Follows</Link>
+                                        </div>
+                                        <div className="w-1/3">
+                                        </div>
+                                        <div className="w-1/3">
+                                            {windowBar}
+                                        </div>
                                     </div>
                                 </footer>
                             </div>

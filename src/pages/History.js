@@ -3,12 +3,14 @@ import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import ReadingHistoryRow from '../component/ReadingHistoryRow.js';
 import { isLogged } from "../util/loginUtil.js";
+import { Store } from 'tauri-plugin-store-api';
 
 
 class History extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            storeHistory: [],
             history: [],
             count: 0,
             next: 1,
@@ -18,13 +20,17 @@ class History extends React.Component{
         };
     }
 
-    componentDidMount = () => {
+    async componentDidMount(){
         document.title = "Reading History - MangaDex";
         var $this = this;
         isLogged().then(function(isLogged){
             $this.setState({isLogged:isLogged});
         });
-        this.getReadingHistory();
+        const store = new Store('.dex.dat');
+        let storeHistory = await store.get('readingHistory');
+        this.setState({
+            storeHistory: storeHistory
+        },() => this.getReadingHistory());
     }
 
     getReadingHistory = () => {
@@ -33,8 +39,8 @@ class History extends React.Component{
         let count = 0;
         let loadMore = false;
 
-        if(localStorage.readingHistory){
-            readingHistory = JSON.parse(localStorage.readingHistory);
+        if(this.state.storeHistory){
+            readingHistory = JSON.parse(this.state.storeHistory);
             count = readingHistory.length;
             let init = ((this.state.offset * (this.state.next - 1)) + 1);
             let till = (init + this.state.offset - 1) * -1;
@@ -87,7 +93,7 @@ class History extends React.Component{
                                 </svg>
                                 <span className="ml-2">Reading History ({this.state.count})</span>
                             </div>
-                            <div className="w-full p-3">
+                            <div className="w-full p-3 mt-2">
                                 <table class="table-fixed w-full p-2">
                                     <thead className="border-b-2 border-gray-200 dark:border-gray-900">
                                         <th title="Chapter">

@@ -22,7 +22,4 @@ Due to CORS, I'm using tauri to make it an desktop application.
 Run ```npm start``` and ```npm run tauri dev``` 
 ## Building
 
-Build React app first using ```npm run build``` then use one of the commands below:
-
-* AppImage and .deb: ```npm run tauri build```
-* Windows: 
+Build React app first using ```npm run build``` then run ```npm run tauri build```

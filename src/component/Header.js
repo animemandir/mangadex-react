@@ -3,14 +3,22 @@ import { Link } from "react-router-dom";
 import { colorTheme } from "../util/colorTheme";
 import { saveStorage } from "../util/persistentStore";
 import { fetch } from '@tauri-apps/api/http';
-
+import { appWindow } from '@tauri-apps/api/window'
 
 class Header extends React.Component{
     constructor(props){
         super(props);
         this.state = {
             search: "",
-            mode: "light"
+            mode: "light",
+            loginDrop: {
+                open: false,
+                class: "hidden z-20 w-40 rounded bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            },
+            followDrop: {
+                open: false,
+                class: "hidden z-20 w-40 rounded bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            }
         };
     }
 
@@ -82,17 +90,90 @@ class Header extends React.Component{
         }
     }
 
+    toggleLoginMenu = () => {
+        let loginDrop = {
+            open: false,
+            class: "hidden z-20 w-40 rounded bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        }
+        
+        if(!this.state.loginDrop.open){
+            loginDrop = {
+                open: true,
+                class: "block absolute z-20 w-40 rounded bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            }
+        }
+
+        this.setState({loginDrop:loginDrop});
+    }
+
+    toggleFollowMenu = () => {
+        let followDrop = {
+            open: false,
+            class: "hidden z-20 w-40 rounded bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        }
+        
+        if(!this.state.followDrop.open){
+            followDrop = {
+                open: true,
+                class: "block absolute z-20 w-40 rounded bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            }
+        }
+
+        this.setState({followDrop:followDrop});
+    }
+
     refresh = () => {
         window.location.reload();
+    }
+
+    minimize = () => {
+        appWindow.minimize();
+    }
+
+    maximize = () => {
+        appWindow.toggleMaximize();
+    }
+
+    closeApp = () => {
+        appWindow.close();
     }
 
     render = () => {
         var follow = (this.props.isLogged) ? 
         <li className="nav-item">
-            <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/follow">
-                Follows
+            <button onClick={this.toggleFollowMenu} type="button" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 focus:outline-none">
+                Follow
+            </button>
+            <div className={this.state.followDrop.class}>
+                <ul class="py-1 text-sm">
+                    <li>
+                        <Link to="/follow" className="block px-4 py-2 hover:opacity-80">
+                            Last Updates
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/reading_list" className="block px-4 py-2 hover:opacity-80">
+                            Reading List
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/follow_group" className="block px-4 py-2 hover:opacity-80">
+                            Following Groups
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/history" className="block px-4 py-2 hover:opacity-80">
+                            History
+                        </Link>
+                    </li>
+                </ul>
+            </div>
+        </li> : 
+        <li className="nav-item">
+            <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/history">
+                History
             </Link>
-        </li> : "";
+        </li>;
 
         var login = (!this.props.isLogged) ? 
         <li className="nav-item">
@@ -101,9 +182,21 @@ class Header extends React.Component{
             </Link>
         </li> : 
         <li className="nav-item">
-            <button onClick={this.logout} type="button" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 focus:outline-none">
-                Logout ({localStorage.authUser})
+            <button onClick={this.toggleLoginMenu} type="button" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75 focus:outline-none">
+                User: {localStorage.authUser}
             </button>
+            <div className={this.state.loginDrop.class}>
+                <ul class="py-1 text-sm">
+                    <li>
+                        <Link to="/user/me" className="block px-4 py-2 hover:opacity-80">
+                            Profile
+                        </Link>
+                    </li>
+                    <li>
+                        <button type="button" class="block px-4 py-2 hover:opacity-80" onClick={this.logout}>Logout</button>
+                    </li>
+                </ul>
+            </div>
         </li>;
 
         var mode = (this.state.mode === "dark") ?
@@ -121,28 +214,40 @@ class Header extends React.Component{
                 </svg>
             </button>
         </li>;
+
+        var windowBar = (this.state.mode === "dark") ?
+        <div className="float-right">
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.minimize} src={process.env.PUBLIC_URL + '/minimize-dark.svg'} alt="Minimize" />
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.maximize} src={process.env.PUBLIC_URL + '/maximize-dark.svg'} alt="Maximize" />
+            <img className="pl-1 pr-2 inline cursor-pointer w-7" onClick={this.closeApp} src={process.env.PUBLIC_URL + '/close-dark.svg'} alt="Close" />
+        </div> :
+        <div className="float-right">
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.minimize} src={process.env.PUBLIC_URL + '/minimize.svg'} alt="Minimize" />
+            <img className="px-1 inline cursor-pointer w-7" onClick={this.maximize} src={process.env.PUBLIC_URL + '/maximize.svg'} alt="Maximize" />
+            <img className="pl-1 pr-2 inline cursor-pointer w-7" onClick={this.closeApp} src={process.env.PUBLIC_URL + '/close.svg'} alt="Close" />
+        </div>
         return (
             <div>
-                <nav className="relative flex flex-wrap items-center justify-between px-2 py-3  bg-gray-150 text-gray-600 dark:bg-gray-900 dark:text-gray-100">
-                    <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
+                <nav className="flex flex-wrap items-center justify-between px-2 py-3 bg-gray-150 text-gray-600 dark:bg-gray-900 dark:text-gray-100">
+                    <div className="container px-4 mx-auto flex flex-wrap items-center justify-between z-10">
                         <div className="w-auto px-4 static block justify-start">
                             <Link to="/">
                                 <img className="px-2 inline" width="50px" src={process.env.PUBLIC_URL + '/navbar.svg'} alt="MangaDex" /> MangaDex
                             </Link>
                         </div>
-                        <div className="lg:flex flex-grow items-center" id="example-navbar-warning">
+                        <div className="flex flex-grow">
                             <ul className="flex flex-row list-none mr-auto">
                                 <li className="nav-item">
                                     <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug  hover:opacity-75" to="/search">
                                         Manga
                                     </Link>
                                 </li>
-                                {follow}
                                 <li className="nav-item">
-                                    <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/history">
-                                        History
+                                    <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug  hover:opacity-75" to="/search_chapter">
+                                        Chapter
                                     </Link>
                                 </li>
+                                {follow}
                                 <li className="nav-item">
                                     <Link className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug hover:opacity-75" to="/settings">
                                         Settings
@@ -158,7 +263,7 @@ class Header extends React.Component{
                                     </button>
                                 </li>
                             </ul>
-                            <div className="relative flex w-5/12 px-4 flex-wrap items-stretch ml-auto">
+                            <div className="flex w-5/12 px-4 items-stretch ml-auto">
                                 <div className="relative">
                                     <input onChange={this.handleSearch} onKeyUp={this.handleSearchKeypress} value={this.state.search} type="text" className="h-8 w-96 pl-4 pr-10 rounded focus:outline-none bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500" placeholder="Search" />
                                     <div className="absolute top-0 right-0"> 
@@ -172,8 +277,8 @@ class Header extends React.Component{
                             </div>
                         </div>
                     </div>
+                    {windowBar}
                 </nav>
-    
             </div>
         );
     }

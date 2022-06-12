@@ -13,7 +13,10 @@ import Title from './pages/Title.js';
 import Chapter from './pages/Chapter.js';
 import Settings from './pages/Settings.js';
 import Follow from './pages/Follow.js';
+import ReadingList from './pages/ReadingList.js';
+import FollowGroup from './pages/FollowGroup.js';
 import Search from './pages/Search.js';
+import SearchChapter from './pages/SearchChapter.js';
 import Group from './pages/Group.js';
 import User from './pages/User.js';
 import Author from './pages/Author.js';
@@ -61,11 +64,20 @@ export default function App() {
                 <Route path="/search">
                     <Search />
                 </Route>
+                <Route path="/search_chapter">
+                    <SearchChapter />
+                </Route>
                 <Route path="/settings">
                     <Settings />
                 </Route>
                 <Route path="/follow">
                     <Follow />
+                </Route>
+                <Route path="/follow_group">
+                    <FollowGroup />
+                </Route>
+                <Route path="/reading_list">
+                    <ReadingList />
                 </Route>
                 <Route path="/about">
                     <About />

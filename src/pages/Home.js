@@ -9,7 +9,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { isLogged } from "../util/loginUtil.js";
 import { loadStorage } from "../util/persistentStore.js";
 import { fetch } from '@tauri-apps/api/http';
-
+import { Store } from 'tauri-plugin-store-api';
 
 
 class Home extends React.Component{
@@ -18,6 +18,7 @@ class Home extends React.Component{
         this.state = {
             lastChapters: [],
             lastChaptersData: [],
+            storeHistory: [],
             history: [],
             isLogged: false,
             mangaTabControl: {
@@ -41,11 +42,16 @@ class Home extends React.Component{
         document.title = "Home - MangaDex";
         loadStorage();
         this.getLastChapters();
-        this.getReadingHistory();
         let logged = await isLogged();
+        const store = new Store('.dex.dat');
+        let storeHistory = await store.get('readingHistory');
         this.setState({
-            isLogged: logged
-        },() => this.getTopManga());
+            isLogged: logged,
+            storeHistory: storeHistory
+        },() => {
+            this.getTopManga();
+            this.getReadingHistory();
+        });
     }
 
     getLastChapters = () => {
@@ -206,8 +212,8 @@ class Home extends React.Component{
     getReadingHistory = () => {
         let history = [];
         let readingHistory = [];
-        if(localStorage.readingHistory){
-            readingHistory = JSON.parse(localStorage.readingHistory);
+        if(this.state.storeHistory){
+            readingHistory = JSON.parse(this.state.storeHistory);
             for(let a = readingHistory.length-1; a >= readingHistory.length-10; a--){
                 if(readingHistory[a] !== undefined){
                     history.push(<HomeReadingHistory data={readingHistory[a]} />);

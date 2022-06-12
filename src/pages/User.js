@@ -38,12 +38,72 @@ class User extends React.Component{
         document.title = "User - MangaDex";
         const id = this.props.match.params.id;
         let logged = await isLogged();
-        this.setState({
-            id:id,
-            isLogged: logged
-        },() => this.getUserFeed());
 
-        this.getUserInfo(id);
+        if(id === "me"){
+            this.setState({
+                isLogged: logged
+            });
+            this.getMyInfo();
+        }else{
+            this.setState({
+                id:id,
+                isLogged: logged
+            });
+            this.getUserInfo(id);
+        }
+        
+    }
+
+    getMyInfo = () => {
+        var $this = this;
+        var bearer = "Bearer " + localStorage.authToken;
+        fetch('https://api.mangadex.org/user/me',{
+            method: "GET",
+            headers: {  
+                Authorization: bearer
+            }
+        })
+        .then(function(response){
+            let id = "";
+            let name = "";
+            let version = "";
+            let roles = [];
+            let groupsId = [];
+            id = response.data.data.id;
+            name = response.data.data.attributes.username;
+            version = response.data.data.attributes.version;
+
+            response.data.data.attributes.roles.map((relation) => {
+                roles.push(relation.replace(/^ROLE_/,'').replace(/_/g,' ')); 
+            });
+
+            response.data.data.relationships.map((relation) => {
+                if(relation.type === "scanlation_group"){
+                    groupsId.push(relation.id);
+                }
+            });
+
+            document.title = "User: " + name + " - Mangadex";
+            $this.setState({
+                id:id,
+                name: name,
+                version: version,
+                roles: roles,
+                groupsId: groupsId
+            },() => {
+                $this.getUserFeed();
+                if($this.state.groupsId.length > 0){
+                    $this.getGroups();
+                }
+            });
+        })
+        .catch(function(error){
+            console.log(error);
+            toast.error('Error updating reading status.',{
+                duration: 4000,
+                position: 'top-right',
+            });
+        });
     }
 
     getUserInfo = (id) => {
@@ -74,6 +134,7 @@ class User extends React.Component{
                 roles: roles,
                 groupsId: groupsId
             },() => {
+                $this.getUserFeed()
                 if($this.state.groupsId.length > 0){
                     $this.getGroups();
                 }
@@ -303,7 +364,7 @@ class User extends React.Component{
                     <div className="container mx-auto px-4 flex flex-wrap justify-between">
                         <div className="box-border w-full py-2 mt-6 mb-2 mr-1 border-2 border-gray-200 dark:border-gray-900">
                             <div className="text-left text-lg flex flex-wrap border-b-2 pb-1 px-3 border-gray-200 dark:border-gray-900">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-1 mt-2" viewBox="0 0 20 20" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-1 mt-1" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                 </svg>
                                 <span className="ml-2">{this.state.name}</span>

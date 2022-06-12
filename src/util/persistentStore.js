@@ -2,7 +2,7 @@ import { Store } from 'tauri-plugin-store-api';
 
 export async function saveStorage(){
     const store = new Store('.dex.dat');
-    await store.clear();
+    // await store.clear();
     if(localStorage.theme){
         await store.set('theme',localStorage.theme);
     }
@@ -24,9 +24,9 @@ export async function saveStorage(){
     if(localStorage.content){
         await store.set('content',localStorage.content);
     }
-    if(localStorage.readingHistory){
-        await store.set('readingHistory',localStorage.readingHistory);
-    }
+    // if(localStorage.readingHistory){
+    //     await store.set('readingHistory',localStorage.readingHistory);
+    // }
     if(localStorage.language){
         await store.set('language',localStorage.language);
     }
@@ -60,8 +60,6 @@ export async function saveStorage(){
 
 export async function loadStorage(){
     const store = new Store('.dex.dat');
-    let keys = await store.keys();
-    console.log(keys);
     let authToken = await store.get('authToken');
     let theme = await store.get('theme');
     let authUser = await store.get('authUser');
@@ -69,7 +67,7 @@ export async function loadStorage(){
     let authRefresh = await store.get('authRefresh');
     let refreshExpire = await store.get('refreshExpire');
     let content = await store.get('content');
-    let readingHistory = await store.get('readingHistory');
+    // let readingHistory = await store.get('readingHistory');
     let language = await store.get('language');
     let showReaderMenu = await store.get('showReaderMenu');
     let imageFit = await store.get('imageFit');
@@ -107,9 +105,9 @@ export async function loadStorage(){
     if(language){
         localStorage.language = language;
     }
-    if(readingHistory){
-        localStorage.readingHistory = readingHistory;
-    }
+    // if(readingHistory){
+    //     localStorage.readingHistory = readingHistory;
+    // }
     if(showReaderMenu){
         localStorage.showReaderMenu = showReaderMenu;
     }
